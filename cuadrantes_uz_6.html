@@ -1270,6 +1270,67 @@ tr:hover td { background: var(--bg); }
   justify-content: flex-end;
 }
 
+.verify-note-box,
+.verify-note-saved {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+.verify-note-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.verify-note-label,
+.verify-note-saved-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.verify-note-input {
+  width: 100%;
+  min-height: 76px;
+  resize: vertical;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: white;
+}
+
+.verify-note-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(168, 80, 26, 0.12);
+}
+
+.verify-note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.verify-note-saved {
+  font-size: 12px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 4px;
+}
+
+.verify-note-saved-text {
+  margin-top: 4px;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+
 .status-btn {
   width: 38px;
   height: 38px;
@@ -4321,6 +4382,8 @@ if (turnoActual.code === 'M') {
 }
 
 const serviceStates = {}; // { id: 'pending' | 'ok' | 'warn' | 'danger' }
+const serviceNotes = {}; // texto temporal de incidencia / descubierto por servicio
+let activeNoteEditorId = null;
 verifyServices.forEach(s => serviceStates[s.id] = 'pending');
 
 function renderVerifyList() {
@@ -4328,6 +4391,33 @@ function renderVerifyList() {
   list.innerHTML = verifyServices.map(s => {
     const state = serviceStates[s.id];
     const cls = state === 'ok' ? 'is-ok' : state === 'warn' ? 'is-warn' : state === 'danger' ? 'is-danger' : '';
+    const needsNote = state === 'warn' || state === 'danger';
+    const noteLabel = state === 'danger' ? 'Descripcion del descubierto' : 'Descripcion de la incidencia';
+    const note = serviceNotes[s.id] || '';
+    const noteBlock = needsNote && activeNoteEditorId === s.id
+      ? `
+        <div class="verify-note-box">
+          <label class="verify-note-label" for="verify-note-${s.id}">${noteLabel}</label>
+          <textarea class="verify-note-input" id="verify-note-${s.id}" placeholder="Describe que ocurre, franja afectada, persona implicada o cualquier dato util para revisar el servicio.">${escapeHtml(note)}</textarea>
+          <div class="verify-note-actions">
+            <button class="btn btn-ghost" onclick="cancelStatusNote('${s.id}')">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveStatusNote('${s.id}')">Guardar descripcion</button>
+          </div>
+        </div>
+      `
+      : (needsNote && note
+        ? `
+          <div class="verify-note-saved">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+              <div>
+                <div class="verify-note-saved-label">${noteLabel} guardada</div>
+                <div class="verify-note-saved-text">${escapeHtml(note)}</div>
+              </div>
+              <button class="btn btn-ghost" onclick="editStatusNote('${s.id}')">Editar</button>
+            </div>
+          </div>
+        `
+        : '');
     return `
       <div class="verify-row ${cls}" data-id="${s.id}">
         <div class="verify-row-info">
@@ -4343,6 +4433,7 @@ function renderVerifyList() {
           <button class="status-btn ${state === 'warn' ? 'active warn' : ''}" onclick="setStatus('${s.id}', 'warn')" title="Incidencia">!</button>
           <button class="status-btn ${state === 'danger' ? 'active danger' : ''}" onclick="setStatus('${s.id}', 'danger')" title="Descubierto">✕</button>
         </div>
+        ${noteBlock}
       </div>
     `;
   }).join('');
@@ -4352,21 +4443,85 @@ function renderVerifyList() {
 }
 
 function setStatus(id, state) {
+  if (activeNoteEditorId && activeNoteEditorId !== id) persistActiveStatusNote();
+
   // Toggle off si se vuelve a clicar el mismo
   if (serviceStates[id] === state) {
     serviceStates[id] = 'pending';
+    delete serviceNotes[id];
+    if (activeNoteEditorId === id) activeNoteEditorId = null;
   } else {
     serviceStates[id] = state;
+    if (state === 'warn' || state === 'danger') {
+      activeNoteEditorId = id;
+    } else {
+      delete serviceNotes[id];
+      if (activeNoteEditorId === id) activeNoteEditorId = null;
+    }
   }
+  renderVerifyList();
+  focusActiveStatusNote();
+}
+
+function saveStatusNote(id) {
+  persistStatusNote(id);
+  activeNoteEditorId = null;
   renderVerifyList();
 }
 
+function persistActiveStatusNote() {
+  if (activeNoteEditorId) persistStatusNote(activeNoteEditorId);
+}
+
+function persistStatusNote(id) {
+  const input = document.getElementById(`verify-note-${id}`);
+  serviceNotes[id] = input ? input.value.trim() : (serviceNotes[id] || '');
+}
+
+function cancelStatusNote(id) {
+  activeNoteEditorId = null;
+  renderVerifyList();
+}
+
+function editStatusNote(id) {
+  activeNoteEditorId = id;
+  renderVerifyList();
+  focusActiveStatusNote();
+}
+
+function focusActiveStatusNote() {
+  if (!activeNoteEditorId) return;
+  setTimeout(() => {
+    const input = document.getElementById(`verify-note-${activeNoteEditorId}`);
+    if (input) input.focus();
+  }, 0);
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function markAllOk() {
-  verifyServices.forEach(s => serviceStates[s.id] = 'ok');
+  verifyServices.forEach(s => {
+    serviceStates[s.id] = 'ok';
+    delete serviceNotes[s.id];
+  });
+  activeNoteEditorId = null;
   renderVerifyList();
 }
 
 function confirmVerification() {
+  if (activeNoteEditorId) {
+    persistActiveStatusNote();
+    activeNoteEditorId = null;
+    renderVerifyList();
+  }
+
   const pending = verifyServices.filter(s => serviceStates[s.id] === 'pending').length;
   if (pending > 0) {
     alert(`Quedan ${pending} servicios sin marcar. Marca cada uno como cubierto, con incidencia o descubierto antes de confirmar.`);
@@ -4406,6 +4561,8 @@ function updateDynamicAlerts() {
   let html = '';
 
   verifyServices.forEach(s => {
+    const note = serviceNotes[s.id];
+    const noteHtml = note ? `<div class="alert-meta" style="margin-top:4px"><strong>Descripcion:</strong> ${escapeHtml(note)}</div>` : '';
     if (serviceStates[s.id] === 'danger') {
       html += `
         <div class="alert alert-danger">
@@ -4413,6 +4570,7 @@ function updateDynamicAlerts() {
           <div class="alert-content">
             <div class="alert-title">Servicio descubierto — ${s.name}${s.tag ? ' (' + s.tag + ')' : ''}</div>
             <div class="alert-meta">${turnoActual.name} en curso · Marcado por la contrata · Sin cobertura</div>
+            ${noteHtml}
           </div>
         </div>
       `;
@@ -4423,6 +4581,7 @@ function updateDynamicAlerts() {
           <div class="alert-content">
             <div class="alert-title">Incidencia en ${s.name}${s.tag ? ' (' + s.tag + ')' : ''}</div>
             <div class="alert-meta">${turnoActual.name} en curso · Marcado por la contrata · Requiere revisión</div>
+            ${noteHtml}
           </div>
         </div>
       `;
@@ -4482,7 +4641,11 @@ function switchVerifyTurn(code) {
     `${turnInfo[code].name} · ${turnInfo[code].range}`;
 
   // Resetear estados al cambiar de turno
-  verifyServices.forEach(s => serviceStates[s.id] = 'pending');
+  verifyServices.forEach(s => {
+    serviceStates[s.id] = 'pending';
+    delete serviceNotes[s.id];
+  });
+  activeNoteEditorId = null;
 
   // Si es turno mañana mostrar jefe CECO, si no ocultarlo
   const jefe = verifyServices.find(s => s.id === 'ceco-jefe');
