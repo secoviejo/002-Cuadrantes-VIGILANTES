@@ -1,0 +1,4512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuadrantes UZ · Unidad de Seguridad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f1ea;
+  --bg-elev: #fbf8f2;
+  --ink: #2a2520;
+  --ink-soft: #6b6359;
+  --ink-faded: #9a9285;
+  --line: #e0d8c8;
+  --line-strong: #c9bfa9;
+  --sidebar: #1c1814;
+  --sidebar-soft: #2e2823;
+  --sidebar-text: #d4c9b5;
+  --sidebar-text-active: #f5e9c8;
+  --accent: #a8501a;
+  --accent-soft: #c97a3f;
+  --gold: #d4a574;
+  --success: #557856;
+  --success-bg: #e8efe3;
+  --warn: #b8761a;
+  --warn-bg: #f5e8c8;
+  --danger: #b03a2e;
+  --danger-bg: #f5dcd5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ============ SIDEBAR ============ */
+aside {
+  width: 260px;
+  background: var(--sidebar);
+  color: var(--sidebar-text);
+  min-height: 100vh;
+  padding: 28px 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logo {
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--sidebar-soft);
+}
+
+.logo-mark {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--sidebar-text-active);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark::before {
+  content: "";
+  width: 10px;
+  height: 24px;
+  background: var(--gold);
+  display: inline-block;
+}
+
+.logo-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faded);
+  margin-top: 6px;
+  margin-left: 20px;
+}
+
+nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.nav-section {
+  padding: 12px 24px 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-faded);
+  font-weight: 600;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.nav-item:hover {
+  background: var(--sidebar-soft);
+  color: var(--sidebar-text-active);
+}
+
+.nav-item.active {
+  background: var(--sidebar-soft);
+  border-left-color: var(--gold);
+  color: var(--sidebar-text-active);
+  font-weight: 500;
+}
+
+.nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--sidebar-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.user-meta { font-size: 12px; }
+.user-meta strong { display: block; color: var(--sidebar-text-active); font-weight: 500; font-size: 13px; }
+.user-meta span { color: var(--ink-faded); font-size: 11px; }
+
+/* ============ MAIN ============ */
+main {
+  flex: 1;
+  padding: 32px 48px;
+  max-width: calc(100vw - 260px);
+  overflow-x: hidden;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 36px;
+  gap: 24px;
+}
+
+.page-title {
+  font-family: 'Fraunces', serif;
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.page-subtitle {
+  color: var(--ink-soft);
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  color: var(--ink);
+  transition: all 0.15s ease;
+}
+
+.btn:hover { background: white; border-color: var(--ink-soft); }
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: #8d4416; border-color: #8d4416; }
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink-soft);
+}
+.btn-ghost:hover { background: var(--line); color: var(--ink); border-color: transparent; }
+
+/* ============ VIEW SWITCHING ============ */
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.25s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ CARDS / KPI ============ */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.kpi {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.kpi-value {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.kpi-unit { font-size: 14px; color: var(--ink-soft); margin-left: 4px; font-family: 'DM Sans', sans-serif; }
+
+.kpi-trend {
+  margin-top: 10px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trend-up { color: var(--success); }
+.trend-down { color: var(--danger); }
+.trend-flat { color: var(--ink-soft); }
+
+.kpi-bar {
+  margin-top: 12px;
+  height: 5px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.kpi-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+
+/* ============ TWO-COLUMN ============ */
+.two-col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.card-desc { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+
+/* ============ ALERTS LIST ============ */
+.alert-list { display: flex; flex-direction: column; gap: 10px; }
+
+.alert {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  border-left: 3px solid;
+  background: var(--bg);
+}
+
+.alert-danger { border-color: var(--danger); background: var(--danger-bg); }
+.alert-warn { border-color: var(--warn); background: var(--warn-bg); }
+.alert-info { border-color: var(--ink-soft); }
+
+.alert-icon { font-size: 16px; }
+
+.alert-content { flex: 1; }
+.alert-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+.alert-meta { font-size: 12px; color: var(--ink-soft); }
+
+/* ============ TABLE ============ */
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--bg);
+}
+
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg); }
+
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.pill-success { background: var(--success-bg); color: var(--success); }
+.pill-warn { background: var(--warn-bg); color: var(--warn); }
+.pill-danger { background: var(--danger-bg); color: var(--danger); }
+.pill-neutral { background: var(--line); color: var(--ink-soft); }
+
+/* ============ CUADRANTE GRID ============ */
+.cuadrante-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.month-nav button {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.month-nav button:hover { background: var(--bg-elev); }
+
+.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.filter-chip {
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filter-chip.active {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+
+.cuadrante-grid {
+  display: grid;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 11px;
+}
+
+.cuadrante-header {
+  display: grid;
+  grid-template-columns: 220px repeat(31, 1fr);
+  background: var(--bg);
+  border-bottom: 2px solid var(--line-strong);
+  font-weight: 600;
+  font-size: 10px;
+}
+
+.cuadrante-header > div {
+  padding: 10px 6px;
+  text-align: center;
+  border-right: 1px solid var(--line);
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cuadrante-header > div:first-child { text-align: left; padding-left: 14px; }
+.cuadrante-header .day-festivo { background: var(--warn-bg); color: var(--warn); }
+.cuadrante-header .day-weekend { background: var(--bg); color: var(--accent); }
+
+.cuadrante-row {
+  display: grid;
+  grid-template-columns: 220px repeat(31, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.cuadrante-row:last-child { border-bottom: none; }
+.cuadrante-row:hover { background: var(--bg); }
+
+.servicio-cell {
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--line-strong);
+  font-size: 12px;
+}
+
+.servicio-cell strong { font-weight: 600; }
+.servicio-cell span { font-size: 10px; color: var(--ink-soft); }
+
+.dia-cell {
+  padding: 4px 2px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+}
+
+.turno {
+  width: 100%;
+  font-size: 9px;
+  padding: 1px 0;
+  border-radius: 2px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  color: white;
+}
+.turno-M { background: #5b8a9c; }
+.turno-T { background: #c97a3f; }
+.turno-N { background: #4a4742; }
+.turno-D { background: #6b7e5b; }
+.turno-empty { background: var(--danger); color: white; font-weight: 600; }
+
+/* ============ HOURS PANEL ============ */
+.hours-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.hour-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.hour-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.hour-row:last-child { border-bottom: none; }
+
+.hour-label { color: var(--ink-soft); font-size: 13px; }
+.hour-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+
+.progress-large {
+  margin-top: 24px;
+  padding: 24px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.progress-label { font-weight: 500; }
+.progress-numbers { font-family: 'JetBrains Mono', monospace; color: var(--ink-soft); }
+.progress-bar {
+  height: 14px;
+  background: var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  border-radius: 7px;
+  transition: width 0.6s ease;
+}
+
+/* ============ IMPORT DROP ============ */
+.drop-zone {
+  border: 2px dashed var(--line-strong);
+  border-radius: 8px;
+  padding: 60px 40px;
+  text-align: center;
+  background: var(--bg-elev);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drop-zone:hover { border-color: var(--accent); background: white; }
+
+.drop-icon {
+  font-size: 40px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.drop-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.drop-sub { color: var(--ink-soft); font-size: 13px; }
+
+.import-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.tab {
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: -1px;
+}
+
+.tab.active { border-bottom-color: var(--accent); color: var(--ink); }
+
+/* ============ PERSONA AVATAR ============ */
+.persona { display: flex; align-items: center; gap: 10px; }
+
+.persona-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.persona-meta strong { font-weight: 500; }
+.persona-meta span { font-size: 11px; color: var(--ink-soft); display: block; }
+
+/* ============ CIERRE MENSUAL ============ */
+.cierre-summary {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cierre-summary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--success);
+}
+
+.cierre-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--success-bg);
+  color: var(--success);
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.cierre-summary h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.cierre-numbers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.cierre-number-label { font-size: 11px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
+.cierre-number-value { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; }
+.cierre-number-diff { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--success); margin-top: 4px; }
+
+/* ============ EMPTY ============ */
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink-soft);
+}
+
+.empty-icon { font-size: 32px; opacity: 0.4; margin-bottom: 12px; }
+
+/* ============ PROTO BANNER ============ */
+.proto-banner {
+  background: linear-gradient(90deg, var(--ink), var(--sidebar-soft));
+  color: var(--gold);
+  text-align: center;
+  padding: 6px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ============ FORM (Nuevo servicio) ============ */
+.form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.form-stack { display: flex; flex-direction: column; gap: 20px; }
+
+.form-section {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 26px 28px;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.form-step {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.form-section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.form-section-desc {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.form-grid-full { grid-column: 1 / -1; }
+
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.form-label .req { color: var(--danger); margin-left: 2px; }
+
+.form-hint {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: white;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(168, 80, 26, 0.15);
+}
+
+.form-textarea { min-height: 76px; resize: vertical; font-family: inherit; }
+
+.form-input-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: white;
+  overflow: hidden;
+}
+
+.form-input-group:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(168, 80, 26, 0.15);
+}
+
+.form-input-group .form-input {
+  border: none;
+  border-radius: 0;
+}
+.form-input-group .form-input:focus { box-shadow: none; }
+
+.form-input-prefix,
+.form-input-suffix {
+  padding: 0 12px;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-size: 13px;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.form-input-prefix { border-right: 1px solid var(--line); }
+.form-input-suffix { border-left: 1px solid var(--line); }
+
+/* Radio cards */
+.radio-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.radio-card {
+  position: relative;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 14px;
+  cursor: pointer;
+  background: white;
+  transition: all 0.15s ease;
+}
+
+.radio-card:hover { border-color: var(--accent-soft); }
+
+.radio-card input { position: absolute; opacity: 0; pointer-events: none; }
+
+.radio-card .rc-icon {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.radio-card .rc-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.radio-card .rc-desc {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+.radio-card.selected,
+.radio-card input:checked + .rc-content,
+.radio-card:has(input:checked) {
+  border-color: var(--accent);
+  background: rgba(168, 80, 26, 0.04);
+  box-shadow: 0 0 0 1px var(--accent) inset;
+}
+
+/* Day toggles L M X J V S D */
+.day-toggles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.day-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: white;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.day-toggle:hover { border-color: var(--accent-soft); }
+
+.day-toggle.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.day-toggle.festivo {
+  border-color: var(--warn);
+}
+.day-toggle.festivo.active {
+  background: var(--warn);
+  border-color: var(--warn);
+}
+
+/* Turn chips */
+.turn-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.turn-chip {
+  padding: 9px 14px;
+  border-radius: 5px;
+  border: 1.5px solid var(--line-strong);
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.turn-chip:hover { border-color: var(--accent-soft); }
+
+.turn-chip .tc-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.turn-chip.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
+}
+
+/* Switch */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.switch-row:last-child { border-bottom: none; }
+
+.switch-row .sw-info { flex: 1; }
+.switch-row .sw-title { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+.switch-row .sw-desc { font-size: 11px; color: var(--ink-soft); }
+
+.switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  background: var(--line-strong);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.switch.on { background: var(--accent); }
+.switch.on::after { transform: translateX(16px); }
+
+/* Form footer / actions */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.form-actions-left { display: flex; gap: 10px; }
+.form-actions-right { display: flex; gap: 10px; }
+
+/* Preview pane */
+.form-preview {
+  position: sticky;
+  top: 24px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  align-self: flex-start;
+}
+
+.preview-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-faded);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.preview-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.preview-service-name {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.preview-service-meta { font-size: 12px; color: var(--ink-soft); margin-bottom: 14px; }
+
+.preview-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+
+.preview-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 12px;
+}
+.preview-stat:last-child { border-bottom: none; }
+.preview-stat .ps-label { color: var(--ink-soft); }
+.preview-stat .ps-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+
+.preview-empty { color: var(--ink-faded); font-style: italic; }
+
+.preview-hours-est {
+  background: var(--bg);
+  border-radius: 5px;
+  padding: 14px;
+  text-align: center;
+  margin-top: 14px;
+}
+
+.preview-hours-est .phe-label { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
+.preview-hours-est .phe-value { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 500; color: var(--accent); }
+.preview-hours-est .phe-unit { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+
+@media (max-width: 1100px) {
+  .form-layout { grid-template-columns: 1fr; }
+  .form-preview { position: relative; top: 0; }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.breadcrumb a { color: var(--ink-soft); text-decoration: none; cursor: pointer; }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb .sep { color: var(--ink-faded); }
+
+/* ============ VERIFICACIÓN DE TURNO ============ */
+.verify-panel {
+  background: linear-gradient(135deg, var(--bg-elev) 0%, #fdfaf3 100%);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.verify-panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--accent);
+}
+
+.verify-panel.done::before { background: var(--success); }
+.verify-panel.partial::before { background: var(--warn); }
+.verify-panel.critical::before { background: var(--danger); }
+
+.verify-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.verify-shift {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.verify-shift-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'Fraunces', serif;
+  flex-shrink: 0;
+}
+
+.verify-shift-icon.M { background: #5b8a9c; }
+.verify-shift-icon.T { background: #c97a3f; }
+.verify-shift-icon.N { background: #4a4742; }
+
+.verify-info-block .vi-eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.verify-info-block .vi-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.verify-info-block .vi-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+.verify-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.verify-counter-value {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.verify-counter-value .vcv-total { color: var(--ink-faded); font-size: 22px; }
+
+.verify-counter-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.verify-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.verify-row {
+  display: grid;
+  grid-template-columns: 1fr 180px 140px;
+  align-items: center;
+  padding: 12px 14px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  gap: 14px;
+  transition: all 0.15s ease;
+}
+
+.verify-row.is-ok { border-color: var(--success); background: rgba(85, 120, 86, 0.04); }
+.verify-row.is-warn { border-color: var(--warn); background: rgba(184, 118, 26, 0.05); }
+.verify-row.is-danger { border-color: var(--danger); background: rgba(176, 58, 46, 0.05); }
+
+.verify-row-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.verify-row-name { font-weight: 600; font-size: 14px; }
+.verify-row-name .vr-tag {
+  display: inline-block;
+  font-size: 9px;
+  padding: 1px 6px;
+  background: var(--line);
+  color: var(--ink-soft);
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.verify-row-meta { font-size: 12px; color: var(--ink-soft); }
+
+.verify-row-person {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.verify-row-person .persona-avatar { width: 26px; height: 26px; font-size: 10px; }
+
+.verify-row-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.status-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  border: 1.5px solid var(--line-strong);
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--ink-soft);
+  transition: all 0.12s ease;
+  font-family: inherit;
+}
+
+.status-btn:hover {
+  transform: scale(1.05);
+  border-color: var(--ink);
+}
+
+.status-btn.active.ok {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+  box-shadow: 0 2px 6px rgba(85, 120, 86, 0.3);
+}
+
+.status-btn.active.warn {
+  background: var(--warn);
+  color: white;
+  border-color: var(--warn);
+  box-shadow: 0 2px 6px rgba(184, 118, 26, 0.3);
+}
+
+.status-btn.active.danger {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+  box-shadow: 0 2px 6px rgba(176, 58, 46, 0.3);
+}
+
+.verify-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.verify-history {
+  font-size: 12px;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verify-history .vh-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.verify-actions { display: flex; gap: 8px; }
+
+.btn-success {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+.btn-success:hover { background: #455f47; border-color: #455f47; }
+
+.turn-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1.5px solid var(--line-strong);
+  background: var(--bg-elev);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.turn-filter-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+
+.turn-filter-btn.active {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+
+.tfb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ============ INFORME MODAL ============ */
+.report-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(28, 24, 20, 0.6);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.report-overlay.active { display: flex; justify-content: center; }
+
+.report-container {
+  background: white;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  position: relative;
+  align-self: flex-start;
+}
+
+.report-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  border-radius: 8px 8px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.report-toolbar-title { font-weight: 600; font-size: 13px; color: var(--ink-soft); }
+.report-toolbar-actions { display: flex; gap: 8px; }
+
+.report-body { padding: 48px 56px; }
+
+.report-picker-body { padding: 32px; }
+
+.report-picker-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.report-picker-copy {
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.report-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.report-choice {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  text-align: left;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.report-choice:hover,
+.report-choice:focus-visible {
+  border-color: var(--accent);
+  background: var(--bg-elev);
+  outline: none;
+}
+
+.report-choice:active { transform: translateY(1px); }
+
+.report-choice-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.report-choice-title {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.report-choice-desc {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.report-logo-block { display: flex; align-items: center; gap: 14px; }
+
+.report-logo-bar {
+  width: 8px;
+  height: 48px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.report-logo-text {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.report-logo-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+.report-meta-block { text-align: right; font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
+.report-meta-block strong { color: var(--ink); display: block; font-size: 13px; }
+
+.report-title {
+  font-family: 'Fraunces', serif;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.report-subtitle { font-size: 14px; color: var(--ink-soft); margin-bottom: 32px; }
+
+.report-section {
+  margin-bottom: 32px;
+}
+
+.report-section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.report-section-line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  margin-bottom: 16px;
+}
+
+.report-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.report-kpi {
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+}
+
+.report-kpi-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.report-kpi-value {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.report-kpi-value .rk-unit { font-size: 13px; color: var(--ink-soft); font-family: 'DM Sans', sans-serif; }
+
+.report-kpi-sub { font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.report-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  border-bottom: 1.5px solid var(--line-strong);
+  background: var(--bg);
+}
+
+.report-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.report-table tr:last-child td { border-bottom: none; }
+
+.report-alert-row {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.report-alert-row.ra-danger { border-color: var(--danger); background: var(--danger-bg); }
+.report-alert-row.ra-warn { border-color: var(--warn); background: var(--warn-bg); }
+.report-alert-row.ra-info { border-color: var(--ink-soft); background: var(--bg); }
+
+.report-alert-icon { font-size: 14px; }
+.report-alert-title { font-weight: 600; font-size: 12px; }
+.report-alert-meta { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+
+.report-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.report-stamp {
+  background: var(--bg);
+  border: 1px dashed var(--line-strong);
+  border-radius: 6px;
+  padding: 20px 28px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.report-stamp-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faded); font-weight: 600; margin-bottom: 8px; }
+.report-stamp-line { border-bottom: 1px solid var(--line-strong); margin: 24px 40px 6px; }
+.report-stamp-hint { font-size: 10px; color: var(--ink-faded); }
+
+@media print {
+  .report-overlay { position: static; background: none; padding: 0; display: block !important; }
+  .report-toolbar { display: none; }
+  .report-container { box-shadow: none; border-radius: 0; max-width: none; }
+  .app-shell, .auth-screen, .proto-banner { display: none !important; }
+  body { background: white; }
+}
+
+/* Role-based nav visibility */
+body.role-contrata .nav-control,
+body.role-contrata .nav-config { display: none; }
+
+/* Solo lectura para UZ */
+body.role-uz .verify-panel .status-btn { pointer-events: none; opacity: 0.55; }
+body.role-uz .verify-panel .verify-actions { display: none; }
+body.role-uz .verify-panel .verify-readonly-note { display: flex; }
+
+.verify-readonly-note {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: var(--bg);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-style: italic;
+}
+
+@media (max-width: 850px) {
+  .verify-row { grid-template-columns: 1fr; gap: 8px; }
+  .verify-row-actions { justify-content: flex-start; }
+}
+
+/* ============ AUTH SCREEN ============ */
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  z-index: 1000;
+  background: var(--bg);
+}
+
+.app-shell {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body.logged-out .app-shell { display: none; }
+body.logged-in .auth-screen { display: none; }
+
+/* Panel izquierdo: branding oscuro */
+.auth-brand {
+  background: var(--sidebar);
+  color: var(--sidebar-text);
+  padding: 56px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(212, 165, 116, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 165, 116, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.auth-brand::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  bottom: -120px;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgba(212, 165, 116, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.auth-brand-top { position: relative; z-index: 2; }
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 64px;
+}
+
+.auth-logo-mark {
+  width: 14px;
+  height: 36px;
+  background: var(--gold);
+}
+
+.auth-logo-text {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--sidebar-text-active);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.auth-logo-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-faded);
+  margin-top: 6px;
+}
+
+.auth-headline {
+  font-family: 'Fraunces', serif;
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--sidebar-text-active);
+  max-width: 460px;
+  margin-bottom: 24px;
+}
+
+.auth-headline em {
+  font-style: italic;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.auth-tagline {
+  font-size: 15px;
+  color: var(--sidebar-text);
+  max-width: 440px;
+  line-height: 1.55;
+  opacity: 0.85;
+}
+
+.auth-brand-bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.auth-brand-bottom .version {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Panel derecho: formulario */
+.auth-form-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--bg);
+  position: relative;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-welcome {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.auth-welcome-sub {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+/* Role selector */
+.role-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px;
+  margin-bottom: 26px;
+  gap: 2px;
+}
+
+.role-tab {
+  padding: 12px 8px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.role-tab:hover { color: var(--ink); }
+
+.role-tab.active {
+  background: var(--ink);
+  color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.role-tab .rt-icon { font-size: 14px; }
+
+.auth-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.auth-field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+}
+
+.auth-field-label .form-label { margin: 0; }
+.auth-field-label a {
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.auth-field-label a:hover { text-decoration: underline; }
+
+.auth-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.checkbox-row input { accent-color: var(--accent); cursor: pointer; }
+
+.btn-auth {
+  width: 100%;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 18px;
+}
+
+.auth-divider {
+  text-align: center;
+  position: relative;
+  margin: 22px 0;
+  color: var(--ink-faded);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 30px);
+  height: 1px;
+  background: var(--line);
+}
+.auth-divider::before { left: 0; }
+.auth-divider::after { right: 0; }
+
+.btn-sso {
+  width: 100%;
+  padding: 11px;
+  background: white;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-sso:hover { background: var(--bg-elev); border-color: var(--ink-soft); }
+
+.btn-sso .sso-mark {
+  width: 18px;
+  height: 18px;
+  background: var(--accent);
+  color: white;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'Fraunces', serif;
+}
+
+.auth-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--ink-faded);
+  text-align: center;
+}
+
+.auth-footer a { color: var(--ink-soft); text-decoration: none; }
+.auth-footer a:hover { color: var(--accent); }
+
+.demo-hint {
+  background: var(--warn-bg);
+  border-left: 3px solid var(--warn);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--ink);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.demo-hint strong { color: var(--warn); }
+
+/* Logout in sidebar */
+.sidebar-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--sidebar-soft);
+  color: var(--sidebar-text);
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.icon-btn:hover { background: var(--sidebar-soft); color: var(--sidebar-text-active); }
+
+.role-badge {
+  display: inline-block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.role-badge-uz { background: rgba(212, 165, 116, 0.2); color: var(--gold); }
+.role-badge-contrata { background: rgba(91, 138, 156, 0.25); color: #9bbcc9; }
+
+@media (max-width: 900px) {
+  .auth-screen { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+
+</style>
+</head>
+<body class="logged-out">
+
+<!-- ====================== AUTH SCREEN ====================== -->
+<div class="auth-screen" id="auth-screen">
+  <div class="auth-brand">
+    <div class="auth-brand-top">
+      <div class="auth-logo">
+        <div class="auth-logo-mark"></div>
+        <div>
+          <div class="auth-logo-text">Cuadrantes</div>
+          <div class="auth-logo-sub">Universidad de Zaragoza</div>
+        </div>
+      </div>
+
+      <h1 class="auth-headline">Gestión integral del <em>servicio de vigilancia</em> universitaria.</h1>
+      <p class="auth-tagline">Planifica, supervisa y valida los cuadrantes de los servicios de seguridad y auxiliares en todos los campus de la UZ. Cobertura 24/7 bajo control.</p>
+    </div>
+
+    <div class="auth-brand-bottom">
+      <span>Unidad de Seguridad</span>
+      <span class="version">v0.3 · Prototipo</span>
+    </div>
+  </div>
+
+  <div class="auth-form-wrap">
+    <div class="auth-form">
+      <h2 class="auth-welcome">Inicia sesión</h2>
+      <p class="auth-welcome-sub">Selecciona tu organización y accede a tu cuenta</p>
+
+      <div class="role-tabs" id="role-tabs">
+        <div class="role-tab active" data-role="uz">
+          <span class="rt-icon">◑</span>
+          <span>Unidad de Seguridad</span>
+        </div>
+        <div class="role-tab" data-role="contrata">
+          <span class="rt-icon">⌖</span>
+          <span>Contrata de vigilancia</span>
+        </div>
+      </div>
+
+      <div class="demo-hint">
+        <strong>Demo:</strong> usa cualquier credencial para entrar. El rol seleccionado determina la vista.
+      </div>
+
+      <div class="auth-fields">
+        <div>
+          <div class="auth-field-label">
+            <span class="form-label">Usuario o correo</span>
+          </div>
+          <input type="text" class="form-input" id="auth-user" placeholder="msanchez@unizar.es" autocomplete="username">
+        </div>
+        <div>
+          <div class="auth-field-label">
+            <span class="form-label">Contraseña</span>
+            <a href="#" onclick="return false">¿Olvidaste tu contraseña?</a>
+          </div>
+          <input type="password" class="form-input" id="auth-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+      </div>
+
+      <div class="auth-row">
+        <label class="checkbox-row">
+          <input type="checkbox"> Mantener sesión iniciada
+        </label>
+      </div>
+
+      <button class="btn btn-primary btn-auth" onclick="doLogin()">Entrar →</button>
+
+      <div class="auth-divider">o</div>
+
+      <button class="btn-sso" onclick="doLogin('sso')">
+        <span class="sso-mark">U</span>
+        Acceso institucional UZ (SSO)
+      </button>
+    </div>
+
+    <div class="auth-footer">
+      © 2026 Universidad de Zaragoza · <a href="#" onclick="return false">Aviso legal</a> · <a href="#" onclick="return false">Soporte</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== APP SHELL ====================== -->
+<div class="app-shell">
+
+<aside>
+  <div class="logo">
+    <div class="logo-mark">Cuadrantes</div>
+    <div class="logo-sub">Unidad de Seguridad · UZ</div>
+  </div>
+
+  <nav>
+    <div class="nav-section">Operación</div>
+    <div class="nav-item active" data-view="dashboard"><span class="nav-icon">◐</span> Resumen</div>
+    <div class="nav-item" data-view="cuadrante"><span class="nav-icon">▦</span> Cuadrante mensual</div>
+    <div class="nav-item" data-view="importar"><span class="nav-icon">↥</span> Importar Excel</div>
+    <div class="nav-item" data-view="sustituciones"><span class="nav-icon">⇄</span> Sustituciones</div>
+
+    <div class="nav-section nav-control">Control</div>
+    <div class="nav-item nav-control" data-view="horas"><span class="nav-icon">◷</span> Horas anuales</div>
+    <div class="nav-item nav-control" data-view="cierre"><span class="nav-icon">✓</span> Cierre mensual</div>
+
+    <div class="nav-section nav-config">Configuración</div>
+    <div class="nav-item nav-config" data-view="servicios"><span class="nav-icon">⌂</span> Servicios</div>
+    <div class="nav-item nav-config" data-view="personal"><span class="nav-icon">◉</span> Personal</div>
+    <div class="nav-item nav-config" data-view="calendario"><span class="nav-icon">▢</span> Calendario laboral</div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="avatar" id="sidebar-avatar">MS</div>
+    <div class="user-meta" style="flex:1">
+      <strong id="sidebar-username">M. Sánchez</strong>
+      <span id="sidebar-org">Unidad de Seguridad</span>
+      <span class="role-badge role-badge-uz" id="sidebar-role">UZ</span>
+    </div>
+    <div class="sidebar-footer-actions">
+      <button class="icon-btn" title="Cerrar sesión" onclick="doLogout()">↩</button>
+    </div>
+  </div>
+</aside>
+
+<main>
+<div class="proto-banner">⚐ Prototipo navegable · Datos de demostración</div>
+
+<!-- ====================== VISTA: DASHBOARD ====================== -->
+<div class="view active" id="view-dashboard">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Resumen operativo</h1>
+      <p class="page-subtitle">Mayo 2026 · Vista actual del servicio de vigilancia</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Exportar PDF</button>
+      <button class="btn btn-primary" onclick="openReportPrompt()">Generar informe</button>
+    </div>
+  </div>
+
+  <!-- VERIFICACIÓN DE TURNO -->
+  <div class="verify-panel" id="verify-panel">
+    <div class="verify-header">
+      <div class="verify-shift">
+        <div class="verify-shift-icon" id="verify-shift-icon">T</div>
+        <div class="verify-info-block">
+          <div class="vi-eyebrow">Verificación de cobertura</div>
+          <div class="vi-title" id="verify-shift-title">Turno tarde · 14:00–22:00</div>
+          <div class="vi-sub" id="verify-shift-date">Hoy, miércoles 13 de mayo de 2026</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+        <div class="verify-counter">
+          <div class="verify-counter-value"><span id="verify-done-count">0</span><span class="vcv-total">/<span id="verify-total-count">7</span></span></div>
+          <div class="verify-counter-label">Verificados</div>
+        </div>
+        <div class="turn-filter-chips" id="turn-filter-chips" style="display:flex;gap:5px">
+          <button class="turn-filter-btn" data-turn="M" onclick="switchVerifyTurn('M')">
+            <span class="tfb-dot" style="background:#5b8a9c"></span> Mañana
+          </button>
+          <button class="turn-filter-btn" data-turn="T" onclick="switchVerifyTurn('T')">
+            <span class="tfb-dot" style="background:#c97a3f"></span> Tarde
+          </button>
+          <button class="turn-filter-btn" data-turn="N" onclick="switchVerifyTurn('N')">
+            <span class="tfb-dot" style="background:#4a4742"></span> Noche
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="verify-list" id="verify-list">
+      <!-- generado por JS -->
+    </div>
+
+    <div class="verify-footer">
+      <div class="verify-history" id="verify-history">
+        <span class="vh-dot"></span>
+        <span>Último turno (mañana) verificado a las 13:58 por L. Ortega · Sin incidencias</span>
+      </div>
+      <div class="verify-readonly-note">
+        <span>◐</span> Solo lectura · La verificación la realiza el operador CECO de la contrata
+      </div>
+      <div class="verify-actions">
+        <button class="btn" onclick="markAllOk()">Marcar todos cubiertos</button>
+        <button class="btn btn-success" onclick="confirmVerification()">✓ Confirmar verificación</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Cobertura del mes</div>
+      <div class="kpi-value">98,4<span class="kpi-unit">%</span></div>
+      <div class="kpi-trend trend-up">▲ 1,2% vs abril</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:98.4%"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Horas planificadas</div>
+      <div class="kpi-value">5.394<span class="kpi-unit">h</span></div>
+      <div class="kpi-trend trend-flat">— Mayo 2026</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Horas ejecutadas</div>
+      <div class="kpi-value">5.308<span class="kpi-unit">h</span></div>
+      <div class="kpi-trend trend-down">▼ 86h sobre planificado</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Acumulado anual</div>
+      <div class="kpi-value">26.140<span class="kpi-unit">/ 63.508h</span></div>
+      <div class="kpi-trend trend-flat">41,2% del contrato</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:41.2%"></div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Cobertura por campus</div>
+          <div class="card-desc">Servicios fijos 24/7 · Mayo 2026</div>
+        </div>
+        <button class="btn btn-ghost" onclick="navTo('cuadrante')">Ver cuadrante →</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Servicio</th><th>Dotación</th><th>Horas mes</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>San Francisco</strong><br><span style="font-size:11px;color:var(--ink-soft)">2 vigilantes 24/7</span></td>
+            <td class="mono">2 × 24h</td>
+            <td class="mono">1.488 h</td>
+            <td><span class="pill pill-success">Cubierto</span></td>
+          </tr>
+          <tr>
+            <td><strong>Paraíso</strong><br><span style="font-size:11px;color:var(--ink-soft)">24/7</span></td>
+            <td class="mono">1 × 24h</td>
+            <td class="mono">744 h</td>
+            <td><span class="pill pill-success">Cubierto</span></td>
+          </tr>
+          <tr>
+            <td><strong>Veterinaria</strong><br><span style="font-size:11px;color:var(--ink-soft)">24/7</span></td>
+            <td class="mono">1 × 24h</td>
+            <td class="mono">744 h</td>
+            <td><span class="pill pill-success">Cubierto</span></td>
+          </tr>
+          <tr>
+            <td><strong>Río Ebro</strong><br><span style="font-size:11px;color:var(--ink-soft)">24/7</span></td>
+            <td class="mono">1 × 24h</td>
+            <td class="mono">744 h</td>
+            <td><span class="pill pill-success">Cubierto</span></td>
+          </tr>
+          <tr>
+            <td><strong>CECO</strong><br><span style="font-size:11px;color:var(--ink-soft)">24/7 + Jefe equipo L–V diurno</span></td>
+            <td class="mono">1 × 24h + 1 × 8h</td>
+            <td class="mono">912 h</td>
+            <td><span class="pill pill-warn">2 días sin jefe</span></td>
+          </tr>
+          <tr>
+            <td><strong>Teruel</strong><br><span style="font-size:11px;color:var(--ink-soft)">22:00–08:00 (sin agosto)</span></td>
+            <td class="mono">1 × 10h</td>
+            <td class="mono">310 h</td>
+            <td><span class="pill pill-success">Cubierto</span></td>
+          </tr>
+          <tr>
+            <td><strong>Huesca</strong><br><span style="font-size:11px;color:var(--ink-soft)">Variable (lectivo/no lectivo)</span></td>
+            <td class="mono">1 × variable</td>
+            <td class="mono">412 h</td>
+            <td><span class="pill pill-danger">1 franja sin cubrir</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Alertas activas</div>
+          <div class="card-desc">Pendientes de revisión</div>
+        </div>
+      </div>
+      <div class="alert-list" id="alerts-list">
+        <div id="alerts-dynamic"></div>
+        <div class="alert alert-danger">
+          <div class="alert-icon">⚠</div>
+          <div class="alert-content">
+            <div class="alert-title">Franja descubierta — Huesca</div>
+            <div class="alert-meta">Sábado 10 mayo · 14:00–22:00 · Sin asignación</div>
+          </div>
+        </div>
+        <div class="alert alert-warn">
+          <div class="alert-icon">!</div>
+          <div class="alert-content">
+            <div class="alert-title">Falta jefe de equipo CECO</div>
+            <div class="alert-meta">Martes 6 y miércoles 14 mayo · Día laborable sin cobertura diurna</div>
+          </div>
+        </div>
+        <div class="alert alert-warn">
+          <div class="alert-icon">!</div>
+          <div class="alert-content">
+            <div class="alert-title">Desvío de horas mensual</div>
+            <div class="alert-meta">86h menos ejecutadas vs planificadas (1,6%)</div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <div class="alert-icon">ⓘ</div>
+          <div class="alert-content">
+            <div class="alert-title">Refuerzo programado</div>
+            <div class="alert-meta">Viernes 23 mayo · Acto institucional Paraninfo · 4 auxiliares</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Últimas sustituciones</div>
+        <div class="card-desc">Comunicadas en las últimas 72 horas</div>
+      </div>
+      <button class="btn btn-ghost" onclick="navTo('sustituciones')">Ver todas →</button>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Fecha turno</th><th>Servicio</th><th>Original</th><th>Sustituto</th><th>Motivo</th><th>Aviso</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">12/05 · Noche</td>
+          <td>Paraíso</td>
+          <td><div class="persona"><div class="persona-avatar">JG</div><div class="persona-meta"><strong>J. García</strong></div></div></td>
+          <td><div class="persona"><div class="persona-avatar">RM</div><div class="persona-meta"><strong>R. Mendoza</strong></div></div></td>
+          <td>Baja médica</td>
+          <td><span class="pill pill-success">Comunicada 26h antes</span></td>
+        </tr>
+        <tr>
+          <td class="mono">11/05 · Mañana</td>
+          <td>Río Ebro</td>
+          <td><div class="persona"><div class="persona-avatar">AL</div><div class="persona-meta"><strong>A. López</strong></div></div></td>
+          <td><div class="persona"><div class="persona-avatar">PR</div><div class="persona-meta"><strong>P. Ruiz</strong></div></div></td>
+          <td>Asuntos propios</td>
+          <td><span class="pill pill-success">Comunicada 5d antes</span></td>
+        </tr>
+        <tr>
+          <td class="mono">10/05 · Tarde</td>
+          <td>San Francisco</td>
+          <td><div class="persona"><div class="persona-avatar">CN</div><div class="persona-meta"><strong>C. Núñez</strong></div></div></td>
+          <td><div class="persona"><div class="persona-avatar">FB</div><div class="persona-meta"><strong>F. Beltrán</strong></div></div></td>
+          <td>Incidencia familiar</td>
+          <td><span class="pill pill-warn">Comunicada 18h antes</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== VISTA: CUADRANTE ====================== -->
+<div class="view" id="view-cuadrante">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Cuadrante mensual</h1>
+      <p class="page-subtitle">Visualización por servicio · Mayo 2026</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Exportar Excel</button>
+      <button class="btn btn-ghost">Vista por persona</button>
+    </div>
+  </div>
+
+  <div class="cuadrante-controls">
+    <div class="month-nav">
+      <button>‹</button>
+      <span>Mayo 2026</span>
+      <button>›</button>
+    </div>
+    <div class="filter-group">
+      <span class="filter-chip active">Todos</span>
+      <span class="filter-chip">Vigilancia</span>
+      <span class="filter-chip">Auxiliares</span>
+      <span class="filter-chip">Solo descubierto</span>
+    </div>
+    <div style="display:flex;gap:14px;font-size:11px;color:var(--ink-soft);">
+      <span><b style="display:inline-block;width:10px;height:10px;background:#5b8a9c;margin-right:4px;vertical-align:middle"></b>Mañana</span>
+      <span><b style="display:inline-block;width:10px;height:10px;background:#c97a3f;margin-right:4px;vertical-align:middle"></b>Tarde</span>
+      <span><b style="display:inline-block;width:10px;height:10px;background:#4a4742;margin-right:4px;vertical-align:middle"></b>Noche</span>
+      <span><b style="display:inline-block;width:10px;height:10px;background:#6b7e5b;margin-right:4px;vertical-align:middle"></b>Diurno</span>
+      <span><b style="display:inline-block;width:10px;height:10px;background:var(--danger);margin-right:4px;vertical-align:middle"></b>Sin cubrir</span>
+    </div>
+  </div>
+
+  <div class="cuadrante-grid" id="cuadrante-grid">
+    <!-- generado por JS -->
+  </div>
+</div>
+
+<!-- ====================== VISTA: IMPORTAR ====================== -->
+<div class="view" id="view-importar">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Importar Excel</h1>
+      <p class="page-subtitle">Cuadrante planificado o relación de horas ejecutadas</p>
+    </div>
+  </div>
+
+  <div class="import-tabs">
+    <div class="tab active">Cuadrante planificado</div>
+    <div class="tab">Horas ejecutadas (cierre mes)</div>
+    <div class="tab">Refuerzos / prestaciones variables</div>
+  </div>
+
+  <div class="drop-zone">
+    <div class="drop-icon">↥</div>
+    <div class="drop-title">Arrastra aquí el Excel del proveedor</div>
+    <div class="drop-sub">o haz clic para seleccionar · formato .xlsx</div>
+    <div style="margin-top:18px"><button class="btn btn-primary">Seleccionar archivo</button></div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Historial de importaciones</div>
+        <div class="card-desc">Últimos 6 meses</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Fecha</th><th>Tipo</th><th>Periodo</th><th>Filas</th><th>Validación</th><th>Importado por</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">28/04/2026 09:14</td>
+          <td>Cuadrante planificado</td>
+          <td>Mayo 2026</td>
+          <td class="mono">1.124</td>
+          <td><span class="pill pill-warn">3 alertas</span></td>
+          <td>M. Sánchez</td>
+        </tr>
+        <tr>
+          <td class="mono">02/05/2026 11:42</td>
+          <td>Horas ejecutadas</td>
+          <td>Abril 2026</td>
+          <td class="mono">1.198</td>
+          <td><span class="pill pill-success">OK</span></td>
+          <td>M. Sánchez</td>
+        </tr>
+        <tr>
+          <td class="mono">15/04/2026 16:30</td>
+          <td>Refuerzo</td>
+          <td>Acto 23/04 Paraninfo</td>
+          <td class="mono">8</td>
+          <td><span class="pill pill-success">OK</span></td>
+          <td>L. Ferrer</td>
+        </tr>
+        <tr>
+          <td class="mono">29/03/2026 10:08</td>
+          <td>Cuadrante planificado</td>
+          <td>Abril 2026</td>
+          <td class="mono">1.089</td>
+          <td><span class="pill pill-success">OK</span></td>
+          <td>M. Sánchez</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== VISTA: SUSTITUCIONES ====================== -->
+<div class="view" id="view-sustituciones">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Registro de sustituciones</h1>
+      <p class="page-subtitle">Comunicaciones obligadas a la Unidad de Seguridad (pliego, art. cond. generales)</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Filtrar</button>
+      <button class="btn btn-primary">+ Nueva sustitución</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Fecha turno</th><th>Servicio</th><th>Original</th><th>Sustituto</th><th>Motivo</th><th>Comunicada</th><th>Cumple 24h</th></tr>
+      </thead>
+      <tbody id="subs-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== VISTA: HORAS ====================== -->
+<div class="view" id="view-horas">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Horas anuales</h1>
+      <p class="page-subtitle">2026 · Contrato: 63.508h fijas + 2.000h variables</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Cambiar año</button>
+      <button class="btn btn-ghost">Exportar</button>
+    </div>
+  </div>
+
+  <div class="hours-grid">
+    <div class="hour-card">
+      <div class="card-title" style="margin-bottom:16px">Prestaciones fijas — Categorías</div>
+      <div class="hour-row">
+        <span class="hour-label">Laboral diurno</span>
+        <span class="hour-value">11.420 / 27.656 h <span style="color:var(--ink-faded)">(41,3%)</span></span>
+      </div>
+      <div class="hour-row">
+        <span class="hour-label">Laboral nocturno</span>
+        <span class="hour-value">6.580 / 15.944 h <span style="color:var(--ink-faded)">(41,3%)</span></span>
+      </div>
+      <div class="hour-row">
+        <span class="hour-label">Festivo diurno</span>
+        <span class="hour-value">5.250 / 12.740 h <span style="color:var(--ink-faded)">(41,2%)</span></span>
+      </div>
+      <div class="hour-row">
+        <span class="hour-label">Festivo nocturno</span>
+        <span class="hour-value">2.890 / 7.168 h <span style="color:var(--ink-faded)">(40,3%)</span></span>
+      </div>
+    </div>
+
+    <div class="hour-card">
+      <div class="card-title" style="margin-bottom:16px">Prestaciones variables (informativo)</div>
+      <div class="hour-row">
+        <span class="hour-label">Ejecutadas 2026</span>
+        <span class="hour-value">684 h</span>
+      </div>
+      <div class="hour-row">
+        <span class="hour-label">Previsión anual</span>
+        <span class="hour-value">2.000 h</span>
+      </div>
+      <div class="hour-row">
+        <span class="hour-label">Disponibles</span>
+        <span class="hour-value" style="color:var(--success)">1.316 h</span>
+      </div>
+      <div class="hour-row">
+        <span class="hour-label">Mayor consumo</span>
+        <span class="hour-value">Auxiliares salas estudio</span>
+      </div>
+      <div style="margin-top:16px;font-size:11px;color:var(--ink-soft);background:var(--bg);padding:10px;border-radius:4px;">
+        ℹ Las prestaciones variables se solicitan con un mínimo de 24h de antelación
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-large">
+    <div class="progress-header">
+      <span class="progress-label">Progreso anual prestaciones fijas</span>
+      <span class="progress-numbers">26.140 / 63.508 h · 41,2%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:41.2%"></div></div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Desglose por campus / servicio</div>
+        <div class="card-desc">Acumulado año en curso</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Servicio</th><th>Diurno laboral</th><th>Nocturno laboral</th><th>Festivo diurno</th><th>Festivo nocturno</th><th>Total año</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>San Francisco</strong></td><td class="mono">3.520</td><td class="mono">2.012</td><td class="mono">1.608</td><td class="mono">887</td><td class="mono"><strong>8.027</strong></td></tr>
+        <tr><td><strong>Paraíso</strong></td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+        <tr><td><strong>Veterinaria</strong></td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+        <tr><td><strong>Río Ebro</strong></td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+        <tr><td><strong>CECO</strong></td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+        <tr><td><strong>CECO Jefe equipo</strong></td><td class="mono">340</td><td class="mono">0</td><td class="mono">0</td><td class="mono">0</td><td class="mono"><strong>340</strong></td></tr>
+        <tr><td><strong>Teruel</strong></td><td class="mono">320</td><td class="mono">444</td><td class="mono">216</td><td class="mono">142</td><td class="mono"><strong>1.122</strong></td></tr>
+        <tr><td><strong>Huesca</strong></td><td class="mono">200</td><td class="mono">100</td><td class="mono">210</td><td class="mono">89</td><td class="mono"><strong>599</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== VISTA: CIERRE ====================== -->
+<div class="view" id="view-cierre">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Cierre mensual — Validación de factura</h1>
+      <p class="page-subtitle">Comparativa planificado vs. ejecutado · Mayo 2026</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Cambiar mes</button>
+      <button class="btn btn-primary">Aprobar para facturación</button>
+    </div>
+  </div>
+
+  <div class="cierre-summary">
+    <div class="cierre-status">✓ Listo para validar</div>
+    <h2>Cuadrante de Mayo 2026 conciliado</h2>
+    <p style="color:var(--ink-soft);max-width:600px">El Excel de horas ejecutadas se importó el 02/05. La app ha contrastado las horas reales con el cuadrante planificado y aplicado el calendario laboral cargado.</p>
+
+    <div class="cierre-numbers">
+      <div>
+        <div class="cierre-number-label">Planificado</div>
+        <div class="cierre-number-value">5.394 h</div>
+      </div>
+      <div>
+        <div class="cierre-number-label">Ejecutado</div>
+        <div class="cierre-number-value">5.308 h</div>
+        <div class="cierre-number-diff" style="color:var(--danger)">−86 h (−1,6%)</div>
+      </div>
+      <div>
+        <div class="cierre-number-label">A facturar</div>
+        <div class="cierre-number-value">5.308 h</div>
+        <div class="cierre-number-diff">Según ejecutado real</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Conciliación por tipo de hora</div>
+        <div class="card-desc">Mayo 2026</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Categoría</th><th>Planificado</th><th>Ejecutado</th><th>Δ</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Laboral diurno</strong></td><td class="mono">2.380</td><td class="mono">2.358</td><td class="mono" style="color:var(--danger)">−22</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+        <tr><td><strong>Laboral nocturno</strong></td><td class="mono">1.380</td><td class="mono">1.358</td><td class="mono" style="color:var(--danger)">−22</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+        <tr><td><strong>Festivo diurno</strong></td><td class="mono">1.040</td><td class="mono">1.018</td><td class="mono" style="color:var(--danger)">−22</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+        <tr><td><strong>Festivo nocturno</strong></td><td class="mono">594</td><td class="mono">574</td><td class="mono" style="color:var(--danger)">−20</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+        <tr><td><strong>Prestaciones variables</strong></td><td class="mono">0</td><td class="mono">128</td><td class="mono" style="color:var(--success)">+128</td><td><span class="pill pill-warn">Refuerzos no planificados</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Desviaciones detectadas</div>
+        <div class="card-desc">Justificación documentada de cada desvío</div>
+      </div>
+    </div>
+    <div class="alert-list">
+      <div class="alert alert-warn">
+        <div class="alert-icon">!</div>
+        <div class="alert-content">
+          <div class="alert-title">−86h totales sobre planificado</div>
+          <div class="alert-meta">Causa principal: 1 franja sin cobertura en Huesca (10/05) + 2 días sin jefe equipo CECO</div>
+        </div>
+      </div>
+      <div class="alert alert-info">
+        <div class="alert-icon">ⓘ</div>
+        <div class="alert-content">
+          <div class="alert-title">+128h prestación variable</div>
+          <div class="alert-meta">Refuerzo acto Paraninfo 23/05 (32h) + salas estudio finales junio (96h adelantadas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== VISTA: SERVICIOS ====================== -->
+<div class="view" id="view-servicios">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Catálogo de servicios</h1>
+      <p class="page-subtitle">Servicios fijos del pliego + servicios a demanda · 13 servicios activos</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Exportar</button>
+      <button class="btn btn-primary" onclick="navTo('nuevo-servicio')">+ Nuevo servicio</button>
+    </div>
+  </div>
+
+  <div class="cuadrante-controls" style="margin-bottom:18px">
+    <div class="filter-group" id="campus-filters">
+      <span class="filter-chip active" data-campus="all">Todos <span class="mono" style="opacity:0.6;margin-left:4px">13</span></span>
+      <span class="filter-chip" data-campus="san-francisco">San Francisco <span class="mono" style="opacity:0.6;margin-left:4px">2</span></span>
+      <span class="filter-chip" data-campus="paraiso">Paraíso <span class="mono" style="opacity:0.6;margin-left:4px">2</span></span>
+      <span class="filter-chip" data-campus="veterinaria">Veterinaria <span class="mono" style="opacity:0.6;margin-left:4px">1</span></span>
+      <span class="filter-chip" data-campus="rio-ebro">Río Ebro <span class="mono" style="opacity:0.6;margin-left:4px">1</span></span>
+      <span class="filter-chip" data-campus="ceco">CECO <span class="mono" style="opacity:0.6;margin-left:4px">2</span></span>
+      <span class="filter-chip" data-campus="huesca">Huesca <span class="mono" style="opacity:0.6;margin-left:4px">2</span></span>
+      <span class="filter-chip" data-campus="teruel">Teruel <span class="mono" style="opacity:0.6;margin-left:4px">1</span></span>
+      <span class="filter-chip" data-campus="jaca">Jaca <span class="mono" style="opacity:0.6;margin-left:4px">1</span></span>
+      <span class="filter-chip" data-campus="demanda">A demanda <span class="mono" style="opacity:0.6;margin-left:4px">2</span></span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--ink-soft)">
+      <span id="filter-count">Mostrando 13 servicios</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Servicio</th><th>Tipo</th><th>Campus</th><th>Dotación</th><th>Horario</th><th>Vehículo</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="servicios-body">
+        <tr data-campus="san-francisco"><td><strong>San Francisco</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>San Francisco</td><td class="mono">2</td><td>24/7 todo el año</td><td>2 × SUV eléctrico</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="paraiso"><td><strong>Paraíso</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>Paraíso</td><td class="mono">1</td><td>24/7 todo el año</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="veterinaria"><td><strong>Veterinaria</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>Veterinaria</td><td class="mono">1</td><td>24/7 todo el año</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="rio-ebro"><td><strong>Río Ebro</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>Río Ebro</td><td class="mono">1</td><td>24/7 todo el año</td><td>1 × SUV eléctrico</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="ceco"><td><strong>CECO</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>CECO</td><td class="mono">1</td><td>24/7 todo el año</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="ceco"><td><strong>CECO — Jefe de equipo</strong></td><td><span class="pill pill-neutral">Coordinación</span></td><td>CECO</td><td class="mono">1</td><td>L–V diurno (8h)</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="teruel"><td><strong>Teruel</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>Teruel</td><td class="mono">1</td><td>22:00–08:00 (sin agosto)</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="huesca"><td><strong>Huesca</strong></td><td><span class="pill pill-neutral">Vigilancia</span></td><td>Huesca</td><td class="mono">1</td><td>Variable (lectivo/no lectivo/festivos)</td><td>1 × SUV híbrido</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="san-francisco"><td><strong>OCA San Francisco</strong></td><td><span class="pill pill-neutral">Auxiliar</span></td><td>San Francisco</td><td class="mono">1</td><td>L–V días lectivos / no lectivos</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="paraiso"><td><strong>C.M.U. Pedro Cerbuna</strong></td><td><span class="pill pill-neutral">Auxiliar</span></td><td>Paraíso</td><td class="mono">1</td><td>Nocturno L–V + 24h fin de semana</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="huesca"><td><strong>C.M.U. Ramón Acín</strong></td><td><span class="pill pill-neutral">Auxiliar</span></td><td>Huesca</td><td class="mono">1</td><td>Nocturno L–V + 24h fin de semana</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="jaca"><td><strong>Residencia Jaca</strong></td><td><span class="pill pill-warn">A demanda</span></td><td>Jaca</td><td class="mono">1</td><td>22:00–08:00 según solicitud (~1.900h/año)</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+        <tr data-campus="demanda"><td><strong>Salas estudio (varias)</strong></td><td><span class="pill pill-warn">A demanda</span></td><td>Multi-campus</td><td class="mono">var</td><td>Según calendario académico</td><td>—</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== VISTA: NUEVO SERVICIO ====================== -->
+<div class="view" id="view-nuevo-servicio">
+  <div class="topbar">
+    <div>
+      <div class="breadcrumb">
+        <a onclick="navTo('servicios')">Servicios</a>
+        <span class="sep">/</span>
+        <span>Nuevo servicio</span>
+      </div>
+      <h1 class="page-title">Crear nuevo servicio</h1>
+      <p class="page-subtitle">Define la dotación, horario y recursos. La previsualización a la derecha se actualiza en tiempo real.</p>
+    </div>
+  </div>
+
+  <div class="form-layout">
+    <div class="form-stack">
+
+      <!-- SECCIÓN 1: IDENTIDAD -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-step">01</div>
+          <div>
+            <div class="form-section-title">Identidad del servicio</div>
+            <div class="form-section-desc">Cómo se llama, dónde está y de qué tipo es</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group form-grid-full">
+            <label class="form-label">Nombre del servicio <span class="req">*</span></label>
+            <input type="text" class="form-input" id="ns-nombre" placeholder="Ej. Sala de estudio Betancourt" oninput="updatePreview()">
+            <span class="form-hint">Aparecerá tal cual en cuadrantes e informes</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Código corto</label>
+            <div class="form-input-group">
+              <span class="form-input-prefix">#</span>
+              <input type="text" class="form-input" id="ns-codigo" placeholder="BET-EST" maxlength="10" oninput="updatePreview()">
+            </div>
+            <span class="form-hint">Para referencia rápida en tablas</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Campus <span class="req">*</span></label>
+            <select class="form-select" id="ns-campus" onchange="updatePreview()">
+              <option value="">— Selecciona —</option>
+              <option value="San Francisco">San Francisco</option>
+              <option value="Paraíso">Paraíso</option>
+              <option value="Veterinaria">Veterinaria</option>
+              <option value="Río Ebro">Río Ebro</option>
+              <option value="CECO">CECO</option>
+              <option value="Huesca">Huesca</option>
+              <option value="Teruel">Teruel</option>
+              <option value="Jaca">Jaca</option>
+              <option value="Multi-campus">Multi-campus</option>
+            </select>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Tipo de servicio <span class="req">*</span></label>
+            <div class="radio-cards">
+              <label class="radio-card" data-tipo="Vigilancia">
+                <input type="radio" name="tipo" value="Vigilancia">
+                <div class="rc-content">
+                  <div class="rc-icon">⌖</div>
+                  <div class="rc-title">Vigilancia</div>
+                  <div class="rc-desc">Vigilante de seguridad con TIP en vigor</div>
+                </div>
+              </label>
+              <label class="radio-card" data-tipo="Auxiliar">
+                <input type="radio" name="tipo" value="Auxiliar">
+                <div class="rc-content">
+                  <div class="rc-icon">◉</div>
+                  <div class="rc-title">Auxiliar</div>
+                  <div class="rc-desc">Atención, recepción y control de accesos</div>
+                </div>
+              </label>
+              <label class="radio-card" data-tipo="Coordinación">
+                <input type="radio" name="tipo" value="Coordinación">
+                <div class="rc-content">
+                  <div class="rc-icon">▲</div>
+                  <div class="rc-title">Coordinación</div>
+                  <div class="rc-desc">Jefe de equipo / mando intermedio</div>
+                </div>
+              </label>
+              <label class="radio-card" data-tipo="Mixto">
+                <input type="radio" name="tipo" value="Mixto">
+                <div class="rc-content">
+                  <div class="rc-icon">◫</div>
+                  <div class="rc-title">Mixto</div>
+                  <div class="rc-desc">Combina varias funciones</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Ubicación específica</label>
+            <input type="text" class="form-input" id="ns-ubicacion" placeholder="Ej. Edificio Betancourt, planta baja, hall principal">
+            <span class="form-hint">Edificio, planta o referencia visual para el personal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: HORARIO -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-step">02</div>
+          <div>
+            <div class="form-section-title">Cobertura horaria</div>
+            <div class="form-section-desc">Cuándo se presta el servicio y con qué turnos</div>
+          </div>
+        </div>
+
+        <div class="form-group form-grid-full" style="margin-bottom:22px">
+          <label class="form-label">Modalidad <span class="req">*</span></label>
+          <div class="radio-cards">
+            <label class="radio-card" data-modalidad="24/7">
+              <input type="radio" name="modalidad" value="24/7" onchange="updatePreview()">
+              <div class="rc-content">
+                <div class="rc-icon">◐</div>
+                <div class="rc-title">Continuo 24/7</div>
+                <div class="rc-desc">Tres turnos de 8h, todos los días</div>
+              </div>
+            </label>
+            <label class="radio-card" data-modalidad="fijo">
+              <input type="radio" name="modalidad" value="fijo" onchange="updatePreview()">
+              <div class="rc-content">
+                <div class="rc-icon">▤</div>
+                <div class="rc-title">Horario fijo</div>
+                <div class="rc-desc">Mismos días y franjas siempre</div>
+              </div>
+            </label>
+            <label class="radio-card" data-modalidad="academico">
+              <input type="radio" name="modalidad" value="academico" onchange="updatePreview()">
+              <div class="rc-content">
+                <div class="rc-icon">◇</div>
+                <div class="rc-title">Calendario académico</div>
+                <div class="rc-desc">Varía lectivo/no lectivo/festivos</div>
+              </div>
+            </label>
+            <label class="radio-card" data-modalidad="demanda">
+              <input type="radio" name="modalidad" value="demanda" onchange="updatePreview()">
+              <div class="rc-content">
+                <div class="rc-icon">⌁</div>
+                <div class="rc-title">A demanda</div>
+                <div class="rc-desc">Servicios puntuales por horas</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group form-grid-full">
+            <label class="form-label">Días de la semana</label>
+            <div class="day-toggles" id="day-toggles">
+              <button type="button" class="day-toggle" data-day="1">L</button>
+              <button type="button" class="day-toggle" data-day="2">M</button>
+              <button type="button" class="day-toggle" data-day="3">X</button>
+              <button type="button" class="day-toggle" data-day="4">J</button>
+              <button type="button" class="day-toggle" data-day="5">V</button>
+              <button type="button" class="day-toggle festivo" data-day="6">S</button>
+              <button type="button" class="day-toggle festivo" data-day="0">D</button>
+              <button type="button" class="day-toggle festivo" data-day="F">Festivos</button>
+            </div>
+            <span class="form-hint">Pulsa los días en que se presta el servicio</span>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Turnos / franjas</label>
+            <div class="turn-chips" id="turn-chips">
+              <button type="button" class="turn-chip" data-turn="M"><span class="tc-dot" style="background:#5b8a9c"></span> Mañana 06:00–14:00</button>
+              <button type="button" class="turn-chip" data-turn="T"><span class="tc-dot" style="background:#c97a3f"></span> Tarde 14:00–22:00</button>
+              <button type="button" class="turn-chip" data-turn="N"><span class="tc-dot" style="background:#4a4742"></span> Noche 22:00–06:00</button>
+              <button type="button" class="turn-chip" data-turn="D"><span class="tc-dot" style="background:#6b7e5b"></span> Diurno 08:00–16:00</button>
+              <button type="button" class="turn-chip" data-turn="P"><span class="tc-dot" style="background:#a8501a"></span> Personalizado</button>
+            </div>
+            <span class="form-hint">Los turnos cerrados 24h se organizan en bloques de 8h con cambio a la misma hora (pliego, cond. generales)</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hora inicio personalizada</label>
+            <input type="time" class="form-input" id="ns-hora-ini" value="22:00">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hora fin personalizada</label>
+            <input type="time" class="form-input" id="ns-hora-fin" value="08:00">
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Excepciones del calendario</label>
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Sin servicio en agosto</div>
+                  <div class="sw-desc">Como en el caso de Teruel</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Sin servicio durante cierre universitario</div>
+                  <div class="sw-desc">Periodos de cierre fijados en calendario</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Refuerzo en festivos y vísperas</div>
+                  <div class="sw-desc">Activa dotación adicional automática</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: DOTACIÓN -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-step">03</div>
+          <div>
+            <div class="form-section-title">Dotación y requisitos</div>
+            <div class="form-section-desc">Cuántas personas y con qué cualificación</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Personas simultáneas <span class="req">*</span></label>
+            <div class="form-input-group">
+              <input type="number" class="form-input" id="ns-personas" value="1" min="1" max="10" oninput="updatePreview()">
+              <span class="form-input-suffix">persona(s)</span>
+            </div>
+            <span class="form-hint">Por franja horaria</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Movilidad entre puestos</label>
+            <select class="form-select">
+              <option>Fijo en el puesto</option>
+              <option>Movilidad dentro del campus</option>
+              <option>Movilidad entre campus</option>
+              <option>Ronda con vehículo</option>
+            </select>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Requisitos del personal</label>
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Acreditación de vigilante (TIP) vigente</div>
+                  <div class="sw-desc">Obligatorio para servicios de Vigilancia</div>
+                </div>
+                <div class="switch on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Formación específica 20h anuales</div>
+                  <div class="sw-desc">Pliego: formación adicional UZ obligatoria</div>
+                </div>
+                <div class="switch on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Inglés B2 o superior</div>
+                  <div class="sw-desc">Recomendado en colegios mayores y residencias</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Carné de conducir tipo B</div>
+                  <div class="sw-desc">Servicios con vehículo asignado</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 4: RECURSOS -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-step">04</div>
+          <div>
+            <div class="form-section-title">Recursos asociados</div>
+            <div class="form-section-desc">Vehículo, equipamiento y dotación material</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Vehículo</label>
+            <select class="form-select" id="ns-vehiculo" onchange="updatePreview()">
+              <option value="">Sin vehículo</option>
+              <option value="SUV eléctrico">SUV 100% eléctrico</option>
+              <option value="SUV híbrido">SUV híbrido</option>
+              <option value="Turismo">Turismo convencional</option>
+              <option value="Otro">Otro (especificar)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nº de unidades</label>
+            <input type="number" class="form-input" value="1" min="1" max="5">
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Equipamiento</label>
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Smartphone Android (app de partes)</div>
+                  <div class="sw-desc">Pliego: terminal por cada vigilante simultáneo</div>
+                </div>
+                <div class="switch on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Chaleco reflectante</div>
+                  <div class="sw-desc">Mínimo 10 unidades en dotación general</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="switch-row">
+                <div class="sw-info">
+                  <div class="sw-title">Punto de marcaje (control de rondas)</div>
+                  <div class="sw-desc">Si forma parte de circuito de rondas</div>
+                </div>
+                <div class="switch" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Equipamiento adicional</label>
+            <textarea class="form-textarea" placeholder="Ej. taquilla, atril, mesa específica, llaves maestras, walkie-talkie..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 5: VIGENCIA -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-step">05</div>
+          <div>
+            <div class="form-section-title">Vigencia y observaciones</div>
+            <div class="form-section-desc">Fechas de alta y notas internas</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Fecha de alta <span class="req">*</span></label>
+            <input type="date" class="form-input" value="2026-05-13">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha de baja</label>
+            <input type="date" class="form-input" placeholder="Sin fecha fin">
+            <span class="form-hint">Dejar vacío si el servicio es indefinido</span>
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label">Observaciones internas</label>
+            <textarea class="form-textarea" placeholder="Notas para la Unidad de Seguridad: contactos, particularidades, contexto histórico..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="form-actions-left">
+          <button class="btn btn-ghost" onclick="navTo('servicios')">Cancelar</button>
+        </div>
+        <div class="form-actions-right">
+          <button class="btn">Guardar borrador</button>
+          <button class="btn btn-primary">Crear servicio</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PREVIEW PANE -->
+    <div class="form-preview">
+      <div class="preview-label">Previsualización en tiempo real</div>
+      <div class="preview-card">
+        <div class="preview-service-name" id="prev-name">Nuevo servicio</div>
+        <div class="preview-service-meta" id="prev-meta">Campus por definir · Tipo por definir</div>
+
+        <div class="preview-tags" id="prev-tags">
+          <span class="pill pill-neutral">Sin clasificar</span>
+        </div>
+
+        <div class="preview-stat"><span class="ps-label">Modalidad</span><span class="ps-value" id="prev-modalidad">—</span></div>
+        <div class="preview-stat"><span class="ps-label">Días</span><span class="ps-value" id="prev-dias">—</span></div>
+        <div class="preview-stat"><span class="ps-label">Turnos</span><span class="ps-value" id="prev-turnos">—</span></div>
+        <div class="preview-stat"><span class="ps-label">Personas/franja</span><span class="ps-value" id="prev-personas">1</span></div>
+        <div class="preview-stat"><span class="ps-label">Vehículo</span><span class="ps-value" id="prev-vehiculo">—</span></div>
+      </div>
+
+      <div class="preview-hours-est">
+        <div class="phe-label">Estimación anual</div>
+        <div class="phe-value" id="prev-horas">—</div>
+        <div class="phe-unit" id="prev-horas-detalle">configura modalidad y turnos</div>
+      </div>
+
+      <div style="font-size:11px;color:var(--ink-soft);margin-top:14px;text-align:center;line-height:1.5">
+        El cálculo final se ajustará al cargar el calendario laboral del año
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== VISTA: PERSONAL ====================== -->
+<div class="view" id="view-personal">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Personal</h1>
+      <p class="page-subtitle">Plantilla de la empresa adjudicataria — Datos remitidos</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Importar plantilla</button>
+      <button class="btn btn-primary">+ Añadir persona</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Persona</th><th>Rol</th><th>Acreditación</th><th>Formación anual</th><th>Idiomas</th><th>Estado</th></tr>
+      </thead>
+      <tbody id="personal-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== VISTA: CALENDARIO ====================== -->
+<div class="view" id="view-calendario">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title">Calendario laboral 2026</h1>
+      <p class="page-subtitle">Festivos y periodos lectivos (carga manual anual)</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Cambiar año</button>
+      <button class="btn btn-primary">+ Añadir festivo</button>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Festivos por ámbito</div>
+          <div class="card-desc">Nacionales, autonómicos y locales (Zaragoza, Huesca, Teruel)</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Fecha</th><th>Festividad</th><th>Ámbito</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">01/01</td><td>Año Nuevo</td><td><span class="pill pill-neutral">Nacional</span></td></tr>
+          <tr><td class="mono">06/01</td><td>Reyes</td><td><span class="pill pill-neutral">Nacional</span></td></tr>
+          <tr><td class="mono">05/03</td><td>Cincomarzada</td><td><span class="pill pill-warn">Zaragoza</span></td></tr>
+          <tr><td class="mono">23/04</td><td>San Jorge — Día de Aragón</td><td><span class="pill pill-warn">Aragón</span></td></tr>
+          <tr><td class="mono">01/05</td><td>Día del Trabajo</td><td><span class="pill pill-neutral">Nacional</span></td></tr>
+          <tr><td class="mono">29/05</td><td>San Fernando (Huesca)</td><td><span class="pill pill-warn">Huesca</span></td></tr>
+          <tr><td class="mono">10/07</td><td>San Cristóbal (Huesca)</td><td><span class="pill pill-warn">Huesca</span></td></tr>
+          <tr><td class="mono">15/08</td><td>Asunción</td><td><span class="pill pill-neutral">Nacional</span></td></tr>
+          <tr><td class="mono">12/10</td><td>Fiesta Nacional</td><td><span class="pill pill-neutral">Nacional</span></td></tr>
+          <tr><td class="mono">13/10</td><td>Pilar</td><td><span class="pill pill-warn">Zaragoza</span></td></tr>
+          <tr><td class="mono">25/12</td><td>Navidad</td><td><span class="pill pill-neutral">Nacional</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Periodos académicos</div>
+          <div class="card-desc">Lectivo vs. no lectivo (afecta Huesca y auxiliares)</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Periodo</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td>07/01 – 31/01</td><td><span class="pill pill-success">Lectivo</span></td></tr>
+          <tr><td>01/02 – 14/02</td><td><span class="pill pill-neutral">No lectivo</span></td></tr>
+          <tr><td>15/02 – 27/03</td><td><span class="pill pill-success">Lectivo</span></td></tr>
+          <tr><td>28/03 – 06/04</td><td><span class="pill pill-neutral">No lectivo</span></td></tr>
+          <tr><td>07/04 – 30/06</td><td><span class="pill pill-success">Lectivo</span></td></tr>
+          <tr><td>01/07 – 31/08</td><td><span class="pill pill-warn">Cierre universitario</span></td></tr>
+          <tr><td>01/09 – 22/12</td><td><span class="pill pill-success">Lectivo</span></td></tr>
+          <tr><td>23/12 – 06/01</td><td><span class="pill pill-warn">Cierre universitario</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</main>
+</div><!-- /.app-shell -->
+
+<!-- ====================== TIPO DE INFORME MODAL ====================== -->
+<div class="report-overlay" id="report-type-overlay" style="align-items: center;">
+  <div class="report-container" style="max-width: 480px; align-self: center;">
+    <div class="report-toolbar">
+      <span class="report-toolbar-title">Generar nuevo informe</span>
+      <div class="report-toolbar-actions">
+        <button class="btn btn-ghost" onclick="closeReportPrompt()">✕</button>
+      </div>
+    </div>
+    <div class="report-picker-body">
+      <h2 class="report-picker-title">Seleccionar tipo de informe</h2>
+      <p class="report-picker-copy">Elige el periodo que deseas cubrir en el documento. Los datos se consolidarán con la información disponible del prototipo.</p>
+      
+      <div class="report-choice-list" role="list">
+        <button type="button" class="report-choice" onclick="generateReport('diario')">
+          <span class="report-choice-icon" aria-hidden="true">D</span>
+          <span>
+            <strong class="report-choice-title">Día actual</strong>
+            <span class="report-choice-desc">Informe básico del día completo: servicios previstos, verificaciones, incidencias y sustituciones.</span>
+          </span>
+        </button>
+
+        <button type="button" class="report-choice" onclick="generateReport('mensual')">
+          <span class="report-choice-icon" aria-hidden="true">M</span>
+          <span>
+            <strong class="report-choice-title">Informe mensual</strong>
+            <span class="report-choice-desc">Resumen del mes en curso con cobertura, conciliación horaria, incidencias y prestaciones variables.</span>
+          </span>
+        </button>
+
+        <button type="button" class="report-choice" onclick="generateReport('anual')">
+          <span class="report-choice-icon" aria-hidden="true">A</span>
+          <span>
+            <strong class="report-choice-title">Informe del año</strong>
+            <span class="report-choice-desc">Resumen anual del contrato, avance acumulado, meses cerrados, incidencias relevantes y variables.</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== INFORME MODAL ====================== -->
+<div class="report-overlay" id="report-overlay">
+  <div class="report-container">
+    <div class="report-toolbar">
+      <span class="report-toolbar-title" id="report-toolbar-title">Vista previa del informe · Mayo 2026</span>
+      <div class="report-toolbar-actions">
+        <button class="btn btn-ghost" onclick="window.print()">🖨 Imprimir / PDF</button>
+        <button class="btn" onclick="closeReport()">Cerrar</button>
+      </div>
+    </div>
+    <div class="report-body">
+
+      <!-- HEADER -->
+      <div class="report-header">
+        <div class="report-logo-block">
+          <div class="report-logo-bar"></div>
+          <div>
+            <div class="report-logo-text">Universidad de Zaragoza</div>
+            <div class="report-logo-sub">Unidad de Seguridad · Gerencia</div>
+          </div>
+        </div>
+        <div class="report-meta-block">
+          <strong id="report-meta-type">Informe mensual de servicio</strong>
+          Periodo: <span id="report-meta-period">Mayo 2026</span><br>
+          Generado: <span id="report-gen-date"></span><br>
+          Ref: <span id="report-ref">UZ-SEG-2026-05</span>
+        </div>
+      </div>
+
+      <div class="report-title" id="report-title">Informe de seguimiento del servicio de vigilancia</div>
+      <div class="report-subtitle" id="report-subtitle">Contrato de servicios de seguridad y auxiliares de conserjería · Periodo: mayo 2026</div>
+
+      <div id="report-content">
+      <!-- KPIs -->
+      <div class="report-kpis">
+        <div class="report-kpi">
+          <div class="report-kpi-label">Cobertura</div>
+          <div class="report-kpi-value">98,4<span class="rk-unit">%</span></div>
+          <div class="report-kpi-sub">▲ 1,2% vs abril</div>
+        </div>
+        <div class="report-kpi">
+          <div class="report-kpi-label">Planificado</div>
+          <div class="report-kpi-value">5.394<span class="rk-unit"> h</span></div>
+          <div class="report-kpi-sub">Prestaciones fijas</div>
+        </div>
+        <div class="report-kpi">
+          <div class="report-kpi-label">Ejecutado</div>
+          <div class="report-kpi-value">5.308<span class="rk-unit"> h</span></div>
+          <div class="report-kpi-sub" style="color:var(--danger)">−86h (−1,6%)</div>
+        </div>
+        <div class="report-kpi">
+          <div class="report-kpi-label">Acumulado anual</div>
+          <div class="report-kpi-value">41,2<span class="rk-unit">%</span></div>
+          <div class="report-kpi-sub">26.140 / 63.508 h</div>
+        </div>
+      </div>
+
+      <!-- 1. COBERTURA POR CAMPUS -->
+      <div class="report-section">
+        <div class="report-section-title">1. Cobertura por campus y servicio</div>
+        <div class="report-section-line"></div>
+        <table class="report-table">
+          <thead>
+            <tr><th>Servicio</th><th>Dotación</th><th>Horas mes</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>San Francisco</strong> · 2 vigilantes 24/7</td><td class="mono">2 × 24h</td><td class="mono">1.488 h</td><td><span class="pill pill-success">Cubierto</span></td></tr>
+            <tr><td><strong>Paraíso</strong> · 24/7</td><td class="mono">1 × 24h</td><td class="mono">744 h</td><td><span class="pill pill-success">Cubierto</span></td></tr>
+            <tr><td><strong>Veterinaria</strong> · 24/7</td><td class="mono">1 × 24h</td><td class="mono">744 h</td><td><span class="pill pill-success">Cubierto</span></td></tr>
+            <tr><td><strong>Río Ebro</strong> · 24/7</td><td class="mono">1 × 24h</td><td class="mono">744 h</td><td><span class="pill pill-success">Cubierto</span></td></tr>
+            <tr><td><strong>CECO</strong> · 24/7 + Jefe equipo</td><td class="mono">1×24h + 1×8h</td><td class="mono">912 h</td><td><span class="pill pill-warn">2 días sin jefe</span></td></tr>
+            <tr><td><strong>Teruel</strong> · 22:00–08:00</td><td class="mono">1 × 10h</td><td class="mono">310 h</td><td><span class="pill pill-success">Cubierto</span></td></tr>
+            <tr><td><strong>Huesca</strong> · Variable</td><td class="mono">1 × variable</td><td class="mono">412 h</td><td><span class="pill pill-danger">1 franja sin cubrir</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2. CONCILIACIÓN HORARIA -->
+      <div class="report-section">
+        <div class="report-section-title">2. Conciliación horaria — Planificado vs. ejecutado</div>
+        <div class="report-section-line"></div>
+        <table class="report-table">
+          <thead>
+            <tr><th>Categoría</th><th>Planificado</th><th>Ejecutado</th><th>Δ</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Laboral diurno</td><td class="mono">2.380 h</td><td class="mono">2.358 h</td><td class="mono" style="color:var(--danger)">−22</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+            <tr><td>Laboral nocturno</td><td class="mono">1.380 h</td><td class="mono">1.358 h</td><td class="mono" style="color:var(--danger)">−22</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+            <tr><td>Festivo diurno</td><td class="mono">1.040 h</td><td class="mono">1.018 h</td><td class="mono" style="color:var(--danger)">−22</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+            <tr><td>Festivo nocturno</td><td class="mono">594 h</td><td class="mono">574 h</td><td class="mono" style="color:var(--danger)">−20</td><td><span class="pill pill-success">Conciliado</span></td></tr>
+            <tr style="font-weight:600;background:var(--bg)"><td>Total prestaciones fijas</td><td class="mono">5.394 h</td><td class="mono">5.308 h</td><td class="mono" style="color:var(--danger)">−86</td><td></td></tr>
+            <tr><td>Prestaciones variables</td><td class="mono">0 h</td><td class="mono">128 h</td><td class="mono" style="color:var(--success)">+128</td><td><span class="pill pill-warn">Refuerzos</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 3. ACUMULADO ANUAL -->
+      <div class="report-section">
+        <div class="report-section-title">3. Progreso anual del contrato</div>
+        <div class="report-section-line"></div>
+        <table class="report-table">
+          <thead>
+            <tr><th>Servicio</th><th>Diurno lab.</th><th>Nocturno lab.</th><th>Festivo diurno</th><th>Festivo noct.</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>San Francisco</td><td class="mono">3.520</td><td class="mono">2.012</td><td class="mono">1.608</td><td class="mono">887</td><td class="mono"><strong>8.027</strong></td></tr>
+            <tr><td>Paraíso</td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+            <tr><td>Veterinaria</td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+            <tr><td>Río Ebro</td><td class="mono">1.760</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.013</strong></td></tr>
+            <tr><td>CECO + Jefe eq.</td><td class="mono">2.100</td><td class="mono">1.006</td><td class="mono">804</td><td class="mono">443</td><td class="mono"><strong>4.353</strong></td></tr>
+            <tr><td>Teruel</td><td class="mono">320</td><td class="mono">444</td><td class="mono">216</td><td class="mono">142</td><td class="mono"><strong>1.122</strong></td></tr>
+            <tr><td>Huesca</td><td class="mono">200</td><td class="mono">100</td><td class="mono">210</td><td class="mono">89</td><td class="mono"><strong>599</strong></td></tr>
+            <tr style="font-weight:600;background:var(--bg)"><td>Total acumulado</td><td class="mono">11.420</td><td class="mono">6.580</td><td class="mono">5.250</td><td class="mono">2.890</td><td class="mono"><strong>26.140</strong></td></tr>
+            <tr style="color:var(--ink-soft)"><td>Contrato anual</td><td class="mono">27.656</td><td class="mono">15.944</td><td class="mono">12.740</td><td class="mono">7.168</td><td class="mono">63.508</td></tr>
+            <tr style="color:var(--ink-soft)"><td>% ejecución</td><td class="mono">41,3%</td><td class="mono">41,3%</td><td class="mono">41,2%</td><td class="mono">40,3%</td><td class="mono">41,2%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4. INCIDENCIAS Y ALERTAS -->
+      <div class="report-section">
+        <div class="report-section-title">4. Incidencias y alertas del periodo</div>
+        <div class="report-section-line"></div>
+        <div class="report-alert-row ra-danger">
+          <div class="report-alert-icon">⚠</div>
+          <div>
+            <div class="report-alert-title">Franja descubierta — Huesca</div>
+            <div class="report-alert-meta">Sábado 10 mayo · 14:00–22:00 · Sin asignación ni sustitución</div>
+          </div>
+        </div>
+        <div class="report-alert-row ra-warn">
+          <div class="report-alert-icon">!</div>
+          <div>
+            <div class="report-alert-title">Ausencia jefe de equipo CECO</div>
+            <div class="report-alert-meta">Martes 6 y miércoles 14 mayo · Jornada diurna sin cobertura de coordinación</div>
+          </div>
+        </div>
+        <div class="report-alert-row ra-warn">
+          <div class="report-alert-icon">!</div>
+          <div>
+            <div class="report-alert-title">Desvío −86h sobre planificado</div>
+            <div class="report-alert-meta">1,6% del total mensual · Causa: franja Huesca + jefe equipo CECO</div>
+          </div>
+        </div>
+        <div class="report-alert-row ra-info">
+          <div class="report-alert-icon">ⓘ</div>
+          <div>
+            <div class="report-alert-title">+128h prestación variable ejecutada</div>
+            <div class="report-alert-meta">Refuerzo Paraninfo 23/05 (32h) + salas estudio finales junio adelantadas (96h)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. SUSTITUCIONES -->
+      <div class="report-section">
+        <div class="report-section-title">5. Sustituciones comunicadas</div>
+        <div class="report-section-line"></div>
+        <table class="report-table">
+          <thead>
+            <tr><th>Fecha</th><th>Servicio</th><th>Original</th><th>Sustituto</th><th>Motivo</th><th>Cumple 24h</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">12/05 N</td><td>Paraíso</td><td>J. García</td><td>R. Mendoza</td><td>Baja médica</td><td><span class="pill pill-success">✓ 26h</span></td></tr>
+            <tr><td class="mono">11/05 M</td><td>Río Ebro</td><td>A. López</td><td>P. Ruiz</td><td>Asuntos propios</td><td><span class="pill pill-success">✓ 5d</span></td></tr>
+            <tr><td class="mono">10/05 T</td><td>San Francisco</td><td>C. Núñez</td><td>F. Beltrán</td><td>Incidencia familiar</td><td><span class="pill pill-warn">! 18h</span></td></tr>
+            <tr><td class="mono">08/05 N</td><td>CECO</td><td>S. Vidal</td><td>M. Tena</td><td>Vacaciones</td><td><span class="pill pill-success">✓ 13d</span></td></tr>
+            <tr><td class="mono">07/05 T</td><td>Veterinaria</td><td>E. Ríos</td><td>J. Pamplona</td><td>Permiso oficial</td><td><span class="pill pill-success">✓ 24h</span></td></tr>
+            <tr><td class="mono">05/05 N</td><td>Huesca</td><td>O. Bayona</td><td>N. Casas</td><td>Baja médica</td><td><span class="pill pill-danger">× 7h</span></td></tr>
+            <tr><td class="mono">03/05 M</td><td>Paraíso</td><td>J. García</td><td>R. Mendoza</td><td>Asuntos propios</td><td><span class="pill pill-success">✓ 44h</span></td></tr>
+            <tr><td class="mono">01/05 D</td><td>CECO Jefe</td><td>D. Marín</td><td>—</td><td>No sustituido</td><td><span class="pill pill-neutral">—</span></td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:8px">
+          Total sustituciones: 8 · Cumplimiento preaviso 24h: 5/7 (71,4%) · 1 incumplimiento grave (7h) · 1 no sustituido
+        </div>
+      </div>
+
+      <!-- 6. PRESTACIONES VARIABLES -->
+      <div class="report-section">
+        <div class="report-section-title">6. Prestaciones variables (informativo)</div>
+        <div class="report-section-line"></div>
+        <table class="report-table">
+          <thead><tr><th>Concepto</th><th>Horas</th><th>Fecha</th><th>Observaciones</th></tr></thead>
+          <tbody>
+            <tr><td>Refuerzo acto institucional Paraninfo</td><td class="mono">32 h</td><td class="mono">23/05</td><td>4 auxiliares × 8h</td></tr>
+            <tr><td>Salas estudio — preparación exámenes junio</td><td class="mono">96 h</td><td class="mono">26–31/05</td><td>Adelanto periodo exámenes</td></tr>
+            <tr style="font-weight:600;background:var(--bg)"><td>Total mes</td><td class="mono">128 h</td><td></td><td></td></tr>
+            <tr style="color:var(--ink-soft)"><td>Acumulado anual</td><td class="mono">684 / 2.000 h</td><td></td><td>34,2% de la previsión</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+
+      <!-- FIRMA -->
+      <div class="report-stamp">
+        <div class="report-stamp-label">Validación</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:16px">
+          <div>
+            <div class="report-stamp-line"></div>
+            <div class="report-stamp-hint">Responsable Unidad de Seguridad</div>
+          </div>
+          <div>
+            <div class="report-stamp-line"></div>
+            <div class="report-stamp-hint">Responsable empresa adjudicataria</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-footer">
+        <span>Universidad de Zaragoza · Unidad de Seguridad</span>
+        <span>Confidencial · Uso interno</span>
+        <span>Página 1 de 1</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ INFORME ============
+const REPORT_MONTHS = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+];
+
+const REPORT_WEEKDAYS = [
+  'domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'
+];
+
+const REPORT_TYPES = {
+  diario: {
+    metaType: 'Informe diario (Básico)',
+    title: 'Informe básico del día actual',
+    period: (ctx) => ctx.dateLabel,
+    toolbar: (ctx) => `Vista previa del informe · ${ctx.dateLabel}`,
+    ref: (ctx) => `UZ-SEG-DIA-${ctx.yyyy}${ctx.mm}${ctx.dd}`,
+    subtitle: (ctx) => `Contrato de servicios de seguridad y auxiliares de conserjería · Día completo: ${ctx.longDate}`,
+    render: renderDailyReport
+  },
+  mensual: {
+    metaType: 'Informe mensual de servicio',
+    title: 'Informe de seguimiento mensual del servicio de vigilancia',
+    period: (ctx) => ctx.monthYear,
+    toolbar: (ctx) => `Vista previa del informe · ${ctx.monthYear}`,
+    ref: (ctx) => `UZ-SEG-MES-${ctx.yyyy}${ctx.mm}`,
+    subtitle: (ctx) => `Contrato de servicios de seguridad y auxiliares de conserjería · Periodo: ${ctx.monthName} ${ctx.yyyy}`,
+    render: renderMonthlyReport
+  },
+  anual: {
+    metaType: 'Informe anual de servicio',
+    title: 'Informe resumen anual del servicio de vigilancia',
+    period: (ctx) => `Año ${ctx.yyyy}`,
+    toolbar: (ctx) => `Vista previa del informe · Año ${ctx.yyyy}`,
+    ref: (ctx) => `UZ-SEG-ANUAL-${ctx.yyyy}`,
+    subtitle: (ctx) => `Contrato de servicios de seguridad y auxiliares de conserjería · Resumen acumulado ${ctx.yyyy}`,
+    render: renderAnnualReport
+  }
+};
+
+function openReportPrompt() {
+  const overlay = document.getElementById('report-type-overlay');
+  overlay.classList.add('active');
+  syncReportScrollLock();
+  setTimeout(() => overlay.querySelector('.report-choice')?.focus(), 0);
+}
+
+function closeReportPrompt() {
+  document.getElementById('report-type-overlay').classList.remove('active');
+  syncReportScrollLock();
+}
+
+function generateReport(type) {
+  closeReportPrompt();
+  openReport(type);
+}
+
+function openReport(type = 'mensual') {
+  const now = new Date();
+  const ctx = getReportContext(now);
+  const report = REPORT_TYPES[type] || REPORT_TYPES.mensual;
+
+  setReportText('report-gen-date', `${ctx.dateLabel} a las ${ctx.timeLabel}`);
+  setReportText('report-meta-type', report.metaType);
+  setReportText('report-toolbar-title', report.toolbar(ctx));
+  setReportText('report-meta-period', report.period(ctx));
+  setReportText('report-ref', report.ref(ctx));
+  setReportText('report-title', report.title);
+  setReportText('report-subtitle', report.subtitle(ctx));
+
+  const reportContent = document.getElementById('report-content');
+  if (reportContent) reportContent.innerHTML = report.render(ctx);
+
+  document.getElementById('report-overlay').classList.add('active');
+  syncReportScrollLock();
+}
+
+function closeReport() {
+  document.getElementById('report-overlay').classList.remove('active');
+  syncReportScrollLock();
+}
+
+function syncReportScrollLock() {
+  const promptOpen = document.getElementById('report-type-overlay')?.classList.contains('active');
+  const reportOpen = document.getElementById('report-overlay')?.classList.contains('active');
+  document.body.style.overflow = promptOpen || reportOpen ? 'hidden' : '';
+}
+
+function getReportContext(now) {
+  const dd = now.getDate().toString().padStart(2, '0');
+  const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+  const yyyy = now.getFullYear().toString();
+  const monthName = REPORT_MONTHS[now.getMonth()];
+  const monthYear = `${capitalize(monthName)} ${yyyy}`;
+
+  return {
+    dd,
+    mm,
+    yyyy,
+    monthName,
+    monthYear,
+    dateLabel: `${dd}/${mm}/${yyyy}`,
+    timeLabel: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`,
+    longDate: `${REPORT_WEEKDAYS[now.getDay()]}, ${Number(dd)} de ${monthName} de ${yyyy}`
+  };
+}
+
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function setReportText(id, text) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = text;
+}
+
+function renderKpis(kpis) {
+  return `
+    <div class="report-kpis">
+      ${kpis.map(kpi => `
+        <div class="report-kpi">
+          <div class="report-kpi-label">${kpi.label}</div>
+          <div class="report-kpi-value">${kpi.value}</div>
+          <div class="report-kpi-sub"${kpi.tone ? ` style="color:var(--${kpi.tone})"` : ''}>${kpi.sub}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderSection(number, title, body) {
+  return `
+    <div class="report-section">
+      <div class="report-section-title">${number}. ${title}</div>
+      <div class="report-section-line"></div>
+      ${body}
+    </div>
+  `;
+}
+
+function renderTable(headers, rows) {
+  return `
+    <table class="report-table">
+      <thead>
+        <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+      </thead>
+      <tbody>
+        ${rows.map(row => {
+          const cells = Array.isArray(row) ? row : row.cells;
+          const attrs = Array.isArray(row) ? '' : (row.attrs || '');
+          return `<tr${attrs}>${cells.map(cell => `<td${cell.attrs || ''}>${cell.html ?? cell}</td>`).join('')}</tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderAlert(tone, title, meta, icon = '!') {
+  return `
+    <div class="report-alert-row ra-${tone}">
+      <div class="report-alert-icon">${icon}</div>
+      <div>
+        <div class="report-alert-title">${title}</div>
+        <div class="report-alert-meta">${meta}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDailyReport(ctx) {
+  const daySubstitutions = (typeof subsData !== 'undefined')
+    ? subsData.filter(row => row[0].startsWith(`${ctx.dd}/${ctx.mm}`))
+    : [];
+
+  const substitutionBlock = daySubstitutions.length
+    ? renderTable(
+        ['Turno', 'Servicio', 'Original', 'Sustituto', 'Motivo', 'Preaviso'],
+        daySubstitutions.map(row => [
+          { html: row[0], attrs: ' class="mono"' },
+          row[1],
+          row[2],
+          row[3],
+          row[4],
+          `<span class="pill ${getSubstitutionPill(row[6])}">${row[6]}</span>`
+        ])
+      )
+    : renderAlert('info', 'Sin sustituciones comunicadas para el día actual', `No constan cambios registrados para ${ctx.dateLabel}.`, 'i');
+
+  return `
+    ${renderKpis([
+      { label: 'Cobertura día', value: '87,5<span class="rk-unit">%</span>', sub: '7 de 8 servicios previstos' },
+      { label: 'Servicios previstos', value: '8', sub: 'Cobertura de día completo' },
+      { label: 'Incidencias', value: '1', sub: 'CECO jefe sin cobertura', tone: 'warn' },
+      { label: 'Sustituciones', value: String(daySubstitutions.length), sub: 'Comunicadas hoy' }
+    ])}
+    ${renderSection(1, 'Resumen operativo del día', renderTable(
+      ['Bloque', 'Previsión', 'Estado', 'Observaciones'],
+      [
+        ['Servicios 24/7', 'San Francisco, Paraíso, Veterinaria, Río Ebro y CECO', '<span class="pill pill-success">Cubierto</span>', 'Sin incidencias activas en vigilancia permanente'],
+        ['Jefe de equipo CECO', 'Jornada diurna', '<span class="pill pill-warn">Sin cubrir</span>', 'Incidencia detectada en el día actual'],
+        ['Teruel', '22:00-08:00', '<span class="pill pill-success">Previsto</span>', 'Servicio nocturno programado'],
+        ['Huesca', 'Cobertura variable', '<span class="pill pill-success">Previsto</span>', 'Sin franja descubierta en el día actual']
+      ]
+    ))}
+    ${renderSection(2, 'Cobertura por servicio/campus', renderTable(
+      ['Servicio', 'Dotación prevista', 'Alcance del día', 'Estado'],
+      [
+        ['<strong>San Francisco</strong>', '2 vigilantes 24/7', 'Mañana, tarde y noche', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Paraíso</strong>', '1 vigilante 24/7', 'Mañana, tarde y noche', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Veterinaria</strong>', '1 vigilante 24/7', 'Mañana, tarde y noche', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Río Ebro</strong>', '1 vigilante 24/7', 'Mañana, tarde y noche', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>CECO</strong>', '1 vigilante 24/7', 'Mañana, tarde y noche', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>CECO Jefe equipo</strong>', '1 jefe de equipo diurno', 'Jornada diurna', '<span class="pill pill-warn">Sin cubrir</span>'],
+        ['<strong>Teruel</strong>', '1 vigilante nocturno', '22:00-08:00', '<span class="pill pill-success">Previsto</span>'],
+        ['<strong>Huesca</strong>', 'Cobertura variable', 'Noche lectiva', '<span class="pill pill-success">Previsto</span>']
+      ]
+    ))}
+    ${renderSection(3, 'Incidencias detectadas', `
+      ${renderAlert('warn', 'Ausencia jefe de equipo CECO', `${ctx.longDate} · Jornada diurna sin cobertura de coordinación`, '!')}
+      ${renderAlert('info', 'Sin incidencias de franja en Huesca para hoy', 'La franja descubierta registrada pertenece al sábado 10 de mayo.', 'i')}
+    `)}
+    ${renderSection(4, 'Sustituciones del día', substitutionBlock)}
+  `;
+}
+
+function renderMonthlyReport(ctx) {
+  return `
+    ${renderKpis([
+      { label: 'Cobertura mensual', value: '98,4<span class="rk-unit">%</span>', sub: 'Mejora 1,2% vs abril', tone: 'success' },
+      { label: 'Planificado', value: '5.394<span class="rk-unit"> h</span>', sub: 'Prestaciones fijas' },
+      { label: 'Ejecutado', value: '5.308<span class="rk-unit"> h</span>', sub: '&minus;86h (&minus;1,6%)', tone: 'danger' },
+      { label: 'Sustituciones', value: '8', sub: '5/7 con preaviso 24h', tone: 'warn' }
+    ])}
+    ${renderSection(1, 'Cobertura por campus y servicio', renderTable(
+      ['Servicio', 'Dotación', 'Horas mes', 'Estado'],
+      [
+        ['<strong>San Francisco</strong> · 2 vigilantes 24/7', '2 x 24h', '1.488 h', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Paraíso</strong> · 24/7', '1 x 24h', '744 h', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Veterinaria</strong> · 24/7', '1 x 24h', '744 h', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Río Ebro</strong> · 24/7', '1 x 24h', '744 h', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>CECO</strong> · 24/7 + jefe equipo', '1 x 24h + 1 x 8h', '912 h', '<span class="pill pill-warn">2 días sin jefe</span>'],
+        ['<strong>Teruel</strong> · 22:00-08:00', '1 x 10h', '310 h', '<span class="pill pill-success">Cubierto</span>'],
+        ['<strong>Huesca</strong> · variable', '1 x variable', '412 h', '<span class="pill pill-danger">1 franja sin cubrir</span>']
+      ]
+    ))}
+    ${renderSection(2, 'Conciliación horaria - Planificado vs. ejecutado', renderTable(
+      ['Categoría', 'Planificado', 'Ejecutado', 'Delta', 'Estado'],
+      [
+        ['Laboral diurno', '2.380 h', '2.358 h', '<span style="color:var(--danger)">&minus;22</span>', '<span class="pill pill-success">Conciliado</span>'],
+        ['Laboral nocturno', '1.380 h', '1.358 h', '<span style="color:var(--danger)">&minus;22</span>', '<span class="pill pill-success">Conciliado</span>'],
+        ['Festivo diurno', '1.040 h', '1.018 h', '<span style="color:var(--danger)">&minus;22</span>', '<span class="pill pill-success">Conciliado</span>'],
+        ['Festivo nocturno', '594 h', '574 h', '<span style="color:var(--danger)">&minus;20</span>', '<span class="pill pill-success">Conciliado</span>'],
+        { attrs: ' style="font-weight:600;background:var(--bg)"', cells: ['Total prestaciones fijas', '5.394 h', '5.308 h', '<span style="color:var(--danger)">&minus;86</span>', ''] },
+        ['Prestaciones variables', '0 h', '128 h', '<span style="color:var(--success)">+128</span>', '<span class="pill pill-warn">Refuerzos</span>']
+      ]
+    ))}
+    ${renderSection(3, 'Incidencias del mes', `
+      ${renderAlert('danger', 'Franja descubierta - Huesca', 'Sábado 10 mayo · 14:00-22:00 · Sin asignación ni sustitución', '!')}
+      ${renderAlert('warn', 'Ausencia jefe de equipo CECO', 'Martes 6 y miércoles 14 mayo · Jornada diurna sin cobertura de coordinación', '!')}
+      ${renderAlert('warn', 'Desvío &minus;86h sobre planificado', '1,6% del total mensual · Causa: franja Huesca + jefe equipo CECO', '!')}
+      ${renderAlert('info', '+128h prestación variable ejecutada', 'Refuerzo Paraninfo 23/05 (32h) + salas estudio finales junio adelantadas (96h)', 'i')}
+    `)}
+    ${renderSection(4, 'Sustituciones comunicadas', `
+      ${renderTable(
+        ['Fecha', 'Servicio', 'Original', 'Sustituto', 'Motivo', 'Cumple 24h'],
+        [
+          ['12/05 N', 'Paraíso', 'J. García', 'R. Mendoza', 'Baja médica', '<span class="pill pill-success">OK 26h</span>'],
+          ['11/05 M', 'Río Ebro', 'A. López', 'P. Ruiz', 'Asuntos propios', '<span class="pill pill-success">OK 5d</span>'],
+          ['10/05 T', 'San Francisco', 'C. Núñez', 'F. Beltrán', 'Incidencia familiar', '<span class="pill pill-warn">18h</span>'],
+          ['08/05 N', 'CECO', 'S. Vidal', 'M. Tena', 'Vacaciones', '<span class="pill pill-success">OK 13d</span>'],
+          ['07/05 T', 'Veterinaria', 'E. Ríos', 'J. Pamplona', 'Permiso oficial', '<span class="pill pill-success">OK 24h</span>'],
+          ['05/05 N', 'Huesca', 'O. Bayona', 'N. Casas', 'Baja médica', '<span class="pill pill-danger">7h</span>'],
+          ['03/05 M', 'Paraíso', 'J. García', 'R. Mendoza', 'Asuntos propios', '<span class="pill pill-success">OK 44h</span>'],
+          ['01/05 D', 'CECO Jefe', 'D. Marín', '&mdash;', 'No sustituido', '<span class="pill pill-neutral">&mdash;</span>']
+        ]
+      )}
+      <div style="font-size:11px;color:var(--ink-soft);margin-top:8px">
+        Total sustituciones: 8 · Cumplimiento preaviso 24h: 5/7 (71,4%) · 1 incumplimiento grave (7h) · 1 no sustituido
+      </div>
+    `)}
+    ${renderSection(5, 'Prestaciones variables', renderTable(
+      ['Concepto', 'Horas', 'Fecha', 'Observaciones'],
+      [
+        ['Refuerzo acto institucional Paraninfo', '32 h', '23/05', '4 auxiliares x 8h'],
+        ['Salas estudio - preparación exámenes junio', '96 h', '26-31/05', 'Adelanto periodo exámenes'],
+        { attrs: ' style="font-weight:600;background:var(--bg)"', cells: ['Total mes', '128 h', '', ''] }
+      ]
+    ))}
+  `;
+}
+
+function renderAnnualReport(ctx) {
+  return `
+    ${renderKpis([
+      { label: 'Avance anual', value: '41,2<span class="rk-unit">%</span>', sub: '26.140 / 63.508 h' },
+      { label: 'Horas acumuladas', value: '26.140<span class="rk-unit"> h</span>', sub: 'Prestaciones fijas ejecutadas' },
+      { label: 'Contrato anual', value: '63.508<span class="rk-unit"> h</span>', sub: 'Bolsa anual prevista' },
+      { label: 'Variables acum.', value: '684<span class="rk-unit"> h</span>', sub: '34,2% de la previsión', tone: 'warn' }
+    ])}
+    ${renderSection(1, 'Progreso anual por servicio y categoría', renderTable(
+      ['Servicio', 'Diurno lab.', 'Nocturno lab.', 'Festivo diurno', 'Festivo noct.', 'Total'],
+      [
+        ['San Francisco', '3.520', '2.012', '1.608', '887', '<strong>8.027</strong>'],
+        ['Paraíso', '1.760', '1.006', '804', '443', '<strong>4.013</strong>'],
+        ['Veterinaria', '1.760', '1.006', '804', '443', '<strong>4.013</strong>'],
+        ['Río Ebro', '1.760', '1.006', '804', '443', '<strong>4.013</strong>'],
+        ['CECO + Jefe eq.', '2.100', '1.006', '804', '443', '<strong>4.353</strong>'],
+        ['Teruel', '320', '444', '216', '142', '<strong>1.122</strong>'],
+        ['Huesca', '200', '100', '210', '89', '<strong>599</strong>'],
+        { attrs: ' style="font-weight:600;background:var(--bg)"', cells: ['Total acumulado', '11.420', '6.580', '5.250', '2.890', '<strong>26.140</strong>'] },
+        { attrs: ' style="color:var(--ink-soft)"', cells: ['Contrato anual', '27.656', '15.944', '12.740', '7.168', '63.508'] },
+        { attrs: ' style="color:var(--ink-soft)"', cells: ['% ejecución', '41,3%', '41,3%', '41,2%', '40,3%', '41,2%'] }
+      ]
+    ))}
+    ${renderSection(2, 'Resumen mensual acumulado', renderTable(
+      ['Mes', 'Planificado', 'Ejecutado', 'Delta', 'Estado'],
+      [
+        ['Enero', '5.128 h', '5.128 h', '0 h', '<span class="pill pill-success">Cerrado</span>'],
+        ['Febrero', '4.872 h', '4.850 h', '<span style="color:var(--danger)">&minus;22 h</span>', '<span class="pill pill-success">Cerrado</span>'],
+        ['Marzo', '5.410 h', '5.410 h', '0 h', '<span class="pill pill-success">Cerrado</span>'],
+        ['Abril', '5.336 h', '5.316 h', '<span style="color:var(--danger)">&minus;20 h</span>', '<span class="pill pill-success">Cerrado</span>'],
+        [ctx.monthYear, '5.394 h', '5.308 h', '<span style="color:var(--danger)">&minus;86 h</span>', '<span class="pill pill-warn">En curso</span>']
+      ]
+    ))}
+    ${renderSection(3, 'Incidencias relevantes del año', `
+      ${renderAlert('danger', 'Franja descubierta - Huesca', 'Incidencia operativa con impacto en el cómputo mensual de mayo.', '!')}
+      ${renderAlert('warn', 'Cobertura de jefe de equipo CECO', 'Dos jornadas sin cobertura de coordinación registradas en mayo.', '!')}
+      ${renderAlert('warn', 'Preavisos inferiores a 24h', 'Dos sustituciones no cumplen el umbral operativo previsto.', '!')}
+      ${renderAlert('info', 'Prestaciones variables en evolución', '684h acumuladas sobre una previsión anual de 2.000h.', 'i')}
+    `)}
+    ${renderSection(4, 'Prestaciones variables acumuladas', renderTable(
+      ['Concepto', 'Horas acumuladas', 'Peso anual', 'Observaciones'],
+      [
+        ['Actos institucionales', '212 h', '10,6%', 'Refuerzos en Paraninfo y eventos protocolarios'],
+        ['Salas de estudio y exámenes', '328 h', '16,4%', 'Aperturas ampliadas en periodos docentes críticos'],
+        ['Refuerzos de campus', '144 h', '7,2%', 'Coberturas puntuales por actividad extraordinaria'],
+        { attrs: ' style="font-weight:600;background:var(--bg)"', cells: ['Total acumulado', '684 h', '34,2%', 'Sobre previsión anual de 2.000 h'] }
+      ]
+    ))}
+    ${renderSection(5, 'Validación anual', `
+      ${renderAlert('info', 'Informe resumen de año', `Datos acumulados hasta ${ctx.dateLabel}. La validación final requerirá cierre de diciembre.`, 'i')}
+    `)}
+  `;
+}
+
+function getSubstitutionPill(value) {
+  if (value.startsWith('!')) return 'pill-warn';
+  if (value.startsWith('×')) return 'pill-danger';
+  if (value === '—') return 'pill-neutral';
+  return 'pill-success';
+}
+
+// Cerrar con Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+
+  const promptOverlay = document.getElementById('report-type-overlay');
+  const reportOverlay = document.getElementById('report-overlay');
+
+  if (promptOverlay?.classList.contains('active')) {
+    closeReportPrompt();
+    return;
+  }
+
+  if (reportOverlay?.classList.contains('active')) closeReport();
+});
+
+// ============ AUTH ============
+let currentRole = 'uz';
+
+const roleTabs = document.querySelectorAll('#role-tabs .role-tab');
+roleTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    roleTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentRole = tab.dataset.role;
+  });
+});
+
+function doLogin(method) {
+  const userInput = document.getElementById('auth-user').value.trim();
+  const profiles = {
+    uz: {
+      name: userInput && userInput.includes('@') ? userInput.split('@')[0].replace('.', ' ') : 'M. Sánchez',
+      initials: 'MS',
+      org: 'Unidad de Seguridad',
+      role: 'UZ',
+      roleClass: 'role-badge-uz'
+    },
+    contrata: {
+      name: userInput && userInput.includes('@') ? userInput.split('@')[0].replace('.', ' ') : 'L. Ortega',
+      initials: 'LO',
+      org: 'Vigiprotec S.L.',
+      role: 'Contrata',
+      roleClass: 'role-badge-contrata'
+    }
+  };
+
+  // override si es SSO -> siempre UZ
+  if (method === 'sso') currentRole = 'uz';
+
+  const p = profiles[currentRole];
+
+  // pretty-case
+  const prettyName = p.name.replace(/\b\w/g, c => c.toUpperCase());
+
+  document.getElementById('sidebar-avatar').textContent = p.initials;
+  document.getElementById('sidebar-username').textContent = prettyName;
+  document.getElementById('sidebar-org').textContent = p.org;
+
+  const badge = document.getElementById('sidebar-role');
+  badge.textContent = p.role;
+  badge.className = 'role-badge ' + p.roleClass;
+
+  // Cambiar avatar color según rol
+  const avatar = document.getElementById('sidebar-avatar');
+  avatar.style.background = currentRole === 'contrata' ? '#5b8a9c' : 'var(--accent)';
+
+  document.body.classList.remove('logged-out');
+  document.body.classList.add('logged-in');
+  document.body.classList.remove('role-uz', 'role-contrata');
+  document.body.classList.add('role-' + currentRole);
+
+  // Mensaje del panel de verificación según rol
+  updateVerifyPanelForRole();
+
+  // Si es contrata, ir a Resumen (donde está la verificación); UZ también va a Resumen
+  navTo('dashboard');
+}
+
+function doLogout() {
+  document.body.classList.remove('logged-in');
+  document.body.classList.add('logged-out');
+  document.getElementById('auth-user').value = '';
+  document.getElementById('auth-pass').value = '';
+  window.scrollTo(0, 0);
+}
+
+// Enter to login
+document.getElementById('auth-pass').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('auth-user').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ============ NAVIGATION ============
+const navItems = document.querySelectorAll('.nav-item');
+const views = document.querySelectorAll('.view');
+
+function navTo(viewName) {
+  views.forEach(v => v.classList.remove('active'));
+  navItems.forEach(n => n.classList.remove('active'));
+  const v = document.getElementById('view-' + viewName);
+  const n = document.querySelector('.nav-item[data-view="' + viewName + '"]');
+  if (v) v.classList.add('active');
+  if (n) n.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => navTo(item.dataset.view));
+});
+
+// ============ CUADRANTE GRID ============
+const servicios = [
+  { name: 'San Francisco', sub: '2 vig · 24/7', turnos: ['M','T','N'], count: 2 },
+  { name: 'Paraíso', sub: '24/7', turnos: ['M','T','N'], count: 1 },
+  { name: 'Veterinaria', sub: '24/7', turnos: ['M','T','N'], count: 1 },
+  { name: 'Río Ebro', sub: '24/7', turnos: ['M','T','N'], count: 1 },
+  { name: 'CECO', sub: '24/7', turnos: ['M','T','N'], count: 1 },
+  { name: 'CECO Jefe equipo', sub: 'L–V diurno', turnos: ['D'], count: 1, onlyLV: true },
+  { name: 'Teruel', sub: '22:00–08:00', turnos: ['N'], count: 1, skipAug: true },
+  { name: 'Huesca', sub: 'Variable', turnos: ['T','N'], count: 1, partial: true }
+];
+
+const diasMes = 31;
+const festivos = [1]; // 1 mayo
+const grid = document.getElementById('cuadrante-grid');
+let html = '<div class="cuadrante-header"><div>SERVICIO</div>';
+for (let d=1; d<=diasMes; d++) {
+  const date = new Date(2026, 4, d);
+  const dow = date.getDay();
+  const isWeekend = dow === 0 || dow === 6;
+  const isFestivo = festivos.includes(d);
+  const cls = isFestivo ? 'day-festivo' : (isWeekend ? 'day-weekend' : '');
+  html += `<div class="${cls}">${d}</div>`;
+}
+html += '</div>';
+
+servicios.forEach(s => {
+  html += `<div class="cuadrante-row"><div class="servicio-cell"><strong>${s.name}</strong><span>${s.sub}</span></div>`;
+  for (let d=1; d<=diasMes; d++) {
+    const date = new Date(2026, 4, d);
+    const dow = date.getDay();
+    const isWeekend = dow === 0 || dow === 6;
+
+    let cellTurnos = [...s.turnos];
+
+    // Jefe equipo CECO sólo L-V
+    if (s.onlyLV && (isWeekend)) { cellTurnos = []; }
+    // Huesca: lectivo L-V solo noche, no lectivo / FDS variable. Simplificación demo:
+    if (s.partial && !isWeekend) { cellTurnos = ['N']; }
+    if (s.partial && isWeekend) { cellTurnos = ['M','T','N']; }
+
+    // Simular alguna franja descubierta
+    let coverage = cellTurnos.map(t => t);
+    // Huesca día 10 (sábado) tarde descubierta
+    if (s.name === 'Huesca' && d === 10) {
+      coverage = coverage.map(t => t === 'T' ? null : t);
+    }
+    // CECO Jefe martes 6 (martes) y miércoles 14 sin cubrir
+    if (s.name === 'CECO Jefe equipo' && (d === 6 || d === 14)) {
+      coverage = [null];
+    }
+
+    html += '<div class="dia-cell">';
+    coverage.forEach(t => {
+      if (t === null) html += `<div class="turno turno-empty">×</div>`;
+      else html += `<div class="turno turno-${t}">${t}</div>`;
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+});
+
+grid.innerHTML = html;
+
+// ============ SUSTITUCIONES DATA ============
+const subsData = [
+  ['12/05 · N','Paraíso','J. García','R. Mendoza','Baja médica','11/05 18:30','✓ 26h'],
+  ['11/05 · M','Río Ebro','A. López','P. Ruiz','Asuntos propios','06/05 09:12','✓ 5d'],
+  ['10/05 · T','San Francisco','C. Núñez','F. Beltrán','Incidencia familiar','09/05 19:40','! 18h'],
+  ['08/05 · N','CECO','S. Vidal','M. Tena','Vacaciones','25/04 11:00','✓ 13d'],
+  ['07/05 · T','Veterinaria','E. Ríos','J. Pamplona','Permiso oficial','06/05 08:00','✓ 24h'],
+  ['05/05 · N','Huesca','O. Bayona','N. Casas','Baja médica','05/05 14:30','× 7h'],
+  ['03/05 · M','Paraíso','J. García','R. Mendoza','Asuntos propios','01/05 12:00','✓ 44h'],
+  ['01/05 · D','CECO Jefe','D. Marín','—','No sustituido','—','—'],
+];
+
+const subsBody = document.getElementById('subs-body');
+let subsHtml = '';
+subsData.forEach(row => {
+  const initials = (s) => s.split(' ').map(x => x[0]).join('').slice(0,2);
+  const cumple = row[6];
+  let pillCls = 'pill-success';
+  if (cumple.startsWith('!')) pillCls = 'pill-warn';
+  if (cumple.startsWith('×')) pillCls = 'pill-danger';
+  if (cumple === '—') pillCls = 'pill-neutral';
+
+  subsHtml += `<tr>
+    <td class="mono">${row[0]}</td>
+    <td>${row[1]}</td>
+    <td><div class="persona"><div class="persona-avatar">${initials(row[2])}</div><div class="persona-meta"><strong>${row[2]}</strong></div></div></td>
+    <td>${row[3] === '—' ? '<span style="color:var(--ink-faded)">—</span>' : `<div class="persona"><div class="persona-avatar">${initials(row[3])}</div><div class="persona-meta"><strong>${row[3]}</strong></div></div>`}</td>
+    <td>${row[4]}</td>
+    <td class="mono">${row[5]}</td>
+    <td><span class="pill ${pillCls}">${cumple}</span></td>
+  </tr>`;
+});
+subsBody.innerHTML = subsHtml;
+
+// ============ PERSONAL DATA ============
+const personalData = [
+  ['Juan García','VS-12834','Vigilante','22h / 20h','—','Activo'],
+  ['Ana López','VS-19283','Vigilante','20h / 20h','—','Activo'],
+  ['Carmen Núñez','VS-22910','Vigilante','24h / 20h','Inglés B1','Activo'],
+  ['Sergio Vidal','VS-15428','Vigilante','20h / 20h','—','Activo'],
+  ['Elena Ríos','VS-30192','Vigilante','21h / 20h','—','Activo'],
+  ['Óscar Bayona','VS-44021','Vigilante','19h / 20h','—','Activo'],
+  ['David Marín','VS-08821','Vig. (Jefe equipo)','22h / 20h','Inglés B2','Activo'],
+  ['Laura Ferrer','VS-19082','Vigilante','20h / 20h','—','Baja temporal'],
+  ['Pablo Ruiz','VS-22411','Vigilante','20h / 20h','—','Activo'],
+  ['Raúl Mendoza','VS-31203','Vigilante','22h / 20h','—','Activo'],
+  ['Fernando Beltrán','VS-08741','Vigilante','20h / 20h','—','Activo'],
+  ['Marta Tena','—','Auxiliar','—','Inglés B2','Activo'],
+  ['Javier Pamplona','VS-19200','Vigilante','20h / 20h','—','Activo'],
+  ['Nuria Casas','—','Auxiliar','—','Inglés B1','Activo'],
+];
+
+const personalBody = document.getElementById('personal-body');
+let perHtml = '';
+personalData.forEach(p => {
+  const initials = p[0].split(' ').map(x => x[0]).join('').slice(0,2);
+  const [hecho, debe] = p[3] === '—' ? ['—',''] : p[3].split(' / ');
+  const formAlert = (p[3] !== '—' && parseInt(hecho) < parseInt(debe));
+  const estado = p[5];
+  const pillCls = estado === 'Activo' ? 'pill-success' : 'pill-warn';
+
+  perHtml += `<tr>
+    <td><div class="persona"><div class="persona-avatar">${initials}</div><div class="persona-meta"><strong>${p[0]}</strong><span>${p[1]}</span></div></div></td>
+    <td>${p[2]}</td>
+    <td class="mono">${p[1]}</td>
+    <td><span class="mono ${formAlert ? '' : ''}">${p[3]}</span></td>
+    <td>${p[4]}</td>
+    <td><span class="pill ${pillCls}">${estado}</span></td>
+  </tr>`;
+});
+personalBody.innerHTML = perHtml;
+
+// ============ FILTRO POR CAMPUS (Servicios) ============
+const campusFilters = document.querySelectorAll('#campus-filters .filter-chip');
+const serviciosBody = document.getElementById('servicios-body');
+const filterCount = document.getElementById('filter-count');
+
+campusFilters.forEach(chip => {
+  chip.addEventListener('click', () => {
+    campusFilters.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const filter = chip.dataset.campus;
+    let visible = 0;
+    serviciosBody.querySelectorAll('tr').forEach(tr => {
+      const match = filter === 'all' || tr.dataset.campus === filter;
+      tr.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    filterCount.textContent = `Mostrando ${visible} ${visible === 1 ? 'servicio' : 'servicios'}`;
+  });
+});
+
+// ============ NUEVO SERVICIO: interacciones y preview ============
+// Radio cards (tipo + modalidad)
+document.querySelectorAll('.radio-card').forEach(card => {
+  card.addEventListener('click', (e) => {
+    const input = card.querySelector('input');
+    if (!input) return;
+    const name = input.name;
+    document.querySelectorAll(`.radio-card input[name="${name}"]`).forEach(i => {
+      i.checked = false;
+      i.closest('.radio-card').classList.remove('selected');
+    });
+    input.checked = true;
+    card.classList.add('selected');
+    updatePreview();
+  });
+});
+
+// Day toggles
+const selectedDays = new Set();
+document.querySelectorAll('#day-toggles .day-toggle').forEach(b => {
+  b.addEventListener('click', () => {
+    b.classList.toggle('active');
+    const d = b.dataset.day;
+    if (selectedDays.has(d)) selectedDays.delete(d); else selectedDays.add(d);
+    updatePreview();
+  });
+});
+
+// Turn chips
+const selectedTurns = new Set();
+document.querySelectorAll('#turn-chips .turn-chip').forEach(b => {
+  b.addEventListener('click', () => {
+    b.classList.toggle('active');
+    const t = b.dataset.turn;
+    if (selectedTurns.has(t)) selectedTurns.delete(t); else selectedTurns.add(t);
+    updatePreview();
+  });
+});
+
+function updatePreview() {
+  const nombre = document.getElementById('ns-nombre')?.value?.trim();
+  const codigo = document.getElementById('ns-codigo')?.value?.trim();
+  const campus = document.getElementById('ns-campus')?.value;
+  const tipo = document.querySelector('input[name="tipo"]:checked')?.value;
+  const modalidad = document.querySelector('input[name="modalidad"]:checked')?.value;
+  const personas = document.getElementById('ns-personas')?.value || 1;
+  const vehiculo = document.getElementById('ns-vehiculo')?.value;
+
+  // Nombre y meta
+  document.getElementById('prev-name').textContent = nombre || 'Nuevo servicio';
+  let meta = [];
+  if (campus) meta.push(campus);
+  if (codigo) meta.push('#' + codigo);
+  document.getElementById('prev-meta').textContent = meta.length ? meta.join(' · ') : 'Campus por definir';
+
+  // Tags
+  const tagsEl = document.getElementById('prev-tags');
+  tagsEl.innerHTML = '';
+  if (tipo) {
+    const cls = tipo === 'Coordinación' ? 'pill-neutral' : (tipo === 'Auxiliar' ? 'pill-neutral' : 'pill-neutral');
+    tagsEl.innerHTML += `<span class="pill ${cls}">${tipo}</span>`;
+  }
+  if (modalidad === 'demanda') tagsEl.innerHTML += '<span class="pill pill-warn">A demanda</span>';
+  if (modalidad === '24/7') tagsEl.innerHTML += '<span class="pill pill-success">24/7</span>';
+  if (modalidad === 'academico') tagsEl.innerHTML += '<span class="pill pill-warn">Calendario académico</span>';
+  if (!tipo && !modalidad) tagsEl.innerHTML = '<span class="pill pill-neutral">Sin clasificar</span>';
+
+  // Modalidad label
+  const modalidadMap = {
+    '24/7': 'Continuo 24/7',
+    'fijo': 'Horario fijo',
+    'academico': 'Variable académico',
+    'demanda': 'A demanda'
+  };
+  document.getElementById('prev-modalidad').textContent = modalidadMap[modalidad] || '—';
+
+  // Días
+  const dayLabels = { '1':'L', '2':'M', '3':'X', '4':'J', '5':'V', '6':'S', '0':'D', 'F':'F' };
+  const daysArr = Array.from(selectedDays).sort((a,b)=>{
+    const order = ['1','2','3','4','5','6','0','F'];
+    return order.indexOf(a) - order.indexOf(b);
+  });
+  document.getElementById('prev-dias').textContent = daysArr.length
+    ? daysArr.map(d => dayLabels[d]).join(' ')
+    : (modalidad === '24/7' ? 'Todos' : '—');
+
+  // Turnos
+  document.getElementById('prev-turnos').textContent = selectedTurns.size
+    ? Array.from(selectedTurns).join(' · ')
+    : (modalidad === '24/7' ? 'M · T · N' : '—');
+
+  // Personas
+  document.getElementById('prev-personas').textContent = personas;
+
+  // Vehículo
+  document.getElementById('prev-vehiculo').textContent = vehiculo || '—';
+
+  // Estimación de horas anuales
+  let horas = 0;
+  let detalle = 'configura modalidad y turnos';
+  const p = parseInt(personas) || 1;
+
+  if (modalidad === '24/7') {
+    horas = 8760 * p; // 24h × 365 × personas
+    detalle = `24h × 365 días × ${p} pers.`;
+  } else if (modalidad === 'fijo') {
+    const numDias = daysArr.length === 0 ? 0 : (daysArr.includes('F') ? daysArr.length - 1 + 14 : daysArr.length);
+    const numTurnos = selectedTurns.size || 0;
+    // semanas/año ≈ 52, horas turno = 8
+    horas = numDias * 52 * numTurnos * 8 * p;
+    detalle = `${numDias}d × ${numTurnos} turno(s) × 8h × ${p} pers.`;
+  } else if (modalidad === 'academico') {
+    horas = 3500 * p;
+    detalle = 'Estimación según calendario UZ';
+  } else if (modalidad === 'demanda') {
+    horas = 0;
+    detalle = 'Variable, según solicitudes';
+  }
+
+  document.getElementById('prev-horas').textContent = horas > 0 ? horas.toLocaleString('es-ES') + ' h' : '—';
+  document.getElementById('prev-horas-detalle').textContent = detalle;
+}
+
+// init preview
+updatePreview();
+
+// ============ VERIFICACIÓN DE TURNO ============
+const turnoActual = (() => {
+  const h = new Date().getHours();
+  if (h >= 6 && h < 14) return { code: 'M', name: 'Turno mañana', range: '06:00–14:00' };
+  if (h >= 14 && h < 22) return { code: 'T', name: 'Turno tarde', range: '14:00–22:00' };
+  return { code: 'N', name: 'Turno noche', range: '22:00–06:00' };
+})();
+
+// Servicios a cubrir en el turno actual (datos demo coherentes con el pliego)
+const verifyServices = [
+  { id: 'sf1', name: 'San Francisco', tag: 'Vig 1', meta: '24/7 · Edificio Interfacultades', person: 'J. García', initials: 'JG' },
+  { id: 'sf2', name: 'San Francisco', tag: 'Vig 2', meta: '24/7 · Rondas vehículo', person: 'F. Beltrán', initials: 'FB' },
+  { id: 'par', name: 'Paraíso', meta: '24/7', person: 'A. López', initials: 'AL' },
+  { id: 'vet', name: 'Veterinaria', meta: '24/7', person: 'E. Ríos', initials: 'ER' },
+  { id: 'rio', name: 'Río Ebro', meta: '24/7 · Rondas vehículo', person: 'P. Ruiz', initials: 'PR' },
+  { id: 'ceco', name: 'CECO', meta: '24/7 · Centro de Control', person: 'S. Vidal', initials: 'SV' },
+  { id: 'hues', name: 'Huesca', meta: 'Variable lectivo · Rondas vehículo', person: 'O. Bayona', initials: 'OB' },
+];
+
+// Si es turno tarde laborable y horario diurno, añadir jefe CECO (en demo, hora actual)
+if (turnoActual.code === 'M') {
+  verifyServices.push({ id: 'ceco-jefe', name: 'CECO · Jefe de equipo', meta: 'L–V diurno', person: 'D. Marín', initials: 'DM' });
+}
+
+const serviceStates = {}; // { id: 'pending' | 'ok' | 'warn' | 'danger' }
+verifyServices.forEach(s => serviceStates[s.id] = 'pending');
+
+function renderVerifyList() {
+  const list = document.getElementById('verify-list');
+  list.innerHTML = verifyServices.map(s => {
+    const state = serviceStates[s.id];
+    const cls = state === 'ok' ? 'is-ok' : state === 'warn' ? 'is-warn' : state === 'danger' ? 'is-danger' : '';
+    return `
+      <div class="verify-row ${cls}" data-id="${s.id}">
+        <div class="verify-row-info">
+          <div class="verify-row-name">${s.name}${s.tag ? `<span class="vr-tag">${s.tag}</span>` : ''}</div>
+          <div class="verify-row-meta">${s.meta}</div>
+        </div>
+        <div class="verify-row-person">
+          <div class="persona-avatar">${s.initials}</div>
+          <span>${s.person}</span>
+        </div>
+        <div class="verify-row-actions">
+          <button class="status-btn ${state === 'ok' ? 'active ok' : ''}" onclick="setStatus('${s.id}', 'ok')" title="Cubierto">✓</button>
+          <button class="status-btn ${state === 'warn' ? 'active warn' : ''}" onclick="setStatus('${s.id}', 'warn')" title="Incidencia">!</button>
+          <button class="status-btn ${state === 'danger' ? 'active danger' : ''}" onclick="setStatus('${s.id}', 'danger')" title="Descubierto">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateVerifyCounts();
+  updateDynamicAlerts();
+}
+
+function setStatus(id, state) {
+  // Toggle off si se vuelve a clicar el mismo
+  if (serviceStates[id] === state) {
+    serviceStates[id] = 'pending';
+  } else {
+    serviceStates[id] = state;
+  }
+  renderVerifyList();
+}
+
+function markAllOk() {
+  verifyServices.forEach(s => serviceStates[s.id] = 'ok');
+  renderVerifyList();
+}
+
+function confirmVerification() {
+  const pending = verifyServices.filter(s => serviceStates[s.id] === 'pending').length;
+  if (pending > 0) {
+    alert(`Quedan ${pending} servicios sin marcar. Marca cada uno como cubierto, con incidencia o descubierto antes de confirmar.`);
+    return;
+  }
+  const now = new Date();
+  const hh = now.getHours().toString().padStart(2, '0');
+  const mm = now.getMinutes().toString().padStart(2, '0');
+  const profile = currentRole === 'contrata' ? 'L. Ortega' : 'M. Sánchez';
+  document.getElementById('verify-history').innerHTML = `
+    <span class="vh-dot"></span>
+    <span>Turno verificado a las ${hh}:${mm} por ${profile} · ${countByState('danger') > 0 ? countByState('danger') + ' servicio(s) descubiertos' : (countByState('warn') > 0 ? countByState('warn') + ' incidencia(s)' : 'Sin incidencias')}</span>
+  `;
+  document.getElementById('verify-panel').classList.remove('partial', 'critical');
+  document.getElementById('verify-panel').classList.add(countByState('danger') > 0 ? 'critical' : (countByState('warn') > 0 ? 'partial' : 'done'));
+}
+
+function countByState(state) {
+  return verifyServices.filter(s => serviceStates[s.id] === state).length;
+}
+
+function updateVerifyCounts() {
+  const done = verifyServices.filter(s => serviceStates[s.id] !== 'pending').length;
+  document.getElementById('verify-done-count').textContent = done;
+  document.getElementById('verify-total-count').textContent = verifyServices.length;
+
+  // Panel state color
+  const panel = document.getElementById('verify-panel');
+  panel.classList.remove('done', 'partial', 'critical');
+  if (countByState('danger') > 0) panel.classList.add('critical');
+  else if (countByState('warn') > 0) panel.classList.add('partial');
+  else if (done === verifyServices.length) panel.classList.add('done');
+}
+
+function updateDynamicAlerts() {
+  const container = document.getElementById('alerts-dynamic');
+  let html = '';
+
+  verifyServices.forEach(s => {
+    if (serviceStates[s.id] === 'danger') {
+      html += `
+        <div class="alert alert-danger">
+          <div class="alert-icon">⚠</div>
+          <div class="alert-content">
+            <div class="alert-title">Servicio descubierto — ${s.name}${s.tag ? ' (' + s.tag + ')' : ''}</div>
+            <div class="alert-meta">${turnoActual.name} en curso · Marcado por la contrata · Sin cobertura</div>
+          </div>
+        </div>
+      `;
+    } else if (serviceStates[s.id] === 'warn') {
+      html += `
+        <div class="alert alert-warn">
+          <div class="alert-icon">!</div>
+          <div class="alert-content">
+            <div class="alert-title">Incidencia en ${s.name}${s.tag ? ' (' + s.tag + ')' : ''}</div>
+            <div class="alert-meta">${turnoActual.name} en curso · Marcado por la contrata · Requiere revisión</div>
+          </div>
+        </div>
+      `;
+    }
+  });
+  container.innerHTML = html;
+
+  // Actualizar KPI de cobertura dinámicamente
+  const total = verifyServices.length;
+  const cubiertos = total - countByState('danger');
+  const pct = (cubiertos / total * 100).toFixed(1);
+  // Solo modificar si todos están en algún estado (no pending) o hay algún danger
+  if (countByState('danger') > 0) {
+    const kpiVal = document.querySelector('.kpi-value');
+    // No tocamos el KPI de cobertura mensual del mes; el panel ya lo refleja por sí mismo
+  }
+}
+
+function updateVerifyPanelForRole() {
+  // Actualizar icono y título del turno
+  const icon = document.getElementById('verify-shift-icon');
+  icon.textContent = turnoActual.code;
+  icon.className = 'verify-shift-icon ' + turnoActual.code;
+  document.getElementById('verify-shift-title').textContent = `${turnoActual.name} · ${turnoActual.range}`;
+  const now = new Date();
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('verify-shift-date').textContent =
+    `Hoy, ${dias[now.getDay()]} ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+}
+
+// Render inicial del panel de verificación (también en estado deslogueado, oculto)
+renderVerifyList();
+updateVerifyPanelForRole();
+
+// Marcar el chip del turno actual como activo
+(function initTurnChips() {
+  const activeBtn = document.querySelector(`.turn-filter-btn[data-turn="${turnoActual.code}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+})();
+
+function switchVerifyTurn(code) {
+  // Actualizar chips
+  document.querySelectorAll('.turn-filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.turn-filter-btn[data-turn="${code}"]`).classList.add('active');
+
+  // Actualizar icono y título
+  const turnInfo = {
+    M: { name: 'Turno mañana', range: '06:00–14:00' },
+    T: { name: 'Turno tarde',  range: '14:00–22:00' },
+    N: { name: 'Turno noche',  range: '22:00–06:00' },
+  };
+  const icon = document.getElementById('verify-shift-icon');
+  icon.textContent = code;
+  icon.className = 'verify-shift-icon ' + code;
+  document.getElementById('verify-shift-title').textContent =
+    `${turnInfo[code].name} · ${turnInfo[code].range}`;
+
+  // Resetear estados al cambiar de turno
+  verifyServices.forEach(s => serviceStates[s.id] = 'pending');
+
+  // Si es turno mañana mostrar jefe CECO, si no ocultarlo
+  const jefe = verifyServices.find(s => s.id === 'ceco-jefe');
+  if (code === 'M') {
+    if (!jefe) verifyServices.push({ id: 'ceco-jefe', name: 'CECO · Jefe de equipo', meta: 'L–V diurno', person: 'D. Marín', initials: 'DM' });
+  } else {
+    const idx = verifyServices.findIndex(s => s.id === 'ceco-jefe');
+    if (idx > -1) verifyServices.splice(idx, 1);
+  }
+
+  // Teruel solo en turno noche
+  const teruel = verifyServices.find(s => s.id === 'ter');
+  if (code === 'N') {
+    if (!teruel) verifyServices.push({ id: 'ter', name: 'Teruel', meta: '22:00–08:00', person: 'N. Casas', initials: 'NC' });
+  } else {
+    const idx = verifyServices.findIndex(s => s.id === 'ter');
+    if (idx > -1) verifyServices.splice(idx, 1);
+  }
+
+  // Resetear estados nuevos
+  verifyServices.forEach(s => { if (!serviceStates[s.id]) serviceStates[s.id] = 'pending'; });
+
+  renderVerifyList();
+}
+</script>
+</body>
+</html>
