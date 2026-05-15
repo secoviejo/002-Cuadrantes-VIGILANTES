@@ -51,3 +51,11 @@ export function updateServicio(id, data) {
 export function getTrabajadores() {
   return getJson('/trabajadores');
 }
+
+export function createTrabajador(data) {
+  return postJson('/trabajadores', data);
+}
+
+export function updateTrabajador(id, data) {
+  return putJson(`/trabajadores/${id}`, data);
+}

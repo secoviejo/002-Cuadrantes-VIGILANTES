@@ -141,6 +141,20 @@ Se ha creado el CRUD basico de Servicios desde React:
 - Empresas, Campus, Edificios y Dashboard verificados
 - npm run build OK
 
+## Estado del paso 20
+
+Se ha creado el CRUD basico de Trabajadores desde React:
+- Creados: TrabajadoresPage.jsx, TrabajadoresTable.jsx, TrabajadorForm.jsx
+- Agregadas funciones API createTrabajador y updateTrabajador
+- Agregada navegacion en App.jsx
+- Campos del modelo: codigo, nombre, tipo (enum), identificadorProfesional, activo, empresaId
+- Selector de empresa en formulario (relacion obligatoria)
+- Selector de tipo/perfil (VIGILANTE, AUXILIAR, JEFE_EQUIPO, OTRO)
+- Badges de colores para tipo de trabajador
+- Checkbox para activo/inactivo
+- npm run build OK
+- Datos ficticios usados en pruebas (sin datos personales reales)
+
 ## Proximo paso recomendado
 
-1. **PASO 20**: Replicar el patron CRUD para Trabajadores.
+1. **PASO 21**: Revisar y posiblemente extender el CRUD de Trabajadores segun necesidades reales.
