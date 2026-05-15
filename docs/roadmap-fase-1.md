@@ -60,6 +60,10 @@ Prisma ya esta configurado para MariaDB con `schema.prisma`, seed inicial y scri
 
 Capa de repositories preparada en `backend/src/repositories/` con Prisma. Incluye cliente singleton (`prisma.js`), utilidades base de filtrado/paginacion, y repositories para Trabajador, Servicio, Turno, AsignacionTurno y Ausencia. Validado con `prisma validate` y `prisma generate`. Sin controladores reales ni migraciones.
 
+## Estado del paso 9
+
+Controladores y rutas REST GET de solo lectura creados sobre la capa de repositories Prisma. Recursos expuestos: trabajadores, servicios, turnos, asignaciones de turno y ausencias. No hay endpoints de escritura, login real, JWT funcional, conexion frontend-backend ni migraciones reales.
+
 ## Proximo paso recomendado
 
-Crear controladores REST basicos conectados a los repositories para exponer los recursos de API. Esto permitira integrar el frontend React con datos reales desde Prisma cuando se disponga de MariaDB.
+Preparar una MariaDB de desarrollo, ejecutar la primera migracion controlada y probar los endpoints GET con seed. Despues, decidir si ampliar lecturas o introducir escrituras protegidas por autenticacion, roles y auditoria.

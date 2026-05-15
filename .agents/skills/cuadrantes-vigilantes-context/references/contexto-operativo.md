@@ -11,11 +11,11 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `cuadrantes_uz_6.html`: prototipo principal de una sola pagina. Contiene estructura HTML, estilos CSS inline, JavaScript inline, datos de demostracion, navegacion interna, modales, pantallas y logica visual.
 - `legacy/html-original/cuadrantes_uz_6.html`: copia historica del prototipo HTML original, conservada como referencia visual para la migracion progresiva.
 - `legacy/html-original/README.md`: documenta el uso de `legacy/html-original/` como referencia visual historica del prototipo.
-- `README.md`: resumen del proyecto, estado actual, estructura preparada y limites del paso actual.
+- `README.md`: resumen del proyecto, estado actual, estructura preparada, backend con Prisma/repositories/rutas GET y limites pendientes.
 - `DESCRIPCION_Y_FUNCIONES_APP.md`: documento funcional con objetivo, perfiles, pantallas, informes, incidencias y limitaciones actuales.
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
-- `backend/`: API base Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, ruta `src/routes/health.routes.js`, README y estructura preparada.
+- `backend/`: API Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, rutas, controladores, repositories, README y estructura preparada.
 - `backend/prisma/schema.prisma`: schema Prisma inicial configurado para MariaDB con proveedor `mysql`.
 - `backend/prisma/seed.js`: seed inicial con datos ficticios para roles, empresa, campus, edificios, servicios, trabajadores y un turno/asignacion demo.
 - `backend/src/services/motorReglasTurnos.service.js`: motor central de reglas de turnos, independiente de Prisma y basado en objetos JavaScript.
@@ -26,14 +26,16 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
 - `backend/src/repositories/`: capa de acceso a datos con Prisma. Contiene `base.repository.js` con utilidades de filtrado y paginacion, `trabajador.repository.js`, `servicio.repository.js`, `turno.repository.js`, `asignacionTurno.repository.js`, `ausencia.repository.js` e `index.js` que exporta todos los repositorios.
 - `backend/src/db/prisma.js`: cliente Prisma singleton para evitar conexiones multiples.
-- No existen controladores CRUD reales conectados a los repositories; estos son solo la capa de datos.
+- `backend/src/controllers/`: controladores GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
+- `backend/src/routes/`: rutas REST GET de solo lectura para los recursos anteriores, registradas bajo `/api`.
+- No existen controladores CRUD completos; solo hay consultas GET.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
 - Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
 - Prisma esta configurado con MariaDB como base prevista.
 - No hay base MariaDB real configurada, migraciones ejecutadas, autenticacion real ni persistencia operativa.
 - El remoto Git configurado apunta a `git@github.com:secoviejo/002-Cuadrantes-VIGILANTES.git`.
-- En el estado observado, `.agents/` aparece como no trackeado en Git.
+- La skill `.agents/skills/cuadrantes-vigilantes-context/` esta versionada y se usa como memoria viva.
 
 ## Estado Actual de la Arquitectura
 
@@ -51,8 +53,8 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
-- La API Express minima expone `GET /api` y `GET /api/health`; todavia no contiene rutas de negocio.
-- No hay controladores conectados a Prisma y el frontend no consume todavia el backend.
+- La API Express expone `GET /api`, `GET /api/health` y endpoints GET de negocio para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
+- Hay controladores GET conectados a repositories Prisma. El frontend no consume todavia el backend.
 - `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
 ## Pantallas y Estado Funcional
@@ -167,7 +169,7 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. MariaDB real, migraciones, JWT y la API REST de negocio quedan para pasos posteriores.
+Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio existe solo en modo lectura. MariaDB real, migraciones, JWT y escrituras quedan para pasos posteriores.
 
 La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate funcionan con `DATABASE_URL` de ejemplo en la sesion.
 
@@ -185,8 +187,9 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Guardar trazabilidad de acciones importantes en auditoria.
 - Centralizar reglas en backend, preferiblemente en un servicio tipo `MotorReglasTurnos`, evitando duplicarlas en componentes React.
 - `MotorReglasTurnos` implementa ya reglas iniciales de solapamiento, descanso, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura.
-- Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y futuros controladores accedan a datos sin dependencia directa del ORM.
-- El siguiente paso tecnico recomendado es crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar primero una capa de repositorios.
+- Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y controladores accedan a datos sin dependencia directa del ORM.
+- Rutas y controladores GET de solo lectura ya disponibles para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
+- El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y primera migracion controlada, o ampliar lecturas antes de escrituras protegidas.
 
 ## Riesgos Tecnicos Actuales
 
@@ -207,7 +210,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - No borrar ni mover el HTML original hasta tener una referencia visual versionada.
 - Mantener `legacy/html-original/` como referencia historica del prototipo original antes de la migracion.
 - No reescribir toda la aplicacion de golpe.
-- No crear Prisma ni MariaDB sin una fase previa de modelo de datos y decisiones tecnicas.
+- No ejecutar migraciones MariaDB ni ampliar Prisma sin una fase previa de modelo de datos y decisiones tecnicas.
 - Usar el HTML como maqueta funcional y visual, no como fuente de verdad de datos.
 - Migrar primero piezas de bajo riesgo: layout, navegacion, dashboard visual y tablas demo.
 - Separar desde el inicio datos, servicios de API, componentes visuales y reglas de negocio.
@@ -235,10 +238,12 @@ Al tocar backend/API futura, comprobar:
 - Rutas.
 - Validaciones.
 - Errores.
+- Contrato de respuesta `data`/`meta` en listados.
 - Permisos.
 - Persistencia.
 - Auditoria.
 - `npm run test:reglas` si se toca `MotorReglasTurnos`.
+- Importacion de `createApp` si se registran nuevas rutas.
 
 Al tocar Prisma/MariaDB futura, comprobar:
 
@@ -292,3 +297,5 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 - 2026-05-15: Inicializado backend base en `backend/` con Node.js + Express, CORS y dotenv. Verificadas rutas `GET /api` y `GET /api/health`. No se ha creado Prisma ni MariaDB.
 - 2026-05-15: Configurado Prisma en `backend/prisma/schema.prisma` con proveedor MySQL para MariaDB, modelo inicial, enums requeridos y seed ficticio. Verificados `npx prisma validate` y `npx prisma generate`; no se ejecutaron migraciones reales ni se conectaron controladores a Prisma.
 - 2026-05-15: Creado `MotorReglasTurnos` como servicio backend independiente y testeable con objetos JavaScript. Valida reglas basicas de asignacion de turnos y cuenta con ejemplos y script manual `npm run test:reglas`; sigue sin conectarse a controladores reales ni Prisma.
+- 2026-05-15: Preparada capa de repositories Prisma para Trabajador, Servicio, Turno, AsignacionTurno y Ausencia, con cliente singleton y script manual `npm run test:repos`.
+- 2026-05-15: Creados controladores y rutas REST GET de solo lectura conectados a repositories Prisma para trabajadores, servicios, turnos, asignaciones de turno y ausencias. No se han creado endpoints de escritura, login real, JWT, migraciones ni conexion frontend-backend.

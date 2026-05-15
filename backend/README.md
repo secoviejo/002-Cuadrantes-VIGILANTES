@@ -32,6 +32,39 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 
 - `GET /api`: informacion basica de la API.
 - `GET /api/health`: comprobacion de salud del backend.
+- `GET /api/trabajadores`: lista trabajadores con filtros basicos.
+- `GET /api/trabajadores/:id`: obtiene un trabajador.
+- `GET /api/servicios`: lista servicios con filtros basicos.
+- `GET /api/servicios/:id`: obtiene un servicio.
+- `GET /api/turnos`: lista turnos con filtros basicos.
+- `GET /api/turnos/:id`: obtiene un turno.
+- `GET /api/asignaciones-turno`: lista asignaciones de turno.
+- `GET /api/asignaciones-turno/:id`: obtiene una asignacion de turno.
+- `GET /api/ausencias`: lista ausencias.
+- `GET /api/ausencias/:id`: obtiene una ausencia.
+
+Estas rutas son de solo lectura. No existen todavia endpoints `POST`, `PUT`, `PATCH` ni `DELETE` de negocio.
+
+Filtros soportados segun recurso:
+
+- Comunes: `id`, `busqueda`, `activo`, `tipo`, `estado`, `pagina`, `elementosPorPagina`.
+- Relaciones: `empresaId`, `campusId`, `servicioId`, `turnoId`, `trabajadorId`.
+- Fechas: `fechaDesde`, `fechaHasta`.
+
+Las respuestas de listado siguen esta forma:
+
+```json
+{
+  "data": [],
+  "meta": {
+    "total": 0,
+    "pagina": 1,
+    "elementosPorPagina": 20
+  }
+}
+```
+
+Los endpoints consultan la capa `src/repositories/` con Prisma. Requieren una `DATABASE_URL` valida y una MariaDB migrada para devolver datos reales.
 
 ## MotorReglasTurnos
 
@@ -93,6 +126,6 @@ npm run seed
 
 ## Estado actual
 
-Este backend es una inicializacion minima. No contiene todavia autenticacion JWT funcional, controladores conectados a Prisma ni migraciones ejecutadas.
+Este backend tiene API Express, Prisma, repositories y controladores/rutas GET de solo lectura conectados a los repositories. No contiene todavia autenticacion JWT funcional, endpoints de escritura, migraciones ejecutadas ni integracion con frontend.
 
-El siguiente paso recomendado es crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar antes una capa de repositorios para conectar Prisma sin acoplar controladores a la base de datos.
+El siguiente paso recomendado es preparar MariaDB de desarrollo y ejecutar la primera migracion controlada, o completar la capa de endpoints de lectura para mas entidades antes de introducir escrituras con permisos.

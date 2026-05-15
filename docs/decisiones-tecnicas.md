@@ -12,6 +12,7 @@
 - Configurar Prisma con proveedor MySQL para MariaDB dentro de `backend/prisma/schema.prisma`.
 - Crear un seed inicial con datos ficticios sin datos personales reales.
 - Crear `MotorReglasTurnos` como servicio backend puro que trabaja con objetos JavaScript y no depende directamente de Prisma.
+- Exponer primero endpoints REST GET de solo lectura conectados a repositories Prisma, sin escrituras hasta tener autenticacion, permisos y auditoria.
 
 ## Decisiones pendientes
 
@@ -20,8 +21,8 @@
 - Revision funcional del modelo Prisma inicial.
 - Configuracion de MariaDB local o de desarrollo.
 - Primera migracion Prisma.
-- Crear rutas/controladores reales para trabajadores, servicios y turnos.
-- Decidir si se incorpora una capa de repositorios antes de conectar Prisma a controladores.
+- Ampliar endpoints de lectura a entidades restantes si hace falta.
+- Decidir el orden de introduccion de escrituras protegidas.
 - Estrategia de autenticacion JWT.
 - Estrategia de auditoria.
 - Estrategia de testing.
@@ -31,5 +32,5 @@
 - No mover ni borrar el HTML original.
 - No mezclar datos demo con modelo real.
 - No implementar funcionalidades avanzadas antes de estabilizar la base.
-- No conectar controladores reales a Prisma hasta validar reglas y modelo.
+- No exponer endpoints de escritura conectados a Prisma hasta validar autenticacion, permisos y auditoria.
 - Mantener reglas de turnos en `MotorReglasTurnos`, no duplicarlas en frontend.

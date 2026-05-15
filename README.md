@@ -14,17 +14,26 @@ Ya existen bases tecnicas separadas para frontend y backend. La migracion funcio
 ## Estructura preparada
 
 - `frontend/`: aplicacion base inicializada con React + Vite + Tailwind CSS.
-- `backend/`: API base Node.js + Express con rutas minimas de salud.
+- `backend/`: API Node.js + Express con Prisma, repositories, motor de reglas y rutas GET de solo lectura.
 - `docs/`: documentacion tecnica y funcional de la migracion.
 - `.agents/skills/cuadrantes-vigilantes-context/`: memoria viva del proyecto para decisiones futuras.
 
-## Fuera de este paso
+## Estado tecnico actual
 
-En esta fase ya se han inicializado frontend y backend base. Siguen sin crearse base de datos ni configuracion de ORM:
+- Frontend base React + Vite + Tailwind CSS inicializado.
+- Backend Express inicializado.
+- Prisma configurado para MariaDB.
+- Schema y seed inicial creados.
+- `MotorReglasTurnos` creado como modulo backend independiente.
+- Capa de repositories Prisma preparada.
+- Rutas REST GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
 
-- No hay Prisma.
-- No hay MariaDB.
-- No hay API REST funcional de negocio.
+## Pendiente
+
+- No hay MariaDB real configurada ni migraciones ejecutadas.
 - No hay autenticacion JWT real.
+- No hay endpoints de escritura.
+- No hay conexion frontend-backend.
+- No se han migrado pantallas funcionales del HTML a React.
 
 La siguiente evolucion debe hacerse por pasos pequenos, manteniendo el HTML original como referencia visual.
