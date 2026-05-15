@@ -3,7 +3,16 @@ import { getTurnos, getServicios } from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
 import TurnosTable from '../components/turnos/TurnosTable';
 import TurnoForm from '../components/turnos/TurnoForm';
-import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Plus, Loader2, AlertCircle, CheckCircle2, Filter } from 'lucide-react';
+
+const ESTADOS = [
+  { value: '', label: 'Todos' },
+  { value: 'SIN_CUBRIR', label: 'Sin cubrir' },
+  { value: 'PARCIAL', label: 'Parcial' },
+  { value: 'CUBIERTO', label: 'Cubierto' },
+  { value: 'INCIDENCIA', label: 'Incidencia' },
+  { value: 'CANCELADO', label: 'Cancelado' },
+];
 
 export default function TurnosPage({ currentRoute, onNavigate }) {
   const [turnos, setTurnos] = useState([]);
@@ -15,6 +24,10 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
   const [turnoToEdit, setTurnoToEdit] = useState(null);
   
   const [feedback, setFeedback] = useState(null);
+  
+  const [filtroEstado, setFiltroEstado] = useState('');
+  const [filtroFecha, setFiltroFecha] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const loadTurnos = async () => {
     setLoading(true);
@@ -73,6 +86,15 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
     loadTurnos();
   };
 
+  const turnosFiltrados = turnos.filter(turno => {
+    if (filtroEstado && turno.estado !== filtroEstado) return false;
+    if (filtroFecha) {
+      const fechaTurno = new Date(turno.fecha).toISOString().split('T')[0];
+      if (fechaTurno !== filtroFecha) return false;
+    }
+    return true;
+  });
+
   return (
     <AppLayout 
       isConnected={!error} 
@@ -102,7 +124,14 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 text-sm text-stone-600 hover:text-stone-800 transition-colors"
+            >
+              <Filter className="w-4 h-4" />
+              Filtros
+            </button>
             <button
               onClick={handleCreateNew}
               className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
@@ -110,6 +139,50 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
               <Plus className="w-4 h-4" />
               Nuevo turno
             </button>
+          </div>
+
+          {showFilters && (
+            <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+              <div className="flex flex-wrap gap-4">
+                <div className="space-y-1">
+                  <label htmlFor="filtroEstado" className="text-xs font-medium text-stone-600">Estado</label>
+                  <select
+                    id="filtroEstado"
+                    value={filtroEstado}
+                    onChange={(e) => setFiltroEstado(e.target.value)}
+                    className="px-3 py-1.5 border border-stone-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  >
+                    {ESTADOS.map(e => (
+                      <option key={e.value} value={e.value}>{e.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="filtroFecha" className="text-xs font-medium text-stone-600">Fecha</label>
+                  <input
+                    type="date"
+                    id="filtroFecha"
+                    value={filtroFecha}
+                    onChange={(e) => setFiltroFecha(e.target.value)}
+                    className="px-3 py-1.5 border border-stone-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+                {(filtroEstado || filtroFecha) && (
+                  <div className="flex items-end">
+                    <button
+                      onClick={() => { setFiltroEstado(''); setFiltroFecha(''); }}
+                      className="px-3 py-1.5 text-sm text-stone-600 hover:text-stone-800"
+                    >
+                      Limpiar
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="text-sm text-stone-500">
+            Mostrando {turnosFiltrados.length} de {turnos.length} turnos
           </div>
 
           {loading ? (
@@ -132,7 +205,7 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
               </div>
             </div>
           ) : (
-            <TurnosTable turnos={turnos} onEdit={handleEdit} />
+            <TurnosTable turnos={turnosFiltrados} onEdit={handleEdit} />
           )}
         </div>
       )}
