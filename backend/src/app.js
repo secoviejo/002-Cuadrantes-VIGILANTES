@@ -3,12 +3,25 @@ import express from 'express'
 import { healthRouter } from './routes/health.routes.js'
 import { apiRouter } from './routes/index.js'
 
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+]
+
 export function createApp() {
   const app = express()
 
   app.use(
     cors({
-      origin: process.env.FRONTEND_ORIGIN || 'http://127.0.0.1:5173',
+      origin(origin, callback) {
+        if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+          return callback(null, true)
+        }
+        return callback(new Error('Not allowed by CORS'))
+      },
+      credentials: true,
     }),
   )
   app.use(express.json())
