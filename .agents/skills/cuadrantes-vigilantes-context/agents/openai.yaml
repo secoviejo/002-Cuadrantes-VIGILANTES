@@ -1,0 +1,5 @@
+interface:
+  display_name: "Cuadrantes Vigilantes Context"
+  short_description: "Contexto vivo de 002-Cuadrantes-VIGILANTES"
+  brand_color: "#2E6DA4"
+  default_prompt: "Use $cuadrantes-vigilantes-context to understand the project before proposing or implementing changes."
