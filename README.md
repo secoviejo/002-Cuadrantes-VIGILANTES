@@ -1,38 +1,149 @@
-# 002-Cuadrantes-VIGILANTES
+# Cuadrantes VIGILANTES - UZ
 
-Aplicacion para gestionar y supervisar cuadrantes de vigilantes de seguridad y auxiliares de servicio vinculados a la Universidad de Zaragoza.
+Sistema de gestión de cuadrantes de vigilantes de seguridad para la Universidad de Zaragoza.
 
-## Estado actual
+## Tecnologias
 
-El proyecto parte de un prototipo HTML navegable:
+- **Frontend:** React + Vite + TailwindCSS
+- **Backend:** Node.js + Express + Prisma
+- **Base de datos:** MariaDB
 
-- `cuadrantes_uz_6.html`: prototipo original en la raiz.
-- `legacy/html-original/`: copia historica conservada como referencia visual.
+## Requisitos
 
-Ya existen bases tecnicas separadas para frontend y backend. La migracion funcional del prototipo seguira haciendose de forma progresiva.
+- Node.js 18+
+- MariaDB 10.5+
+- npm o yarn
 
-## Estructura preparada
+## Instalacion
 
-- `frontend/`: aplicacion base inicializada con React + Vite + Tailwind CSS.
-- `backend/`: API Node.js + Express con Prisma, repositories, motor de reglas, rutas GET y escrituras basicas en entidades maestras.
-- `docs/`: documentacion tecnica y funcional de la migracion.
-- `.agents/skills/cuadrantes-vigilantes-context/`: memoria viva del proyecto para decisiones futuras.
+### Backend
 
-## Estado tecnico actual
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Editar .env con la configuracion de la base de datos
+npx prisma migrate dev
+npm start
+```
 
-- Frontend React + Vite + Tailwind CSS conectado a backend mediante cliente HTTP.
-- Primer Dashboard implementado mostrando datos reales (KPIs, listados de Trabajadores y Servicios).
-- Backend Express sirviendo API REST en puerto 4000.
-- Entorno MariaDB local con Docker Compose en puerto 3308.
-- Prisma configurado y primera migracion ejecutada con seed de datos inicial.
-- `MotorReglasTurnos` creado como modulo backend independiente.
-- Capa de repositories Prisma preparada.
-- Rutas REST GET para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
-- Rutas REST `POST` y `PUT` para empresas, campus, edificios, servicios y trabajadores.
-- CRUD completo implementado en frontend para Empresas, Campus, Edificios, Servicios y Trabajadores.
+### Frontend
 
-## Pendiente
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-- Autenticacion JWT real y securizacion de endpoints.
-- Endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios.
-- Conexion de reglas de negocio complejas (MotorReglasTurnos) al flujo principal.
+## Estructura del proyecto
+
+```
+/
+├── backend/
+│   ├── prisma/
+│   │   └── schema.prisma      # Modelo de datos
+│   ├── src/
+│   │   ├── controllers/      # Controladores API
+│   │   ├── middleware/        # Middleware (auth)
+│   │   ├── repositories/     # Acceso a datos
+│   │   ├── routes/           # Rutas API
+│   │   ├── services/         # Logica de negocio
+│   │   └── utils/            # Utilidades
+│   └── server.js
+├── frontend/
+│   └── src/
+│       ├── api/              # Funciones API cliente
+│       ├── components/       # Componentes React
+│       ├── pages/            # Paginas
+│       └── utils/            # Utilidades
+└── README.md
+```
+
+## Entidades del sistema
+
+| Entidad | Descripcion |
+|---------|-------------|
+| Empresa | Empresas de seguridad |
+| Campus | Campus universitarios |
+| Edificio | Edificios dentro de campus |
+| Servicio | Servicios de vigilancia |
+| Trabajador | Vigilantes y auxiliares |
+| Turno | Turnos de trabajo |
+| Asignacion | Asignaciones trabajador-turno |
+| Sustitucion | Sustituciones entre trabajadores |
+| Incidencia | Incidencias operativas |
+| Verificacion | Verificaciones de cobertura |
+| Usuario | Usuarios del sistema |
+| Rol | Roles (ADMIN, GESTOR, etc.) |
+
+## Rutas API
+
+### Catalogo
+- `GET /api/empresas`
+- `GET /api/campus`
+- `GET /api/edificios`
+- `GET /api/servicios`
+- `GET /api/trabajadores`
+
+### Operativo
+- `GET /api/turnos`
+- `GET /api/asignaciones-turno`
+- `GET /api/sustituciones`
+- `GET /api/incidencias`
+- `GET /api/verificaciones`
+
+### Utilidades
+- `GET /api/validaciones/validar-asignacion`
+- `GET /api/auditoria`
+
+### Autenticacion
+- `POST /api/auth/login`
+- `GET /api/auth/profile`
+- `GET /api/auth/roles`
+
+## Configuracion
+
+Variables de entorno necesarias en `backend/.env`:
+
+```
+DATABASE_URL="mysql://user:password@localhost:3306/cuadrantes"
+SHADOW_DATABASE_URL="mysql://user:password@localhost:3306/cuadrantes_shadow"
+JWT_SECRET="tu-secret-key"
+JWT_EXPIRES="24h"
+PORT=4000
+```
+
+## Comandos de desarrollo
+
+```bash
+# Backend
+cd backend
+npm run dev          # Desarrollo con nodemon
+npm run lint         # Linting
+
+# Frontend
+cd frontend
+npm run dev          # Desarrollo
+npm run build        # Produccion
+```
+
+## Estado del proyecto
+
+**Version:** MVP 1.0
+
+**Funcionalidades implementadas:**
+- CRUD completo de todas las entidades
+- Validacion de asignaciones
+- Exportacion a CSV
+- Autenticacion JWT
+- Roles y permisos
+- Auditoria de acciones
+
+**Pendiente:**
+- Tests unitarios
+- Documentacion completa
+- Despliegue en produccion
+
+## Licencia
+
+Proprietario - Universidad de Zaragoza
