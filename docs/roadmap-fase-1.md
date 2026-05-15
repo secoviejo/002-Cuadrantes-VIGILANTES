@@ -68,6 +68,30 @@ Controladores y rutas REST GET de solo lectura creados sobre la capa de reposito
 
 Escrituras basicas `POST` y `PUT` creadas para entidades maestras: empresas, campus, edificios, servicios y trabajadores. Se mantienen fuera las escrituras de turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login y JWT. No hay `PATCH`, `DELETE`, conexion frontend-backend ni migraciones reales.
 
+## Estado del paso 11
+
+Documentacion preparada para la primera migracion controlada de MariaDB de desarrollo.
+
+- Schema Prisma validado: `prisma validate` ejecutado correctamente.
+- Prisma Client generado: `prisma generate` ejecutado correctamente.
+- `.env.example` actualizado con nombre de base de datos de desarrollo (`cuadrantes_vigilantes_dev`) y comentarios claros.
+- `backend/README.md` ampliado con instrucciones detalladas de preparacion de MariaDB, migracion y seed.
+- `docs/arquitectura.md` y `docs/roadmap-fase-1.md` actualizados.
+- Contexto vivo actualizado.
+- La migracion real NO se ha ejecutado: no hay MariaDB local disponible en este entorno.
+- La carpeta `backend/prisma/migrations/` NO existe todavia: se creara con el primer `prisma migrate dev`.
+
 ## Proximo paso recomendado
 
-Preparar una MariaDB de desarrollo, ejecutar la primera migracion controlada y probar los endpoints GET/POST/PUT con seed. Despues, introducir autenticacion/roles o escrituras operativas con auditoria.
+Cuando el usuario disponga de MariaDB local (instalacion directa o Docker):
+
+1. Crear la base de datos `cuadrantes_vigilantes_dev` con el SQL documentado en `backend/README.md`.
+2. Copiar `.env.example` a `.env` y ajustar `DATABASE_URL` con las credenciales reales locales.
+3. Desde `backend/`, ejecutar:
+   ```bash
+   npm run prisma:migrate     # Primera migracion: crea backend/prisma/migrations/
+   npm run seed               # Carga datos ficticios
+   npm run dev                # Arranca el servidor
+   ```
+4. Probar los endpoints GET/POST/PUT contra datos reales.
+5. Si todo funciona, introducir autenticacion JWT o escrituras operativas con auditoria.

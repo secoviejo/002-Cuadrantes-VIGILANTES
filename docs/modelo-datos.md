@@ -42,10 +42,15 @@ Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, ca
 ## Pendiente
 
 - Revisar campos con usuarios funcionales.
-- Crear base MariaDB local o de desarrollo.
-- Ejecutar primera migracion Prisma.
+- Instalar MariaDB local (o levantar con Docker).
+- Crear base de datos `cuadrantes_vigilantes_dev` con el SQL documentado en `backend/README.md`.
+- Configurar `.env` local con `DATABASE_URL` real.
+- Ejecutar primera migracion Prisma: `npm run prisma:migrate`.
+- Ejecutar seed: `npm run seed`.
 - Probar los endpoints GET/POST/PUT actuales contra una base MariaDB migrada y con seed.
 - Conectar `MotorReglasTurnos` con datos leidos desde Prisma mediante repositories o controladores.
+
+> El schema Prisma esta validado y el Prisma Client esta generado. La migracion real no se ha ejecutado porque no hay MariaDB local disponible en este entorno (PASO 11).
 
 ## Consumo API actual
 

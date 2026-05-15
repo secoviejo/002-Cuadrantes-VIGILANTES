@@ -105,26 +105,65 @@ npm run test:reglas
 
 ## Prisma y MariaDB
 
-Prisma esta configurado en `prisma/schema.prisma` con proveedor `mysql`.
+Prisma esta configurado en `prisma/schema.prisma` con proveedor `mysql` para MariaDB.
 
-La URL esperada para desarrollo esta documentada en `.env.example`:
+La URL de conexion usa la variable de entorno `DATABASE_URL`. Esta variable **nunca** se sube al repositorio. Se gestiona unicamente a traves de un archivo `.env` local, ignorado por Git.
 
-```text
-DATABASE_URL="mysql://usuario:password@localhost:3306/cuadrantes_vigilantes"
-```
+Copia `.env.example` a `.env` y ajusta los valores antes de ejecutar cualquier migracion o seed.
 
-Preparacion local orientativa de MariaDB:
+### Preparar la base de datos MariaDB de desarrollo
+
+Estos son los comandos SQL orientativos para crear la base de datos local de **desarrollo**. No son credenciales reales. Cambia usuario y password segun tu entorno.
+
+> **Importante**: esta base de datos es solo de desarrollo. No toques ni configures la base de datos de produccion en este paso.
 
 ```sql
-CREATE DATABASE cuadrantes_vigilantes CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'usuario'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON cuadrantes_vigilantes.* TO 'usuario'@'localhost';
+CREATE DATABASE cuadrantes_vigilantes_dev
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'cuadrantes_user'@'localhost' IDENTIFIED BY 'CAMBIAR_PASSWORD_LOCAL';
+
+GRANT ALL PRIVILEGES ON cuadrantes_vigilantes_dev.* TO 'cuadrantes_user'@'localhost';
+
 FLUSH PRIVILEGES;
 ```
 
-Despues, crea un `.env` local a partir de `.env.example` y ajusta usuario/password. En este paso no se han ejecutado migraciones reales porque no se ha configurado una base MariaDB local.
+Despues de crear la base, edita tu `.env` local con los valores reales:
 
-Comandos disponibles:
+```text
+DATABASE_URL="mysql://cuadrantes_user:TU_PASSWORD_LOCAL@localhost:3306/cuadrantes_vigilantes_dev"
+```
+
+### Ejecutar la primera migracion Prisma
+
+Una vez configurado `.env` con una `DATABASE_URL` valida que apunte a MariaDB local:
+
+```bash
+# Desde backend/
+npm run prisma:validate        # Valida el schema (no requiere base de datos real)
+npm run prisma:migrate         # Ejecuta: prisma migrate dev --name init
+npm run prisma:generate        # Genera Prisma Client (puede ejecutarse sin MariaDB)
+```
+
+La primera migracion creara la carpeta `backend/prisma/migrations/` con el SQL inicial.
+
+### Verificar la migracion
+
+```bash
+npx prisma migrate status      # Muestra que migraciones se han ejecutado
+npx prisma studio              # Abre un explorador visual de la base de datos (opcional)
+```
+
+### Cargar datos de ejemplo (seed)
+
+```bash
+npm run seed                   # Requiere MariaDB migrada
+```
+
+El seed carga datos ficticios: roles, empresa demo, campus, edificios, servicios y trabajadores. No contiene datos personales reales.
+
+### Comandos disponibles
 
 ```bash
 npm run prisma:validate
@@ -134,10 +173,14 @@ npm run prisma:studio
 npm run seed
 ```
 
-`npm run seed` requiere una base MariaDB configurada y migrada.
+## Estado actual (PASO 11)
 
-## Estado actual
+- Schema Prisma validado (`prisma validate` ejecutado con URL de entorno temporal).
+- Prisma Client generado (`prisma generate` ejecutado correctamente).
+- `.env.example` actualizado con comentarios claros y nombre de base de datos de desarrollo.
+- No hay MariaDB local configurada en este entorno: **la migracion real no se ha ejecutado**.
+- La carpeta `backend/prisma/migrations/` no existe todavia: se creara con la primera migracion.
+- No hay conexion frontend-backend todavia.
+- No hay autenticacion JWT funcional todavia.
 
-Este backend tiene API Express, Prisma, repositories, controladores/rutas GET conectados a repositories y escrituras basicas para entidades maestras. No contiene todavia autenticacion JWT funcional, escrituras operativas de turnos/asignaciones/incidencias/verificaciones, migraciones ejecutadas ni integracion con frontend.
-
-El siguiente paso recomendado es preparar MariaDB de desarrollo y ejecutar la primera migracion controlada para probar estas rutas contra datos reales antes de ampliar escrituras operativas.
+El siguiente paso, cuando el usuario disponga de MariaDB local, es ejecutar `npm run prisma:migrate` y `npm run seed` para probar los endpoints contra datos reales.

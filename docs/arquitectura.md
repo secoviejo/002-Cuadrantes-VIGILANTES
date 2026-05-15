@@ -4,13 +4,15 @@
 
 El proyecto conserva un prototipo HTML monolitico como referencia funcional y visual. La copia historica esta en `legacy/html-original/`.
 
-El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `frontend/`. El backend ya tiene una API Express dentro de `backend/`, con Prisma configurado para MariaDB, repositories, rutas REST GET y escrituras basicas para entidades maestras. Todavia no hay migraciones reales ejecutadas ni base MariaDB conectada.
+El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `frontend/`. El backend ya tiene una API Express dentro de `backend/`, con Prisma configurado para MariaDB, repositories, rutas REST GET y escrituras basicas para entidades maestras.
+
+El schema Prisma ha sido validado (`prisma validate`) y el Prisma Client ha sido generado (`prisma generate`). No se han ejecutado migraciones reales porque el entorno de desarrollo no tiene MariaDB local instalada todavia.
 
 ## Arquitectura objetivo
 
 - Frontend: React + Vite + Tailwind CSS.
 - Backend: Node.js + Express.
-- Base de datos: MariaDB.
+- Base de datos: MariaDB (base de desarrollo: `cuadrantes_vigilantes_dev`).
 - ORM: Prisma configurado en `backend/prisma/schema.prisma`.
 - API: REST.
 - Seguridad: autenticacion JWT y roles.
@@ -31,4 +33,4 @@ La migracion debe ser progresiva. El HTML original no debe borrarse ni reescribi
 
 La API REST de negocio empezo por endpoints GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias. Despues se han abierto escrituras basicas solo para entidades maestras: empresas, campus, edificios, servicios y trabajadores. No hay escrituras para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios ni login.
 
-El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y la primera migracion controlada para validar estas rutas contra base real antes de ampliar escrituras operativas protegidas.
+El siguiente paso tecnico recomendado es que el usuario instale MariaDB local, cree la base `cuadrantes_vigilantes_dev`, configure `.env` con la `DATABASE_URL` correcta y ejecute `npm run prisma:migrate` desde `backend/`. Una vez migrada, ejecutar `npm run seed` para cargar datos ficticios y probar los endpoints existentes contra datos reales.
