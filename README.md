@@ -29,11 +29,11 @@ Ya existen bases tecnicas separadas para frontend y backend. La migracion funcio
 - Capa de repositories Prisma preparada.
 - Rutas REST GET para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
 - Rutas REST `POST` y `PUT` para empresas, campus, edificios, servicios y trabajadores.
-- CRUD completo implementado en frontend para Empresas, Campus y Edificios.
+- CRUD completo implementado en frontend para Empresas, Campus, Edificios y Servicios.
 
 ## Pendiente
 
 - Autenticacion JWT real y securizacion de endpoints.
-- CRUD completo en frontend para Servicios y Trabajadores.
+- CRUD completo en frontend para Trabajadores.
 - Endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios.
 - Conexion de reglas de negocio complejas (MotorReglasTurnos) al flujo principal.

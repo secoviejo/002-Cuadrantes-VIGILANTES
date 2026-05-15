@@ -128,6 +128,19 @@ Se ha creado el CRUD basico de Edificios desde React:
 - Prisma validate y migrate status OK
 - npm run build OK
 
+## Estado del paso 19
+
+Se ha creado el CRUD basico de Servicios desde React:
+- Creados: ServiciosPage.jsx, ServiciosTable.jsx, ServicioForm.jsx
+- Agregadas funciones API createServicio y updateServicio
+- Agregada navegacion en App.jsx
+- Endpoints backend GET/POST/PUT /api/servicios funcionando y probados
+- Campos especificos: codigo, nombre, descripcion, perfilRequerido (enum), dotacionMinima, activo, edificioId
+- Selector de edificio en formulario
+- Badges para perfil requerido y estado activo
+- Empresas, Campus, Edificios y Dashboard verificados
+- npm run build OK
+
 ## Proximo paso recomendado
 
-1. **PASO 19**: Replicar el patron CRUD para Servicios.
+1. **PASO 20**: Replicar el patron CRUD para Trabajadores.

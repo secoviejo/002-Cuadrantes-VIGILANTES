@@ -40,6 +40,14 @@ export function getServicios() {
   return getJson('/servicios');
 }
 
+export function createServicio(data) {
+  return postJson('/servicios', data);
+}
+
+export function updateServicio(id, data) {
+  return putJson(`/servicios/${id}`, data);
+}
+
 export function getTrabajadores() {
   return getJson('/trabajadores');
 }
