@@ -7,6 +7,7 @@ import ServiciosPage from './pages/ServiciosPage'
 import TrabajadoresPage from './pages/TrabajadoresPage'
 import TurnosPage from './pages/TurnosPage'
 import AsignacionesPage from './pages/AsignacionesPage'
+import CuadrantePage from './pages/CuadrantePage'
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState('dashboard')
@@ -37,6 +38,10 @@ function App() {
 
   if (currentRoute === 'asignaciones') {
     return <AsignacionesPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
+  }
+
+  if (currentRoute === 'cuadrante') {
+    return <CuadrantePage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
   }
 
   return <Dashboard currentRoute={currentRoute} onNavigate={setCurrentRoute} />
