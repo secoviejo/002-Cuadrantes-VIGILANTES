@@ -24,17 +24,16 @@ Ya existen bases tecnicas separadas para frontend y backend. La migracion funcio
 - Primer Dashboard implementado mostrando datos reales (KPIs, listados de Trabajadores y Servicios).
 - Backend Express sirviendo API REST en puerto 4000.
 - Entorno MariaDB local con Docker Compose en puerto 3308.
-- Prisma configurado y primera migración ejecutada con seed de datos inicial.
+- Prisma configurado y primera migracion ejecutada con seed de datos inicial.
 - `MotorReglasTurnos` creado como modulo backend independiente.
 - Capa de repositories Prisma preparada.
 - Rutas REST GET para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
 - Rutas REST `POST` y `PUT` para empresas, campus, edificios, servicios y trabajadores.
+- CRUD completo implementado en frontend para Empresas y Campus.
 
 ## Pendiente
 
-- Implementar lógica CRUD (Crear, Editar) en el Frontend.
-- Autenticacion JWT real y securización de endpoints.
+- Autenticacion JWT real y securizacion de endpoints.
+- CRUD completo en frontend para Edificios y Servicios.
 - Endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios.
-- Conexión de reglas de negocio complejas (MotorReglasTurnos) al flujo principal.
-
-La siguiente evolucion (PASO 15) será implementar las vistas CRUD básicas desde React.
+- Conexion de reglas de negocio complejas (MotorReglasTurnos) al flujo principal.

@@ -97,6 +97,25 @@ Se ha construido el primer Dashboard real en React conectado al backend. El Layo
 
 Se ha consolidado el contrato de la API REST base. Se han añadido métodos de lectura genérica y por ID a los repositorios Prisma y controladores de Express para las entidades maestras de `empresas`, `campus` y `edificios`. Se han habilitado sus rutas GET y se han eliminado los parches (`.catch(() => [])`) en el cliente API de React, garantizando que el frontend consuma datos reales y estructurados directamente de MariaDB, con respuestas preparadas (`[]` en lugar de error 404) para colecciones vacías.
 
+## Estado del paso 16
+
+Se ha implementado CRUD basico en el frontend React para la entidad Empresas. Se creo el patron base reusable incluyendo:
+- EmpresasPage, EmpresasTable, EmpresaForm
+- Funciones API createEmpresa y updateEmpresa
+- Navegacion dinamica con estado currentRoute
+- Mensajes de feedback (exito/error) y gestion de estados de carga
+
+## Estado del paso 17
+
+Se ha verificado y consolidado el CRUD de Campus. Todo estaba implementado correctamente:
+- CampusPage, CampusTable, CampusForm ya existian y funcionan correctamente
+- Navegacion a Campus desde el menu lateral funcionando
+- Endpoints backend GET/POST/PUT /api/campus funcionando y probados
+- Empresas y Dashboard siguen operativos
+- Frontend compila sin errores (npm run build)
+- Prisma validate y migrate status OK
+- Solo se han aÃ±adido las funciones createCampus y updateCampus faltantes en el cliente API
+
 ## Proximo paso recomendado
 
-1. **PASO 16**: Implementar CRUD básico desde el frontend (creación y edición de entidades sencillas como empresas o trabajadores) para validar el flujo completo de escritura de datos, antes de integrar JWT o securización.
+1. **PASO 18**: Replicar el patron CRUD para las entidades Edificios y Servicios.

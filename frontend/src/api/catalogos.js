@@ -16,6 +16,14 @@ export function getCampus() {
   return getJson('/campus');
 }
 
+export function createCampus(data) {
+  return postJson('/campus', data);
+}
+
+export function updateCampus(id, data) {
+  return putJson(`/campus/${id}`, data);
+}
+
 export function getEdificios() {
   return getJson('/edificios');
 }
