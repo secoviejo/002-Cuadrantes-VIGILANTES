@@ -20,21 +20,21 @@ Ya existen bases tecnicas separadas para frontend y backend. La migracion funcio
 
 ## Estado tecnico actual
 
-- Frontend base React + Vite + Tailwind CSS inicializado.
-- Backend Express inicializado.
-- Prisma configurado para MariaDB.
-- Schema y seed inicial creados.
+- Frontend React + Vite + Tailwind CSS conectado a backend mediante cliente HTTP.
+- Primer Dashboard implementado mostrando datos reales (KPIs, listados de Trabajadores y Servicios).
+- Backend Express sirviendo API REST en puerto 4000.
+- Entorno MariaDB local con Docker Compose en puerto 3308.
+- Prisma configurado y primera migración ejecutada con seed de datos inicial.
 - `MotorReglasTurnos` creado como modulo backend independiente.
 - Capa de repositories Prisma preparada.
-- Rutas REST GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
+- Rutas REST GET para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
 - Rutas REST `POST` y `PUT` para empresas, campus, edificios, servicios y trabajadores.
 
 ## Pendiente
 
-- No hay MariaDB real configurada ni migraciones ejecutadas.
-- No hay autenticacion JWT real.
-- No hay endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login ni JWT.
-- No hay conexion frontend-backend.
-- No se han migrado pantallas funcionales del HTML a React.
+- Implementar lógica CRUD (Crear, Editar) en el Frontend.
+- Autenticacion JWT real y securización de endpoints.
+- Endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios.
+- Conexión de reglas de negocio complejas (MotorReglasTurnos) al flujo principal.
 
-La siguiente evolucion debe hacerse por pasos pequenos, manteniendo el HTML original como referencia visual.
+La siguiente evolucion (PASO 15) será implementar las vistas CRUD básicas desde React.

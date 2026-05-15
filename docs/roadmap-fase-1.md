@@ -89,6 +89,10 @@ Entorno MariaDB de desarrollo levantado con Docker Compose en el puerto 3308 par
 
 Se ha validado la comunicación entre el backend Express y MariaDB levantada en Docker (puerto 3308). Los endpoints existentes GET (trabajadores, servicios), POST (empresas, campus) y PUT (empresas) responden correctamente, persistiendo y retornando información desde la base de datos real.
 
+## Estado del paso 14
+
+Se ha construido el primer Dashboard real en React conectado al backend. El Layout base (Sidebar, Header) y los estilos se han adaptado usando TailwindCSS y fuentes legacy. Se han creado clientes HTTP y componentes para cargar dinámicamente y visualizar los datos desde MariaDB. Aún no existe lógica CRUD en el frontend.
+
 ## Proximo paso recomendado
 
-1. Implementar la autenticación JWT, la gestión de sesiones y securizar las rutas (endpoints) actuales para asegurar el acceso basado en los roles del sistema antes de seguir creando lógicas más complejas como turnos y asignaciones.
+1. **PASO 15**: Implementar CRUD básico desde el frontend (creación y edición de entidades sencillas como empresas o trabajadores) para validar el flujo completo de lectura/escritura de datos, antes de integrar JWT o securización.

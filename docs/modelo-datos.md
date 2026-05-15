@@ -44,20 +44,18 @@ Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, ca
 - Conectar `MotorReglasTurnos` con datos leidos desde Prisma mediante repositories o controladores.
 
 > El schema Prisma esta validado y el Prisma Client esta generado. La primera migración real ha sido ejecutada contra una instancia local de MariaDB en Docker (PASO 12).
-## Consumo API actual
+## Consumo API actual (PASO 14)
 
-La primera capa REST de negocio usa los repositories Prisma para exponer datos de lectura:
+El frontend de React ya consume activamente los endpoints GET de lectura mediante un cliente HTTP (`api/client.js`) para mostrar KPIs y listas en el Dashboard.
 
+Los endpoints GET disponibles y funcionales:
 - Trabajadores.
 - Servicios.
-- Turnos.
-- Asignaciones de turno.
-- Ausencias.
+*(Las rutas GET de Empresas, Campus y Edificios aún están pendientes de implementar en backend).*
 
 La escritura basica esta limitada a:
-
-- Empresas.
-- Campus.
+- Empresas (POST, PUT).
+- Campus (POST).
 - Edificios.
 - Servicios.
 - Trabajadores.
