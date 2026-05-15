@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getEmpresas, getCampus, getEdificios, getServicios, getTrabajadores } from '../api/catalogos';
+import { getEmpresas, getCampus, getEdificios, getServicios, getTrabajadores, getTurnos, getAsignaciones, getIncidencias, getSustituciones } from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
 import StatCard from '../components/ui/StatCard';
-import { Users, CalendarDays, Loader2, AlertCircle } from 'lucide-react';
+import { Users, CalendarDays, Loader2, AlertCircle, Clock, AlertTriangle, ArrowRightLeft, CheckCircle } from 'lucide-react';
 
 export default function Dashboard({ currentRoute, onNavigate }) {
   const [data, setData] = useState({
@@ -10,7 +10,11 @@ export default function Dashboard({ currentRoute, onNavigate }) {
     campus: [],
     edificios: [],
     servicios: [],
-    trabajadores: []
+    trabajadores: [],
+    turnos: [],
+    asignaciones: [],
+    incidencias: [],
+    sustituciones: []
   });
   
   const [status, setStatus] = useState({
@@ -22,15 +26,34 @@ export default function Dashboard({ currentRoute, onNavigate }) {
   useEffect(() => {
     async function loadData() {
       try {
-        const [empresas, campus, edificios, servicios, trabajadores] = await Promise.all([
+        const results = await Promise.all([
           getEmpresas(),
           getCampus(),
           getEdificios(),
           getServicios(),
-          getTrabajadores()
+          getTrabajadores(),
+          getTurnos(),
+          getAsignaciones(),
+          getIncidencias(),
+          getSustituciones()
         ]);
         
-        setData({ empresas, campus, edificios, servicios, trabajadores });
+        const turnosData = Array.isArray(results[5]) ? results[5] : (results[5].items || []);
+        const asignacionesData = Array.isArray(results[6]) ? results[6] : (results[6].items || []);
+        const incidenciasData = Array.isArray(results[7]) ? results[7] : (results[7].items || []);
+        const sustitucionesData = Array.isArray(results[8]) ? results[8] : (results[8].items || []);
+        
+        setData({
+          empresas: results[0],
+          campus: results[1],
+          edificios: results[2],
+          servicios: results[3],
+          trabajadores: results[4],
+          turnos: turnosData,
+          asignaciones: asignacionesData,
+          incidencias: incidenciasData,
+          sustituciones: sustitucionesData
+        });
         setStatus({ loading: false, error: null, connected: true });
       } catch (err) {
         setStatus({ loading: false, error: err.message, connected: false });
@@ -40,6 +63,26 @@ export default function Dashboard({ currentRoute, onNavigate }) {
     loadData();
   }, []);
 
+  const getTurnosSinCubrir = () => {
+    return data.turnos.filter(t => t.estado === 'SIN_CUBRIR').length;
+  };
+
+  const getIncidenciasAbiertas = () => {
+    return data.incidencias.filter(i => i.estado === 'ABIERTA').length;
+  };
+
+  const getIncidenciasEnCurso = () => {
+    return data.incidencias.filter(i => i.estado === 'EN_CURSO').length;
+  };
+
+  const getAsignacionesHoy = () => {
+    const hoy = new Date().toISOString().split('T')[0];
+    return data.asignaciones.filter(a => {
+      const fechaAsign = new Date(a.turno?.fecha).toISOString().split('T')[0];
+      return fechaAsign === hoy;
+    }).length;
+  };
+
   return (
     <AppLayout 
       isConnected={status.connected} 
@@ -48,13 +91,28 @@ export default function Dashboard({ currentRoute, onNavigate }) {
       title="Dashboard"
       subtitle="Visión general del estado actual"
     >
-      {/* KPIs */}
-      <div className="grid grid-cols-5 gap-4 mb-8">
-        <StatCard label="Empresas" value={data.empresas.length} loading={status.loading} />
-        <StatCard label="Campus" value={data.campus.length} loading={status.loading} />
-        <StatCard label="Edificios" value={data.edificios.length} loading={status.loading} />
-        <StatCard label="Trabajadores" value={data.trabajadores.length} loading={status.loading} />
-        <StatCard label="Servicios" value={data.servicios.length} loading={status.loading} />
+      {/* KPIs Operativos */}
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3">Estado Operativo</h2>
+        <div className="grid grid-cols-5 gap-4">
+          <StatCard label="Turnos totales" value={data.turnos.length} loading={status.loading} icon={<Clock className="w-4 h-4" />} />
+          <StatCard label="Sin cubrir" value={getTurnosSinCubrir()} loading={status.loading} icon={<Clock className="w-4 h-4 text-red-600" />} />
+          <StatCard label="Incidencias abiertas" value={getIncidenciasAbiertas()} loading={status.loading} icon={<AlertTriangle className="w-4 h-4 text-red-600" />} />
+          <StatCard label="Sustituciones" value={data.sustituciones.length} loading={status.loading} icon={<ArrowRightLeft className="w-4 h-4" />} />
+          <StatCard label="Verificaciones" value={0} loading={status.loading} icon={<CheckCircle className="w-4 h-4" />} />
+        </div>
+      </div>
+
+      {/* KPIs Generales */}
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3">Catalogos</h2>
+        <div className="grid grid-cols-5 gap-4">
+          <StatCard label="Empresas" value={data.empresas.length} loading={status.loading} />
+          <StatCard label="Campus" value={data.campus.length} loading={status.loading} />
+          <StatCard label="Edificios" value={data.edificios.length} loading={status.loading} />
+          <StatCard label="Trabajadores" value={data.trabajadores.length} loading={status.loading} />
+          <StatCard label="Servicios" value={data.servicios.length} loading={status.loading} />
+        </div>
       </div>
 
       {/* Tables */}
@@ -126,9 +184,9 @@ export default function Dashboard({ currentRoute, onNavigate }) {
             </div>
           ) : status.error ? (
              <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
-              <AlertCircle className="inline w-4 h-4 mr-1" />
-              Error: {status.error}
-            </div>
+               <AlertCircle className="inline w-4 h-4 mr-1" />
+               Error: {status.error}
+             </div>
           ) : data.servicios.length === 0 ? (
             <div className="p-8 text-center text-stone-500 text-sm border border-dashed border-stone-300 rounded">
               No hay servicios registrados.
