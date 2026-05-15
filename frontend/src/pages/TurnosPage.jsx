@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { getTurnos, getServicios } from '../api/catalogos';
+import { getTurnos, getServicios, createVerificacion } from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
 import TurnosTable from '../components/turnos/TurnosTable';
 import TurnoForm from '../components/turnos/TurnoForm';
-import { Plus, Loader2, AlertCircle, CheckCircle2, Filter } from 'lucide-react';
+import { Plus, Loader2, AlertCircle, CheckCircle2, Filter, X } from 'lucide-react';
 
 const ESTADOS = [
   { value: '', label: 'Todos' },
@@ -12,6 +12,12 @@ const ESTADOS = [
   { value: 'CUBIERTO', label: 'Cubierto' },
   { value: 'INCIDENCIA', label: 'Incidencia' },
   { value: 'CANCELADO', label: 'Cancelado' },
+];
+
+const ESTADOS_VERIFICACION = [
+  { value: 'CUBIERTO', label: 'Cubierto' },
+  { value: 'INCIDENCIA', label: 'Incidencia' },
+  { value: 'DESCUBIERTO', label: 'Descubierto' },
 ];
 
 export default function TurnosPage({ currentRoute, onNavigate }) {
@@ -28,6 +34,12 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroFecha, setFiltroFecha] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  const [showVerificacion, setShowVerificacion] = useState(false);
+  const [turnoParaVerificar, setTurnoParaVerificar] = useState(null);
+  const [verificacionEstado, setVerificacionEstado] = useState('CUBIERTO');
+  const [verificacionNota, setVerificacionNota] = useState('');
+  const [verificando, setVerificando] = useState(false);
 
   const loadTurnos = async () => {
     setLoading(true);
@@ -84,6 +96,43 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
     setTimeout(() => setFeedback(null), 3000);
     
     loadTurnos();
+  };
+
+  const handleVerificar = (turno) => {
+    setTurnoParaVerificar(turno);
+    setVerificacionEstado('CUBIERTO');
+    setVerificacionNota('');
+    setShowVerificacion(true);
+  };
+
+  const handleConfirmarVerificacion = async () => {
+    if (!turnoParaVerificar) return;
+    
+    setVerificando(true);
+    try {
+      await createVerificacion({
+        turnoId: turnoParaVerificar.id,
+        estado: verificacionEstado,
+        nota: verificacionNota || null,
+      });
+      
+      setFeedback({
+        type: 'success',
+        message: 'Verificacion registrada correctamente'
+      });
+      setTimeout(() => setFeedback(null), 3000);
+      
+      setShowVerificacion(false);
+      setTurnoParaVerificar(null);
+      loadTurnos();
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        message: 'Error al registrar verificacion: ' + err.message
+      });
+    } finally {
+      setVerificando(false);
+    }
   };
 
   const turnosFiltrados = turnos.filter(turno => {
@@ -205,7 +254,70 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
               </div>
             </div>
           ) : (
-            <TurnosTable turnos={turnosFiltrados} onEdit={handleEdit} />
+            <TurnosTable turnos={turnosFiltrados} onEdit={handleEdit} onVerificar={handleVerificar} />
+          )}
+
+          {showVerificacion && turnoParaVerificar && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+                <div className="px-6 py-4 border-b border-stone-200 bg-stone-50">
+                  <h3 className="text-lg font-medium text-stone-800">Verificar Cobertura</h3>
+                  <p className="text-sm text-stone-500 mt-1">
+                    Turno: {turnoParaVerificar.codigo}
+                  </p>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-stone-700">Estado de cobertura</label>
+                    <div className="flex gap-3">
+                      {ESTADOS_VERIFICACION.map(e => (
+                        <label key={e.value} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="verificacionEstado"
+                            value={e.value}
+                            checked={verificacionEstado === e.value}
+                            onChange={() => setVerificacionEstado(e.value)}
+                            className="w-4 h-4 text-amber-600"
+                          />
+                          <span className="text-sm text-stone-700">{e.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label htmlFor="verificacionNota" className="block text-sm font-medium text-stone-700">
+                      Nota (opcional)
+                    </label>
+                    <textarea
+                      id="verificacionNota"
+                      rows="3"
+                      value={verificacionNota}
+                      onChange={(e) => setVerificacionNota(e.target.value)}
+                      placeholder="Observaciones sobre la cobertura..."
+                      className="w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="px-6 py-4 border-t border-stone-200 bg-stone-50 flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowVerificacion(false)}
+                    className="px-4 py-2 text-sm font-medium text-stone-700 bg-white border border-stone-300 rounded-md shadow-sm hover:bg-stone-50 transition-colors inline-flex items-center gap-2"
+                  >
+                    <X className="w-4 h-4" />
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleConfirmarVerificacion}
+                    disabled={verificando}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 transition-colors inline-flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {verificando ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                    Confirmar Verificacion
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       )}

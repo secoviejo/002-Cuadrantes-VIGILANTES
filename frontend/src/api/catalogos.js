@@ -142,3 +142,24 @@ export function deleteIncidencia(id) {
     return res
   });
 }
+
+export function getVerificaciones() {
+  return getJson('/verificaciones');
+}
+
+export function createVerificacion(data) {
+  return postJson('/verificaciones', data);
+}
+
+export function updateVerificacion(id, data) {
+  return putJson(`/verificaciones/${id}`, data);
+}
+
+export function deleteVerificacion(id) {
+  return fetch(`http://localhost:4000/api/verificaciones/${id}`, {
+    method: 'DELETE',
+  }).then(res => {
+    if (!res.ok) throw new Error('Error al eliminar')
+    return res
+  });
+}

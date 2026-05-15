@@ -7,9 +7,9 @@ import { empresaRouter } from './empresa.routes.js'
 import { incidenciaRouter } from './incidencia.routes.js'
 import { servicioRouter } from './servicio.routes.js'
 import { sustitucionRouter } from './sustitucion.routes.js'
-import { trabajadorRouter } from './trabajador.routes.js'
 import { turnoRouter } from './turno.routes.js'
 import { validacionesRouter } from './validaciones.routes.js'
+import { verificacionRouter } from './verificacion.routes.js'
 
 export const apiRouter = Router()
 
@@ -24,3 +24,4 @@ apiRouter.use('/turnos', turnoRouter)
 apiRouter.use('/asignaciones-turno', asignacionTurnoRouter)
 apiRouter.use('/ausencias', ausenciaRouter)
 apiRouter.use('/validaciones', validacionesRouter)
+apiRouter.use('/verificaciones', verificacionRouter)

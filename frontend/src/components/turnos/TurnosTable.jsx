@@ -1,4 +1,4 @@
-import { Edit2 } from 'lucide-react';
+import { Edit2, CheckCircle } from 'lucide-react';
 
 const ESTADOS_COLORS = {
   SIN_CUBRIR: 'bg-red-100 text-red-800',
@@ -98,13 +98,22 @@ export default function TurnosTable({ turnos, onEdit }) {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button
-                    onClick={() => onEdit(turno)}
-                    className="text-amber-600 hover:text-amber-800 transition-colors inline-flex items-center gap-1 text-xs font-medium"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                    Editar
-                  </button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => onEdit(turno)}
+                      className="text-amber-600 hover:text-amber-800 transition-colors inline-flex items-center gap-1 text-xs font-medium"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => onVerificar && onVerificar(turno)}
+                      className="text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center gap-1 text-xs font-medium"
+                    >
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      Verificar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
