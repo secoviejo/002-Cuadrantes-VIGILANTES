@@ -1,18 +1,23 @@
 # Frontend
 
-Carpeta reservada para la futura aplicacion frontend.
+Aplicacion frontend base de 002-Cuadrantes-VIGILANTES.
 
-Stack previsto para fases posteriores:
+## Stack
 
 - React.
 - Vite.
 - Tailwind CSS.
 
-Estado actual:
+## Comandos
 
-- No hay `package.json`.
-- No hay `vite.config.js`.
-- No hay componentes React.
-- No hay aplicacion ejecutable.
+```bash
+npm install
+npm run dev
+npm run build
+```
 
-La estructura de `src/` se deja preparada para organizar la migracion progresiva sin mezclar logica de negocio dentro de componentes visuales.
+## Estado actual
+
+Esta es una inicializacion minima para comprobar el stack frontend. No contiene aun migracion funcional del prototipo HTML ni conexion con backend.
+
+La referencia visual historica sigue en `../legacy/html-original/`.

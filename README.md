@@ -13,16 +13,15 @@ Todavia no existe implementacion full-stack. Este repositorio queda preparado pa
 
 ## Estructura preparada
 
-- `frontend/`: espacio reservado para la futura aplicacion React + Vite + Tailwind CSS.
+- `frontend/`: aplicacion base inicializada con React + Vite + Tailwind CSS.
 - `backend/`: espacio reservado para la futura API Node.js + Express.
 - `docs/`: documentacion tecnica y funcional de la migracion.
 - `.agents/skills/cuadrantes-vigilantes-context/`: memoria viva del proyecto para decisiones futuras.
 
 ## Fuera de este paso
 
-En esta fase no se han creado dependencias, servidores, base de datos ni configuracion de ORM:
+En esta fase solo se ha inicializado el frontend. Siguen sin crearse servidores backend, base de datos ni configuracion de ORM:
 
-- No hay React.
 - No hay Express.
 - No hay Prisma.
 - No hay MariaDB.

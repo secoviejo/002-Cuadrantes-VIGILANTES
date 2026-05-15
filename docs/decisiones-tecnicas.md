@@ -7,10 +7,10 @@
 - Crear estructura base sin generar aplicaciones ni dependencias.
 - Separar espacios futuros para frontend, backend y documentacion.
 - Mantener la memoria viva del proyecto en `.agents/skills/cuadrantes-vigilantes-context/`.
+- Inicializar el frontend con React + Vite + Tailwind CSS dentro de `frontend/`.
 
 ## Decisiones pendientes
 
-- Inicializacion exacta de React + Vite + Tailwind CSS.
 - Convenciones de rutas frontend.
 - Inicializacion de Express.
 - Diseno detallado de API REST.

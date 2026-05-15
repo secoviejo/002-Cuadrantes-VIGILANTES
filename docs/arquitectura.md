@@ -4,7 +4,7 @@
 
 El proyecto conserva un prototipo HTML monolitico como referencia funcional y visual. La copia historica esta en `legacy/html-original/`.
 
-En este paso solo se crea estructura documental y carpetas base. No se ha generado ninguna aplicacion ejecutable.
+El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `frontend/`. El backend, Prisma y MariaDB todavia no existen.
 
 ## Arquitectura objetivo
 
@@ -18,7 +18,7 @@ En este paso solo se crea estructura documental y carpetas base. No se ha genera
 
 ## Separacion prevista
 
-- `frontend/`: interfaz de usuario, componentes, paginas, layouts, hooks, servicios de cliente, utilidades y datos demo temporales.
+- `frontend/`: aplicacion React + Vite + Tailwind CSS, componentes, paginas, layouts, hooks, servicios de cliente, utilidades y datos demo temporales.
 - `backend/`: API REST, controladores, rutas, servicios de negocio, middleware y utilidades.
 - `docs/`: decisiones tecnicas, modelo de datos previsto y roadmap.
 - `legacy/`: referencias historicas que no deben convertirse en codigo activo.
