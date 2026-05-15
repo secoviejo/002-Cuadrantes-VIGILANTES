@@ -1,14 +1,19 @@
 import { ShieldCheck, Building2, Map, Layers, Users, CalendarDays } from 'lucide-react';
 
-export default function Sidebar() {
+export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
   const menuItems = [
-    { name: 'Inicio', icon: <ShieldCheck className="w-5 h-5" />, active: true },
-    { name: 'Empresas', icon: <Building2 className="w-5 h-5" /> },
-    { name: 'Campus', icon: <Map className="w-5 h-5" /> },
-    { name: 'Edificios', icon: <Layers className="w-5 h-5" /> },
-    { name: 'Servicios', icon: <CalendarDays className="w-5 h-5" /> },
-    { name: 'Trabajadores', icon: <Users className="w-5 h-5" /> },
+    { id: 'dashboard', name: 'Inicio', icon: <ShieldCheck className="w-5 h-5" /> },
+    { id: 'empresas', name: 'Empresas', icon: <Building2 className="w-5 h-5" /> },
+    { id: 'campus', name: 'Campus', icon: <Map className="w-5 h-5" /> },
+    { id: 'edificios', name: 'Edificios', icon: <Layers className="w-5 h-5" /> },
+    { id: 'servicios', name: 'Servicios', icon: <CalendarDays className="w-5 h-5" /> },
+    { id: 'trabajadores', name: 'Trabajadores', icon: <Users className="w-5 h-5" /> },
   ];
+
+  const handleNav = (e, id) => {
+    e.preventDefault();
+    if (onNavigate) onNavigate(id);
+  };
 
   return (
     <aside className="w-64 bg-stone-950 text-stone-200 min-h-screen flex flex-col sticky top-0 h-screen">
@@ -27,21 +32,25 @@ export default function Sidebar() {
           Menú Principal
         </div>
         <ul className="mt-2 flex flex-col">
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <a
-                href="#"
-                className={`flex items-center gap-3 px-6 py-2.5 text-sm transition-colors border-l-4 ${
-                  item.active
-                    ? 'border-amber-500 bg-stone-800 text-amber-200 font-medium'
-                    : 'border-transparent text-stone-300 hover:bg-stone-800 hover:text-amber-100'
-                }`}
-              >
-                {item.icon}
-                {item.name}
-              </a>
-            </li>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = currentRoute === item.id;
+            return (
+              <li key={item.id}>
+                <a
+                  href="#"
+                  onClick={(e) => handleNav(e, item.id)}
+                  className={`flex items-center gap-3 px-6 py-2.5 text-sm transition-colors border-l-4 ${
+                    isActive
+                      ? 'border-amber-500 bg-stone-800 text-amber-200 font-medium'
+                      : 'border-transparent text-stone-300 hover:bg-stone-800 hover:text-amber-100'
+                  }`}
+                >
+                  {item.icon}
+                  {item.name}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 

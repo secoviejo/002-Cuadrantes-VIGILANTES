@@ -4,7 +4,7 @@ import AppLayout from '../components/layout/AppLayout';
 import StatCard from '../components/ui/StatCard';
 import { Users, CalendarDays, Loader2, AlertCircle } from 'lucide-react';
 
-export default function Dashboard() {
+export default function Dashboard({ currentRoute, onNavigate }) {
   const [data, setData] = useState({
     empresas: [],
     campus: [],
@@ -41,7 +41,13 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <AppLayout isConnected={status.connected}>
+    <AppLayout 
+      isConnected={status.connected} 
+      currentRoute={currentRoute} 
+      onNavigate={onNavigate}
+      title="Dashboard"
+      subtitle="Visión general del estado actual"
+    >
       {/* KPIs */}
       <div className="grid grid-cols-5 gap-4 mb-8">
         <StatCard label="Empresas" value={data.empresas.length} loading={status.loading} />

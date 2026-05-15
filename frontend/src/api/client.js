@@ -9,3 +9,35 @@ export async function getJson(path) {
 
   return response.json();
 }
+
+export async function postJson(path, data) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status} al crear recurso en ${path}`);
+  }
+
+  return response.json();
+}
+
+export async function putJson(path, data) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status} al actualizar recurso en ${path}`);
+  }
+
+  return response.json();
+}
