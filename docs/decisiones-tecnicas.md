@@ -11,6 +11,7 @@
 - Inicializar el backend con Node.js + Express dentro de `backend/`, solo con rutas minimas.
 - Configurar Prisma con proveedor MySQL para MariaDB dentro de `backend/prisma/schema.prisma`.
 - Crear un seed inicial con datos ficticios sin datos personales reales.
+- Crear `MotorReglasTurnos` como servicio backend puro que trabaja con objetos JavaScript y no depende directamente de Prisma.
 
 ## Decisiones pendientes
 
@@ -19,7 +20,8 @@
 - Revision funcional del modelo Prisma inicial.
 - Configuracion de MariaDB local o de desarrollo.
 - Primera migracion Prisma.
-- Creacion de `MotorReglasTurnos`.
+- Crear rutas/controladores reales para trabajadores, servicios y turnos.
+- Decidir si se incorpora una capa de repositorios antes de conectar Prisma a controladores.
 - Estrategia de autenticacion JWT.
 - Estrategia de auditoria.
 - Estrategia de testing.
@@ -30,3 +32,4 @@
 - No mezclar datos demo con modelo real.
 - No implementar funcionalidades avanzadas antes de estabilizar la base.
 - No conectar controladores reales a Prisma hasta validar reglas y modelo.
+- Mantener reglas de turnos en `MotorReglasTurnos`, no duplicarlas en frontend.

@@ -18,6 +18,10 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `backend/`: API base Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, ruta `src/routes/health.routes.js`, README y estructura preparada.
 - `backend/prisma/schema.prisma`: schema Prisma inicial configurado para MariaDB con proveedor `mysql`.
 - `backend/prisma/seed.js`: seed inicial con datos ficticios para roles, empresa, campus, edificios, servicios, trabajadores y un turno/asignacion demo.
+- `backend/src/services/motorReglasTurnos.service.js`: motor central de reglas de turnos, independiente de Prisma y basado en objetos JavaScript.
+- `backend/src/services/motorReglasTurnos.examples.js`: datos mock para entender y probar el motor.
+- `backend/src/scripts/probarMotorReglasTurnos.js`: script manual para ejecutar casos basicos del motor.
+- `backend/src/utils/dateUtils.js`: utilidades de fechas para rangos, solapamientos y calculo de descanso.
 - `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
 - No existen carpetas `server/` ni `tests/`. Prisma vive dentro de `backend/prisma/`.
@@ -47,6 +51,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
 - La API Express minima expone `GET /api` y `GET /api/health`; todavia no contiene rutas de negocio.
 - No hay controladores conectados a Prisma y el frontend no consume todavia el backend.
+- `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
 ## Pantallas y Estado Funcional
 
@@ -177,7 +182,8 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Registrar verificaciones de cobertura con usuario, fecha/hora, turno y estado por servicio.
 - Guardar trazabilidad de acciones importantes en auditoria.
 - Centralizar reglas en backend, preferiblemente en un servicio tipo `MotorReglasTurnos`, evitando duplicarlas en componentes React.
-- El siguiente paso tecnico recomendado es crear `MotorReglasTurnos` antes de conectar controladores reales a Prisma.
+- `MotorReglasTurnos` implementa ya reglas iniciales de solapamiento, descanso, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura.
+- El siguiente paso tecnico recomendado es crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar primero una capa de repositorios.
 
 ## Riesgos Tecnicos Actuales
 
@@ -229,6 +235,7 @@ Al tocar backend/API futura, comprobar:
 - Permisos.
 - Persistencia.
 - Auditoria.
+- `npm run test:reglas` si se toca `MotorReglasTurnos`.
 
 Al tocar Prisma/MariaDB futura, comprobar:
 
@@ -281,3 +288,4 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 - 2026-05-15: Inicializado frontend base en `frontend/` con React, Vite y Tailwind CSS. Verificado `npm run build`. No se ha creado backend, Prisma ni MariaDB.
 - 2026-05-15: Inicializado backend base en `backend/` con Node.js + Express, CORS y dotenv. Verificadas rutas `GET /api` y `GET /api/health`. No se ha creado Prisma ni MariaDB.
 - 2026-05-15: Configurado Prisma en `backend/prisma/schema.prisma` con proveedor MySQL para MariaDB, modelo inicial, enums requeridos y seed ficticio. Verificados `npx prisma validate` y `npx prisma generate`; no se ejecutaron migraciones reales ni se conectaron controladores a Prisma.
+- 2026-05-15: Creado `MotorReglasTurnos` como servicio backend independiente y testeable con objetos JavaScript. Valida reglas basicas de asignacion de turnos y cuenta con ejemplos y script manual `npm run test:reglas`; sigue sin conectarse a controladores reales ni Prisma.

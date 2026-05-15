@@ -52,6 +52,10 @@ El backend base ya esta inicializado con Express y rutas minimas. Todavia no hay
 
 Prisma ya esta configurado para MariaDB con `schema.prisma`, seed inicial y scripts de validacion/generacion. Se han ejecutado `prisma validate` y `prisma generate`, pero no migraciones reales porque no hay base MariaDB configurada.
 
+## Estado del paso 7
+
+`MotorReglasTurnos` ya existe como modulo backend independiente y testeable. Valida solapamientos, descanso minimo, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura usando objetos JavaScript normales.
+
 ## Proximo paso recomendado
 
-Crear `MotorReglasTurnos` en backend para centralizar validaciones de turnos antes de conectar controladores reales a Prisma.
+Crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar primero una capa de repositorios para conectar Prisma manteniendo bajo acoplamiento.

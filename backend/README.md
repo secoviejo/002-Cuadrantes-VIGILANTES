@@ -17,6 +17,7 @@ npm run dev
 npm start
 npm run prisma:validate
 npm run prisma:generate
+npm run test:reglas
 ```
 
 Por defecto la API escucha en:
@@ -31,6 +32,31 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 
 - `GET /api`: informacion basica de la API.
 - `GET /api/health`: comprobacion de salud del backend.
+
+## MotorReglasTurnos
+
+El modulo `src/services/motorReglasTurnos.service.js` centraliza reglas basicas antes de asignar trabajadores a turnos. Trabaja con objetos JavaScript normales y todavia no depende directamente de Prisma.
+
+Reglas actuales:
+
+- Solapamiento de turnos.
+- Descanso minimo entre turnos.
+- Perfil requerido por el servicio.
+- Trabajador activo.
+- Ausencias coincidentes con el turno.
+- Dotacion minima.
+- Estado de cobertura: `SIN_CUBRIR`, `PARCIAL`, `CUBIERTO`.
+
+Ejemplos de uso:
+
+- `src/services/motorReglasTurnos.examples.js`
+- `src/scripts/probarMotorReglasTurnos.js`
+
+Prueba manual:
+
+```bash
+npm run test:reglas
+```
 
 ## Prisma y MariaDB
 
@@ -67,6 +93,6 @@ npm run seed
 
 ## Estado actual
 
-Este backend es una inicializacion minima. No contiene todavia autenticacion JWT funcional, controladores conectados a Prisma, reglas de negocio ni migraciones ejecutadas.
+Este backend es una inicializacion minima. No contiene todavia autenticacion JWT funcional, controladores conectados a Prisma ni migraciones ejecutadas.
 
-El siguiente paso recomendado es crear `MotorReglasTurnos` como servicio backend independiente antes de conectar controladores reales a Prisma.
+El siguiente paso recomendado es crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar antes una capa de repositorios para conectar Prisma sin acoplar controladores a la base de datos.

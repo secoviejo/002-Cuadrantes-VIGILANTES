@@ -19,7 +19,7 @@ El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `
 ## Separacion prevista
 
 - `frontend/`: aplicacion React + Vite + Tailwind CSS, componentes, paginas, layouts, hooks, servicios de cliente, utilidades y datos demo temporales.
-- `backend/`: API Express base, Prisma, controladores, rutas, servicios de negocio, middleware y utilidades.
+- `backend/`: API Express base, Prisma, `MotorReglasTurnos`, controladores, rutas, servicios de negocio, middleware y utilidades.
 - `docs/`: decisiones tecnicas, modelo de datos previsto y roadmap.
 - `legacy/`: referencias historicas que no deben convertirse en codigo activo.
 
@@ -27,4 +27,6 @@ El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `
 
 La migracion debe ser progresiva. El HTML original no debe borrarse ni reescribirse de golpe. Las reglas de negocio deben tender a centralizarse en backend y no en componentes visuales.
 
-El siguiente paso tecnico recomendado es crear `MotorReglasTurnos` como servicio backend puro, sin conectar todavia controladores reales a Prisma.
+`MotorReglasTurnos` ya existe como servicio backend puro y testeable con objetos JavaScript normales. Todavia no esta conectado a controladores ni Prisma.
+
+El siguiente paso tecnico recomendado es crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar primero una capa de repositorios.

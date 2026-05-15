@@ -45,4 +45,4 @@ Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, ca
 - Crear base MariaDB local o de desarrollo.
 - Ejecutar primera migracion Prisma.
 - Conectar controladores reales a Prisma.
-- Crear `MotorReglasTurnos` para centralizar validaciones de turnos.
+- Conectar `MotorReglasTurnos` con datos leidos desde Prisma mediante repositorios o controladores.
