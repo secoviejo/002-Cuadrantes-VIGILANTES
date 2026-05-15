@@ -16,14 +16,16 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
 - `backend/`: API base Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, ruta `src/routes/health.routes.js`, README y estructura preparada.
+- `backend/prisma/schema.prisma`: schema Prisma inicial configurado para MariaDB con proveedor `mysql`.
+- `backend/prisma/seed.js`: seed inicial con datos ficticios para roles, empresa, campus, edificios, servicios, trabajadores y un turno/asignacion demo.
 - `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
-- No existen carpetas `prisma/`, `server/` ni `tests/`.
+- No existen carpetas `server/` ni `tests/`. Prisma vive dentro de `backend/prisma/`.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
 - Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
-- No existen Prisma ni MariaDB configurados.
-- Hay backend Express minimo, pero no hay base de datos, autenticacion real ni persistencia.
+- Prisma esta configurado con MariaDB como base prevista.
+- No hay base MariaDB real configurada, migraciones ejecutadas, autenticacion real ni persistencia operativa.
 - El remoto Git configurado apunta a `git@github.com:secoviejo/002-Cuadrantes-VIGILANTES.git`.
 - En el estado observado, `.agents/` aparece como no trackeado en Git.
 
@@ -32,6 +34,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Stack actual: HTML + CSS inline + JavaScript inline en un unico archivo.
 - `frontend/` ya contiene una aplicacion base ejecutable con React + Vite + Tailwind CSS.
 - `backend/` ya contiene una API Express minima ejecutable.
+- Prisma Client esta instalado y el schema valida correctamente.
 - El HTML tiene CSS embebido entre `<style>` y `</style>`, con estilos generales, responsive, roles, modales e impresion.
 - El JavaScript esta embebido al final del HTML, entre `<script>` y `</script>`.
 - No hay CSS externo propio ni JavaScript externo propio.
@@ -43,6 +46,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
 - La API Express minima expone `GET /api` y `GET /api/health`; todavia no contiene rutas de negocio.
+- No hay controladores conectados a Prisma y el frontend no consume todavia el backend.
 
 ## Pantallas y Estado Funcional
 
@@ -156,9 +160,9 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React y el backend Express ya estan inicializados como bases tecnicas. Prisma, MariaDB, JWT y la API REST de negocio quedan para pasos posteriores.
+Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. MariaDB real, migraciones, JWT y la API REST de negocio quedan para pasos posteriores.
 
-La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima.
+La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate funcionan con `DATABASE_URL` de ejemplo en la sesion.
 
 ## Reglas de Negocio Previstas
 
@@ -173,6 +177,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Registrar verificaciones de cobertura con usuario, fecha/hora, turno y estado por servicio.
 - Guardar trazabilidad de acciones importantes en auditoria.
 - Centralizar reglas en backend, preferiblemente en un servicio tipo `MotorReglasTurnos`, evitando duplicarlas en componentes React.
+- El siguiente paso tecnico recomendado es crear `MotorReglasTurnos` antes de conectar controladores reales a Prisma.
 
 ## Riesgos Tecnicos Actuales
 
@@ -225,6 +230,13 @@ Al tocar backend/API futura, comprobar:
 - Persistencia.
 - Auditoria.
 
+Al tocar Prisma/MariaDB futura, comprobar:
+
+- `npx prisma validate`.
+- `npx prisma generate`.
+- No ejecutar migraciones contra una base no confirmada.
+- No subir credenciales reales.
+
 ## Roadmap Tecnico
 
 ### Fase 0 - Prototipo actual
@@ -268,3 +280,4 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 - 2026-05-15: Creada estructura base documental con `README.md`, `frontend/`, `backend/` y `docs/`, sin inicializar React, Express, Prisma, MariaDB ni dependencias.
 - 2026-05-15: Inicializado frontend base en `frontend/` con React, Vite y Tailwind CSS. Verificado `npm run build`. No se ha creado backend, Prisma ni MariaDB.
 - 2026-05-15: Inicializado backend base en `backend/` con Node.js + Express, CORS y dotenv. Verificadas rutas `GET /api` y `GET /api/health`. No se ha creado Prisma ni MariaDB.
+- 2026-05-15: Configurado Prisma en `backend/prisma/schema.prisma` con proveedor MySQL para MariaDB, modelo inicial, enums requeridos y seed ficticio. Verificados `npx prisma validate` y `npx prisma generate`; no se ejecutaron migraciones reales ni se conectaron controladores a Prisma.

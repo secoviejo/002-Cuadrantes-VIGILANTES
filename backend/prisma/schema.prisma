@@ -1,0 +1,302 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoTrabajador {
+  VIGILANTE
+  AUXILIAR
+  JEFE_EQUIPO
+  OTRO
+}
+
+enum TipoPerfilRequerido {
+  VIGILANTE
+  AUXILIAR
+  CUALQUIERA
+}
+
+enum EstadoTurno {
+  SIN_CUBRIR
+  PARCIAL
+  CUBIERTO
+  INCIDENCIA
+  CANCELADO
+}
+
+enum EstadoAsignacion {
+  ASIGNADO
+  CONFIRMADO
+  SUSTITUIDO
+  CANCELADO
+}
+
+enum TipoAusencia {
+  VACACIONES
+  BAJA
+  PERMISO
+  INDISPONIBILIDAD
+  OTRO
+}
+
+enum EstadoIncidencia {
+  ABIERTA
+  EN_CURSO
+  CERRADA
+}
+
+enum EstadoCobertura {
+  CUBIERTO
+  INCIDENCIA
+  DESCUBIERTO
+}
+
+enum TipoDiaCalendario {
+  FESTIVO
+  LECTIVO
+  ESPECIAL
+  CIERRE
+}
+
+model Usuario {
+  id             Int                     @id @default(autoincrement())
+  email          String                  @unique @db.VarChar(191)
+  nombre         String                  @db.VarChar(191)
+  passwordHash   String                  @db.VarChar(255)
+  activo         Boolean                 @default(true)
+  rolId          Int
+  empresaId      Int?
+  rol            Rol                     @relation(fields: [rolId], references: [id])
+  empresa        Empresa?                @relation(fields: [empresaId], references: [id])
+  auditorias     Auditoria[]
+  verificaciones VerificacionCobertura[]
+  creadoEn       DateTime                @default(now())
+  actualizadoEn  DateTime                @updatedAt
+
+  @@index([rolId])
+  @@index([empresaId])
+}
+
+model Rol {
+  id            Int       @id @default(autoincrement())
+  nombre        String    @unique @db.VarChar(80)
+  descripcion   String?   @db.VarChar(255)
+  usuarios      Usuario[]
+  creadoEn      DateTime  @default(now())
+  actualizadoEn DateTime  @updatedAt
+}
+
+model Empresa {
+  id            Int          @id @default(autoincrement())
+  nombre        String       @db.VarChar(191)
+  cif           String?      @unique @db.VarChar(50)
+  activa        Boolean      @default(true)
+  usuarios      Usuario[]
+  trabajadores  Trabajador[]
+  creadoEn      DateTime     @default(now())
+  actualizadoEn DateTime     @updatedAt
+}
+
+model Trabajador {
+  id                         Int               @id @default(autoincrement())
+  codigo                     String            @unique @db.VarChar(80)
+  nombre                     String            @db.VarChar(191)
+  tipo                       TipoTrabajador
+  identificadorProfesional   String?           @db.VarChar(80)
+  activo                     Boolean           @default(true)
+  empresaId                  Int
+  empresa                    Empresa           @relation(fields: [empresaId], references: [id])
+  asignaciones               AsignacionTurno[]
+  ausencias                  Ausencia[]
+  sustitucionesComoOriginal  Sustitucion[]     @relation("TrabajadorOriginal")
+  sustitucionesComoSustituto Sustitucion[]     @relation("TrabajadorSustituto")
+  incidencias                Incidencia[]
+  creadoEn                   DateTime          @default(now())
+  actualizadoEn              DateTime          @updatedAt
+
+  @@index([empresaId])
+  @@index([tipo])
+  @@index([activo])
+}
+
+model Campus {
+  id            Int                 @id @default(autoincrement())
+  codigo        String              @unique @db.VarChar(80)
+  nombre        String              @db.VarChar(191)
+  ciudad        String?             @db.VarChar(120)
+  edificios     Edificio[]
+  calendario    CalendarioLaboral[]
+  creadoEn      DateTime            @default(now())
+  actualizadoEn DateTime            @updatedAt
+}
+
+model Edificio {
+  id            Int        @id @default(autoincrement())
+  codigo        String     @unique @db.VarChar(80)
+  nombre        String     @db.VarChar(191)
+  campusId      Int
+  campus        Campus     @relation(fields: [campusId], references: [id])
+  servicios     Servicio[]
+  creadoEn      DateTime   @default(now())
+  actualizadoEn DateTime   @updatedAt
+
+  @@index([campusId])
+}
+
+model Servicio {
+  id              Int                 @id @default(autoincrement())
+  codigo          String              @unique @db.VarChar(80)
+  nombre          String              @db.VarChar(191)
+  descripcion     String?             @db.Text
+  perfilRequerido TipoPerfilRequerido
+  dotacionMinima  Int                 @default(1)
+  activo          Boolean             @default(true)
+  edificioId      Int
+  edificio        Edificio            @relation(fields: [edificioId], references: [id])
+  turnos          Turno[]
+  creadoEn        DateTime            @default(now())
+  actualizadoEn   DateTime            @updatedAt
+
+  @@index([edificioId])
+  @@index([perfilRequerido])
+  @@index([activo])
+}
+
+model Turno {
+  id             Int                     @id @default(autoincrement())
+  codigo         String                  @unique @db.VarChar(120)
+  servicioId     Int
+  servicio       Servicio                @relation(fields: [servicioId], references: [id])
+  fecha          DateTime                @db.Date
+  horaInicio     DateTime
+  horaFin        DateTime
+  estado         EstadoTurno             @default(SIN_CUBRIR)
+  dotacionMinima Int                     @default(1)
+  asignaciones   AsignacionTurno[]
+  sustituciones  Sustitucion[]
+  incidencias    Incidencia[]
+  verificaciones VerificacionCobertura[]
+  creadoEn       DateTime                @default(now())
+  actualizadoEn  DateTime                @updatedAt
+
+  @@index([servicioId])
+  @@index([fecha])
+  @@index([estado])
+}
+
+model AsignacionTurno {
+  id            Int              @id @default(autoincrement())
+  turnoId       Int
+  trabajadorId  Int
+  estado        EstadoAsignacion @default(ASIGNADO)
+  turno         Turno            @relation(fields: [turnoId], references: [id])
+  trabajador    Trabajador       @relation(fields: [trabajadorId], references: [id])
+  creadoEn      DateTime         @default(now())
+  actualizadoEn DateTime         @updatedAt
+
+  @@unique([turnoId, trabajadorId])
+  @@index([trabajadorId])
+  @@index([estado])
+}
+
+model Ausencia {
+  id            Int          @id @default(autoincrement())
+  trabajadorId  Int
+  trabajador    Trabajador   @relation(fields: [trabajadorId], references: [id])
+  tipo          TipoAusencia
+  fechaInicio   DateTime     @db.Date
+  fechaFin      DateTime     @db.Date
+  motivo        String?      @db.VarChar(255)
+  creadoEn      DateTime     @default(now())
+  actualizadoEn DateTime     @updatedAt
+
+  @@index([trabajadorId])
+  @@index([fechaInicio, fechaFin])
+  @@index([tipo])
+}
+
+model Sustitucion {
+  id                    Int         @id @default(autoincrement())
+  turnoId               Int
+  trabajadorOriginalId  Int
+  trabajadorSustitutoId Int?
+  motivo                String      @db.VarChar(255)
+  comunicadaEn          DateTime?
+  cumplePreaviso        Boolean?
+  turno                 Turno       @relation(fields: [turnoId], references: [id])
+  trabajadorOriginal    Trabajador  @relation("TrabajadorOriginal", fields: [trabajadorOriginalId], references: [id])
+  trabajadorSustituto   Trabajador? @relation("TrabajadorSustituto", fields: [trabajadorSustitutoId], references: [id])
+  creadoEn              DateTime    @default(now())
+  actualizadoEn         DateTime    @updatedAt
+
+  @@index([turnoId])
+  @@index([trabajadorOriginalId])
+  @@index([trabajadorSustitutoId])
+}
+
+model Incidencia {
+  id            Int              @id @default(autoincrement())
+  turnoId       Int?
+  trabajadorId  Int?
+  titulo        String           @db.VarChar(191)
+  descripcion   String?          @db.Text
+  estado        EstadoIncidencia @default(ABIERTA)
+  turno         Turno?           @relation(fields: [turnoId], references: [id])
+  trabajador    Trabajador?      @relation(fields: [trabajadorId], references: [id])
+  creadaEn      DateTime         @default(now())
+  cerradaEn     DateTime?
+  actualizadoEn DateTime         @updatedAt
+
+  @@index([turnoId])
+  @@index([trabajadorId])
+  @@index([estado])
+}
+
+model VerificacionCobertura {
+  id           Int             @id @default(autoincrement())
+  turnoId      Int
+  usuarioId    Int
+  estado       EstadoCobertura
+  nota         String?         @db.Text
+  turno        Turno           @relation(fields: [turnoId], references: [id])
+  usuario      Usuario         @relation(fields: [usuarioId], references: [id])
+  verificadaEn DateTime        @default(now())
+
+  @@index([turnoId])
+  @@index([usuarioId])
+  @@index([estado])
+}
+
+model CalendarioLaboral {
+  id          Int               @id @default(autoincrement())
+  codigo      String            @unique @db.VarChar(120)
+  fecha       DateTime          @db.Date
+  tipo        TipoDiaCalendario
+  descripcion String            @db.VarChar(191)
+  campusId    Int?
+  campus      Campus?           @relation(fields: [campusId], references: [id])
+  creadoEn    DateTime          @default(now())
+
+  @@index([fecha])
+  @@index([tipo])
+  @@index([campusId])
+}
+
+model Auditoria {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int?
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id])
+  accion    String   @db.VarChar(120)
+  entidad   String   @db.VarChar(120)
+  entidadId String?  @db.VarChar(120)
+  detalle   Json?
+  creadaEn  DateTime @default(now())
+
+  @@index([usuarioId])
+  @@index([entidad, entidadId])
+  @@index([creadaEn])
+}
