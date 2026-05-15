@@ -92,3 +92,11 @@ export function deleteAsignacion(id) {
     return res
   });
 }
+
+export function validarAsignacion(turnoId, trabajadorId) {
+  return getJson(`/validaciones/validar-asignacion?turnoId=${turnoId}&trabajadorId=${trabajadorId}`);
+}
+
+export function validarAsignacionesMasivas(asignaciones) {
+  return postJson('/validaciones/validar-asignaciones-masivas', { asignaciones });
+}

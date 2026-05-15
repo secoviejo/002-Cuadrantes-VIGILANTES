@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { createAsignacion, updateAsignacion } from '../../api/catalogos';
-import { Save, X, Loader2 } from 'lucide-react';
+import { createAsignacion, updateAsignacion, validarAsignacion } from '../../api/catalogos';
+import { Save, X, Loader2, AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react';
 
 const ESTADOS = [
   { value: 'ASIGNADO', label: 'Asignado' },
@@ -32,6 +32,8 @@ export default function AsignacionForm({ asignacion, onSaved, onCancel, turnoLis
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [validacion, setValidacion] = useState(null);
+  const [validating, setValidating] = useState(false);
 
   useEffect(() => {
     if (asignacion) {
@@ -49,6 +51,26 @@ export default function AsignacionForm({ asignacion, onSaved, onCancel, turnoLis
       ...prev,
       [name]: value
     }));
+    setValidacion(null);
+  };
+
+  const handleValidar = async () => {
+    if (!formData.turnoId || !formData.trabajadorId) {
+      setError('Selecciona un turno y un trabajador para validar');
+      return;
+    }
+
+    setValidating(true);
+    setError(null);
+
+    try {
+      const result = await validarAsignacion(parseInt(formData.turnoId), parseInt(formData.trabajadorId));
+      setValidacion(result.data || result);
+    } catch (err) {
+      setError('Error al validar: ' + err.message);
+    } finally {
+      setValidating(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -172,7 +194,67 @@ export default function AsignacionForm({ asignacion, onSaved, onCancel, turnoLis
           </select>
         </div>
 
+        {validacion && (
+          <div className={`p-4 rounded-lg border ${
+            !validacion.valido 
+              ? 'bg-red-50 border-red-200' 
+              : validacion.advertencias?.length > 0 
+                ? 'bg-yellow-50 border-yellow-200'
+                : 'bg-green-50 border-green-200'
+          }`}>
+            <div className="flex items-center gap-2 mb-2">
+              {!validacion.valido ? (
+                <>
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                  <span className="font-medium text-red-800">No se puede realizar la asignacion</span>
+                </>
+              ) : validacion.advertencias?.length > 0 ? (
+                <>
+                  <AlertCircle className="w-5 h-5 text-yellow-600" />
+                  <span className="font-medium text-yellow-800">Asignacion valida con advertencias</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <span className="font-medium text-green-800">Asignacion valida</span>
+                </>
+              )}
+            </div>
+
+            {validacion.errores?.length > 0 && (
+              <ul className="text-sm text-red-700 space-y-1 mt-2">
+                {validacion.errores.map((err, i) => (
+                  <li key={i}>
+                    {typeof err === 'string' ? err : err.mensaje}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {validacion.advertencias?.length > 0 && (
+              <ul className="text-sm text-yellow-700 space-y-1 mt-2">
+                {validacion.advertencias.map((adv, i) => (
+                  <li key={i}>
+                    {typeof adv === 'string' ? adv : adv.mensaje}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         <div className="pt-4 flex items-center justify-end gap-3 border-t border-stone-100 mt-6">
+          {!isEditing && formData.turnoId && formData.trabajadorId && (
+            <button
+              type="button"
+              onClick={handleValidar}
+              disabled={validating}
+              className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md shadow-sm hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
+            >
+              {validating ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertCircle className="w-4 h-4" />}
+              Validar asignacion
+            </button>
+          )}
           <button
             type="button"
             onClick={onCancel}
