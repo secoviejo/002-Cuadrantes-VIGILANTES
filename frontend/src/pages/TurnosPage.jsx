@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getTurnos, getServicios, createVerificacion } from '../api/catalogos';
+import { exportTurnos } from '../utils/exportUtils';
 import AppLayout from '../components/layout/AppLayout';
 import TurnosTable from '../components/turnos/TurnosTable';
 import TurnoForm from '../components/turnos/TurnoForm';
-import { Plus, Loader2, AlertCircle, CheckCircle2, Filter, X } from 'lucide-react';
+import { Plus, Loader2, AlertCircle, CheckCircle2, Filter, X, Download } from 'lucide-react';
 
 const ESTADOS = [
   { value: '', label: 'Todos' },
@@ -173,22 +174,29 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 text-sm text-stone-600 hover:text-stone-800 transition-colors"
-            >
-              <Filter className="w-4 h-4" />
-              Filtros
-            </button>
-            <button
-              onClick={handleCreateNew}
-              className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Nuevo turno
-            </button>
-          </div>
+          <div className="flex justify-end items-center gap-3">
+              <button
+                onClick={() => exportTurnos(turnosFiltrados)}
+                className="flex items-center gap-2 text-sm text-stone-600 hover:text-stone-800 transition-colors px-3 py-2"
+              >
+                <Download className="w-4 h-4" />
+                Exportar CSV
+              </button>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-sm text-stone-600 hover:text-stone-800 transition-colors px-3 py-2"
+              >
+                <Filter className="w-4 h-4" />
+                Filtros
+              </button>
+              <button
+                onClick={handleCreateNew}
+                className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Nuevo turno
+              </button>
+            </div>
 
           {showFilters && (
             <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
