@@ -59,3 +59,15 @@ export function createTrabajador(data) {
 export function updateTrabajador(id, data) {
   return putJson(`/trabajadores/${id}`, data);
 }
+
+export function getTurnos() {
+  return getJson('/turnos');
+}
+
+export function createTurno(data) {
+  return postJson('/turnos', data);
+}
+
+export function updateTurno(id, data) {
+  return putJson(`/turnos/${id}`, data);
+}

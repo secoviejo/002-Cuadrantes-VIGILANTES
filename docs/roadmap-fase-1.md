@@ -145,16 +145,34 @@ Se ha creado el CRUD basico de Servicios desde React:
 
 Se ha creado el CRUD basico de Trabajadores desde React:
 - Creados: TrabajadoresPage.jsx, TrabajadoresTable.jsx, TrabajadorForm.jsx
-- Agregadas funciones API createTrabajador y updateTrabajador
-- Agregada navegacion en App.jsx
-- Campos del modelo: codigo, nombre, tipo (enum), identificadorProfesional, activo, empresaId
+- Campos del modelo: codigo, nombre, tipo, identificadorProfesional, activo, empresaId
 - Selector de empresa en formulario (relacion obligatoria)
 - Selector de tipo/perfil (VIGILANTE, AUXILIAR, JEFE_EQUIPO, OTRO)
-- Badges de colores para tipo de trabajador
-- Checkbox para activo/inactivo
 - npm run build OK
-- Datos ficticios usados en pruebas (sin datos personales reales)
+- Datos ficticios usados en pruebas
+
+## Estado del paso 21
+
+Revision global de catalogos y navegacion completada:
+- 6 paginas funcionando (Dashboard + 5 catalogos)
+- 15+ componentes (Table, Form, Layout, UI)
+- Navegacion por estado funcionando
+- Menu lateral con 6 opciones
+- Estilo consistente entre entidades
+- CORS configurado para multiples origenes
+
+## Estado del paso 22
+
+Se ha creado el CRUD basico de Turnos desde React:
+- Creados: TurnosPage.jsx, TurnosTable.jsx, TurnoForm.jsx
+- Campos del modelo: codigo, servicioId, fecha, horaInicio, horaFin, dotacionMinima, estado
+- Selector de servicio en formulario
+- Selector de estado (SIN_CUBRIR, PARCIAL, CUBIERTO, INCIDENCIA, CANCELADO)
+- Badges de colores para estados
+- Navegacion actualizada con opcion Turnos
+- Endpoints backend: GET, POST, PUT /api/turnos
+- Pruebas con datos ficticios OK
 
 ## Proximo paso recomendado
 
-1. **PASO 21**: Revisar y posiblemente extender el CRUD de Trabajadores segun necesidades reales.
+1. **PASO 23**: Implementar CRUD basico de Asignaciones (asignar trabajadores a turnos).
