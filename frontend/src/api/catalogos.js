@@ -1,15 +1,15 @@
 import { getJson } from './client';
 
 export function getEmpresas() {
-  return getJson('/empresas').catch(() => []);
+  return getJson('/empresas');
 }
 
 export function getCampus() {
-  return getJson('/campus').catch(() => []);
+  return getJson('/campus');
 }
 
 export function getEdificios() {
-  return getJson('/edificios').catch(() => []);
+  return getJson('/edificios');
 }
 
 export function getServicios() {

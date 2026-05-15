@@ -18,6 +18,17 @@ function prepararDatosCampus(body, { partial = false } = {}) {
   return pickDefinedFields(body, CAMPOS_CAMPUS)
 }
 
+export const listarCampus = asyncHandler(async (req, res) => {
+  const campus = await campusRepository.findAll()
+  res.json(campus || [])
+})
+
+export const obtenerCampus = asyncHandler(async (req, res) => {
+  const id = parseIdParam(req.params.id)
+  const campus = await campusRepository.findById(id)
+  sendDetailResponse(res, campus, 'Campus')
+})
+
 export const crearCampus = asyncHandler(async (req, res) => {
   const campus = await campusRepository.create(prepararDatosCampus(req.body))
   sendCreatedResponse(res, campus)

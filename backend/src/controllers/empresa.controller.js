@@ -25,6 +25,17 @@ function prepararDatosEmpresa(body, { partial = false } = {}) {
   return data
 }
 
+export const listarEmpresas = asyncHandler(async (req, res) => {
+  const empresas = await empresaRepository.findAll()
+  res.json(empresas || [])
+})
+
+export const obtenerEmpresa = asyncHandler(async (req, res) => {
+  const id = parseIdParam(req.params.id)
+  const empresa = await empresaRepository.findById(id)
+  sendDetailResponse(res, empresa, 'Empresa')
+})
+
 export const crearEmpresa = asyncHandler(async (req, res) => {
   const empresa = await empresaRepository.create(prepararDatosEmpresa(req.body))
   sendCreatedResponse(res, empresa)

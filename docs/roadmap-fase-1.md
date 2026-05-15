@@ -93,6 +93,10 @@ Se ha validado la comunicación entre el backend Express y MariaDB levantada en 
 
 Se ha construido el primer Dashboard real en React conectado al backend. El Layout base (Sidebar, Header) y los estilos se han adaptado usando TailwindCSS y fuentes legacy. Se han creado clientes HTTP y componentes para cargar dinámicamente y visualizar los datos desde MariaDB. Aún no existe lógica CRUD en el frontend.
 
+## Estado del paso 15
+
+Se ha consolidado el contrato de la API REST base. Se han añadido métodos de lectura genérica y por ID a los repositorios Prisma y controladores de Express para las entidades maestras de `empresas`, `campus` y `edificios`. Se han habilitado sus rutas GET y se han eliminado los parches (`.catch(() => [])`) en el cliente API de React, garantizando que el frontend consuma datos reales y estructurados directamente de MariaDB, con respuestas preparadas (`[]` en lugar de error 404) para colecciones vacías.
+
 ## Proximo paso recomendado
 
-1. **PASO 15**: Implementar CRUD básico desde el frontend (creación y edición de entidades sencillas como empresas o trabajadores) para validar el flujo completo de lectura/escritura de datos, antes de integrar JWT o securización.
+1. **PASO 16**: Implementar CRUD básico desde el frontend (creación y edición de entidades sencillas como empresas o trabajadores) para validar el flujo completo de escritura de datos, antes de integrar JWT o securización.

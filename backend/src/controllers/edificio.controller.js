@@ -25,6 +25,17 @@ function prepararDatosEdificio(body, { partial = false } = {}) {
   return data
 }
 
+export const listarEdificios = asyncHandler(async (req, res) => {
+  const edificios = await edificioRepository.findAll()
+  res.json(edificios || [])
+})
+
+export const obtenerEdificio = asyncHandler(async (req, res) => {
+  const id = parseIdParam(req.params.id)
+  const edificio = await edificioRepository.findById(id)
+  sendDetailResponse(res, edificio, 'Edificio')
+})
+
 export const crearEdificio = asyncHandler(async (req, res) => {
   const edificio = await edificioRepository.create(prepararDatosEdificio(req.body))
   sendCreatedResponse(res, edificio)

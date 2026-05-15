@@ -34,4 +34,4 @@ La API REST de negocio empezo por endpoints GET de solo lectura para trabajadore
 
 El frontend ya cuenta con una estructura de Dashboard en React + Vite + Tailwind CSS que se comunica con el backend mediante `fetch` (cliente genérico). Este panel inicial ya es capaz de mostrar estadísticas básicas obtenidas en tiempo real de MariaDB.
 
-El siguiente paso técnico recomendado es implementar las funcionalidades de escritura (CRUD básico) desde este nuevo panel de React, para validar el flujo completo antes de abordar la estrategia de autenticación (JWT) y el control de roles.
+El siguiente paso técnico recomendado es implementar las funcionalidades de escritura (CRUD básico) desde este nuevo panel de React, para validar el flujo completo, ahora que las lecturas y el contrato de API están estabilizados, antes de abordar la estrategia de autenticación (JWT) y el control de roles.

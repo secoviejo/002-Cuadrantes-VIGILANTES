@@ -1,5 +1,17 @@
 import { getPrismaClient } from '../db/prisma.js'
 
+export async function findAll() {
+  const prisma = getPrismaClient()
+  return prisma.empresa.findMany({
+    orderBy: { nombre: 'asc' }
+  })
+}
+
+export async function findById(id) {
+  const prisma = getPrismaClient()
+  return prisma.empresa.findUnique({ where: { id } })
+}
+
 export async function create(datos) {
   const prisma = getPrismaClient()
   return prisma.empresa.create({ data: datos })
