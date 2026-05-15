@@ -28,6 +28,26 @@ function formatTime(dateStr) {
   return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
+function CoberturaBadge({ count, min }) {
+  if (!min || min === 0) return <span className="text-stone-400">-</span>;
+  
+  const ratio = count / min;
+  let colorClass = 'bg-red-100 text-red-800';
+  let label = `${count}/${min}`;
+  
+  if (ratio >= 1) {
+    colorClass = 'bg-green-100 text-green-800';
+  } else if (ratio > 0) {
+    colorClass = 'bg-yellow-100 text-yellow-800';
+  }
+  
+  return (
+    <span className={`px-2 py-0.5 rounded text-xs font-medium ${colorClass}`}>
+      {label}
+    </span>
+  );
+}
+
 export default function TurnosTable({ turnos, onEdit }) {
   if (!turnos || turnos.length === 0) {
     return (
@@ -49,6 +69,7 @@ export default function TurnosTable({ turnos, onEdit }) {
               <th className="px-4 py-3 font-semibold">Hora Fin</th>
               <th className="px-4 py-3 font-semibold">Servicio</th>
               <th className="px-4 py-3 font-semibold">Dotacion</th>
+              <th className="px-4 py-3 font-semibold">Cobertura</th>
               <th className="px-4 py-3 font-semibold">Estado</th>
               <th className="px-4 py-3 font-semibold text-right">Acciones</th>
             </tr>
@@ -68,6 +89,9 @@ export default function TurnosTable({ turnos, onEdit }) {
                   )}
                 </td>
                 <td className="px-4 py-3 text-stone-600">{turno.dotacionMinima}</td>
+                <td className="px-4 py-3">
+                  <CoberturaBadge count={turno._count?.asignaciones || 0} min={turno.dotacionMinima} />
+                </td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-0.5 rounded text-xs font-medium ${ESTADOS_COLORS[turno.estado] || 'bg-stone-100'}`}>
                     {ESTADOS_LABELS[turno.estado] || turno.estado}
