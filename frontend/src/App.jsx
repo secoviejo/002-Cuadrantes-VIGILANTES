@@ -6,6 +6,7 @@ import EdificioPage from './pages/EdificioPage'
 import ServiciosPage from './pages/ServiciosPage'
 import TrabajadoresPage from './pages/TrabajadoresPage'
 import TurnosPage from './pages/TurnosPage'
+import AsignacionesPage from './pages/AsignacionesPage'
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState('dashboard')
@@ -32,6 +33,10 @@ function App() {
 
   if (currentRoute === 'turnos') {
     return <TurnosPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
+  }
+
+  if (currentRoute === 'asignaciones') {
+    return <AsignacionesPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
   }
 
   return <Dashboard currentRoute={currentRoute} onNavigate={setCurrentRoute} />

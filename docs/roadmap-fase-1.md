@@ -173,6 +173,20 @@ Se ha creado el CRUD basico de Turnos desde React:
 - Endpoints backend: GET, POST, PUT /api/turnos
 - Pruebas con datos ficticios OK
 
+## Estado del paso 23
+
+Se ha creado el CRUD basico de Asignaciones desde React:
+- Creados: AsignacionesPage.jsx, AsignacionesTable.jsx, AsignacionForm.jsx
+- Campos del modelo: turnoId, trabajadorId, estado
+- Selector de turno (muestra fecha, hora y servicio)
+- Selector de trabajador (muestra nombre y tipo)
+- Selector de estado (ASIGNADO, CONFIRMADO, SUSTITUIDO, CANCELADO)
+- Badges de colores para estados
+- Navegacion actualizada con opcion Asignaciones
+- Control de duplicados en backend (409 Conflict)
+- Endpoints backend: GET, POST, PUT, DELETE /api/asignaciones-turno
+- Pruebas con datos ficticios OK
+
 ## Proximo paso recomendado
 
-1. **PASO 23**: Implementar CRUD basico de Asignaciones (asignar trabajadores a turnos).
+1. **PASO 24**: Revisar turnos, asignaciones y cobertura basica.

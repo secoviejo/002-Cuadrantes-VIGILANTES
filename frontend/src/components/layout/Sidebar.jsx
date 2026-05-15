@@ -1,4 +1,4 @@
-import { ShieldCheck, Building2, Map, Layers, CalendarDays, Users, Clock } from 'lucide-react';
+import { ShieldCheck, Building2, Map, Layers, CalendarDays, Users, Clock, UserCheck } from 'lucide-react';
 
 export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
   const menuItems = [
@@ -9,6 +9,7 @@ export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
     { id: 'servicios', name: 'Servicios', icon: <CalendarDays className="w-5 h-5" /> },
     { id: 'trabajadores', name: 'Trabajadores', icon: <Users className="w-5 h-5" /> },
     { id: 'turnos', name: 'Turnos', icon: <Clock className="w-5 h-5" /> },
+    { id: 'asignaciones', name: 'Asignaciones', icon: <UserCheck className="w-5 h-5" /> },
   ];
 
   const handleNav = (e, id) => {

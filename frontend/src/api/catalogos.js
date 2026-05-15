@@ -71,3 +71,24 @@ export function createTurno(data) {
 export function updateTurno(id, data) {
   return putJson(`/turnos/${id}`, data);
 }
+
+export function getAsignaciones() {
+  return getJson('/asignaciones-turno');
+}
+
+export function createAsignacion(data) {
+  return postJson('/asignaciones-turno', data);
+}
+
+export function updateAsignacion(id, data) {
+  return putJson(`/asignaciones-turno/${id}`, data);
+}
+
+export function deleteAsignacion(id) {
+  return fetch(`http://localhost:4000/api/asignaciones-turno/${id}`, {
+    method: 'DELETE',
+  }).then(res => {
+    if (!res.ok) throw new Error('Error al eliminar')
+    return res
+  });
+}
