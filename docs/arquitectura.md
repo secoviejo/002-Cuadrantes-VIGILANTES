@@ -4,7 +4,7 @@
 
 El proyecto conserva un prototipo HTML monolitico como referencia funcional y visual. La copia historica esta en `legacy/html-original/`.
 
-El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `frontend/`. El backend ya tiene una API Express dentro de `backend/`, con Prisma configurado para MariaDB, repositories y rutas REST GET de solo lectura conectadas a esos repositories. Todavia no hay migraciones reales ejecutadas ni base MariaDB conectada.
+El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `frontend/`. El backend ya tiene una API Express dentro de `backend/`, con Prisma configurado para MariaDB, repositories, rutas REST GET y escrituras basicas para entidades maestras. Todavia no hay migraciones reales ejecutadas ni base MariaDB conectada.
 
 ## Arquitectura objetivo
 
@@ -19,7 +19,7 @@ El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `
 ## Separacion prevista
 
 - `frontend/`: aplicacion React + Vite + Tailwind CSS, componentes, paginas, layouts, hooks, servicios de cliente, utilidades y datos demo temporales.
-- `backend/`: API Express base, Prisma, `MotorReglasTurnos`, repositories, controladores GET de solo lectura, rutas, servicios de negocio, middleware y utilidades.
+- `backend/`: API Express base, Prisma, `MotorReglasTurnos`, repositories, controladores REST, rutas, servicios de negocio, middleware y utilidades.
 - `docs/`: decisiones tecnicas, modelo de datos previsto y roadmap.
 - `legacy/`: referencias historicas que no deben convertirse en codigo activo.
 
@@ -29,6 +29,6 @@ La migracion debe ser progresiva. El HTML original no debe borrarse ni reescribi
 
 `MotorReglasTurnos` ya existe como servicio backend puro y testeable con objetos JavaScript normales. Todavia no esta conectado a los endpoints reales ni a Prisma.
 
-La API REST de negocio empieza por endpoints GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias. No se han expuesto escrituras para evitar crear cambios de datos sin autenticacion, permisos ni auditoria.
+La API REST de negocio empezo por endpoints GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias. Despues se han abierto escrituras basicas solo para entidades maestras: empresas, campus, edificios, servicios y trabajadores. No hay escrituras para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios ni login.
 
-El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y la primera migracion controlada, o ampliar lecturas antes de introducir escrituras protegidas.
+El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y la primera migracion controlada para validar estas rutas contra base real antes de ampliar escrituras operativas protegidas.

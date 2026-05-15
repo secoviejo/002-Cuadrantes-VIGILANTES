@@ -1,4 +1,7 @@
 export * from './base.repository.js'
+export * as CampusRepo from './campus.repository.js'
+export * as EdificioRepo from './edificio.repository.js'
+export * as EmpresaRepo from './empresa.repository.js'
 export * as TrabajadorRepo from './trabajador.repository.js'
 export * as ServicioRepo from './servicio.repository.js'
 export * as TurnoRepo from './turno.repository.js'

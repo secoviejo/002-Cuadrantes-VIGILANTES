@@ -11,7 +11,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `cuadrantes_uz_6.html`: prototipo principal de una sola pagina. Contiene estructura HTML, estilos CSS inline, JavaScript inline, datos de demostracion, navegacion interna, modales, pantallas y logica visual.
 - `legacy/html-original/cuadrantes_uz_6.html`: copia historica del prototipo HTML original, conservada como referencia visual para la migracion progresiva.
 - `legacy/html-original/README.md`: documenta el uso de `legacy/html-original/` como referencia visual historica del prototipo.
-- `README.md`: resumen del proyecto, estado actual, estructura preparada, backend con Prisma/repositories/rutas GET y limites pendientes.
+- `README.md`: resumen del proyecto, estado actual, estructura preparada, backend con Prisma/repositories/rutas GET, escrituras basicas maestras y limites pendientes.
 - `DESCRIPCION_Y_FUNCIONES_APP.md`: documento funcional con objetivo, perfiles, pantallas, informes, incidencias y limitaciones actuales.
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
@@ -24,11 +24,11 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `backend/src/utils/dateUtils.js`: utilidades de fechas para rangos, solapamientos y calculo de descanso.
 - `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
-- `backend/src/repositories/`: capa de acceso a datos con Prisma. Contiene `base.repository.js` con utilidades de filtrado y paginacion, `trabajador.repository.js`, `servicio.repository.js`, `turno.repository.js`, `asignacionTurno.repository.js`, `ausencia.repository.js` e `index.js` que exporta todos los repositorios.
+- `backend/src/repositories/`: capa de acceso a datos con Prisma. Contiene `base.repository.js` con utilidades de filtrado y paginacion, repositories de Trabajador, Servicio, Turno, AsignacionTurno, Ausencia, Empresa, Campus y Edificio, e `index.js` que exporta todos los repositorios.
 - `backend/src/db/prisma.js`: cliente Prisma singleton para evitar conexiones multiples.
-- `backend/src/controllers/`: controladores GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
-- `backend/src/routes/`: rutas REST GET de solo lectura para los recursos anteriores, registradas bajo `/api`.
-- No existen controladores CRUD completos; solo hay consultas GET.
+- `backend/src/controllers/`: controladores GET para consultas principales y controladores `POST`/`PUT` basicos para entidades maestras.
+- `backend/src/routes/`: rutas REST registradas bajo `/api`.
+- No existen controladores CRUD completos; hay GET para recursos operativos y escrituras basicas solo en entidades maestras.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
 - Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
@@ -53,8 +53,8 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
-- La API Express expone `GET /api`, `GET /api/health` y endpoints GET de negocio para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
-- Hay controladores GET conectados a repositories Prisma. El frontend no consume todavia el backend.
+- La API Express expone `GET /api`, `GET /api/health`, endpoints GET de negocio para trabajadores, servicios, turnos, asignaciones de turno y ausencias, y endpoints `POST`/`PUT` para empresas, campus, edificios, servicios y trabajadores.
+- Hay controladores conectados a repositories Prisma. El frontend no consume todavia el backend.
 - `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
 ## Pantallas y Estado Funcional
@@ -169,7 +169,7 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio existe solo en modo lectura. MariaDB real, migraciones, JWT y escrituras quedan para pasos posteriores.
+Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras. MariaDB real, migraciones, JWT y escrituras operativas complejas quedan para pasos posteriores.
 
 La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate funcionan con `DATABASE_URL` de ejemplo en la sesion.
 
@@ -189,7 +189,8 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - `MotorReglasTurnos` implementa ya reglas iniciales de solapamiento, descanso, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura.
 - Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y controladores accedan a datos sin dependencia directa del ORM.
 - Rutas y controladores GET de solo lectura ya disponibles para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
-- El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y primera migracion controlada, o ampliar lecturas antes de escrituras protegidas.
+- Rutas y controladores `POST`/`PUT` basicos ya disponibles para empresas, campus, edificios, servicios y trabajadores.
+- El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y primera migracion controlada para probar la API contra datos reales.
 
 ## Riesgos Tecnicos Actuales
 
@@ -239,6 +240,8 @@ Al tocar backend/API futura, comprobar:
 - Validaciones.
 - Errores.
 - Contrato de respuesta `data`/`meta` en listados.
+- Codigo `201` en creaciones.
+- No abrir escrituras de turnos/asignaciones sin reglas, permisos y auditoria.
 - Permisos.
 - Persistencia.
 - Auditoria.
@@ -287,6 +290,43 @@ Actualizar este archivo cuando cambie:
 
 Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicitamente que no hacia falta actualizar este contexto.
 
+## Regla obligatoria de cierre de paso
+
+Cada vez que se implemente un paso funcional, tecnico, documental o de arquitectura, el agente debe cerrar el paso con esta secuencia obligatoria:
+
+1. Ejecutar las validaciones correspondientes al tipo de cambio:
+   - `npm run test:reglas` si afecta a reglas de turnos.
+   - `npm run prisma:validate` y `npm run prisma:generate` si afecta a Prisma.
+   - `npm run build` si afecta al frontend.
+   - `node --check` o una validacion equivalente sobre los archivos JavaScript afectados si afecta al backend.
+2. Actualizar la documentacion afectada:
+   - `README.md` si cambia el uso, estructura o estado general del proyecto.
+   - `backend/README.md` si cambia el backend.
+   - `frontend/README.md` si cambia el frontend.
+   - `docs/` si cambia arquitectura, modelo de datos, roadmap o decisiones tecnicas.
+   - `.agents/skills/cuadrantes-vigilantes-context/references/contexto-operativo.md` si cambia estado funcional, arquitectura, rutas, riesgos, validaciones o pasos completados.
+3. Ejecutar `git status`.
+4. Si hay cambios pendientes del paso, hacer commit con un mensaje claro y especifico.
+5. Despues del commit, ejecutar de nuevo `git status`.
+6. Informar siempre al usuario de:
+   - Validaciones ejecutadas.
+   - Documentacion actualizada.
+   - Contexto vivo actualizado.
+   - Commit creado.
+   - Archivos incluidos en el commit.
+   - Estado final de Git.
+   - Si la rama queda por delante de `origin/main`.
+   - Si queda pendiente hacer `git push`.
+7. No empezar el siguiente paso si el paso actual deja cambios sin commit, salvo que el usuario lo pida expresamente.
+8. No hacer `git push` salvo que el usuario lo pida expresamente o el prompt del paso lo indique.
+9. No incluir archivos sensibles en commits:
+   - No subir `.env`.
+   - No subir credenciales.
+   - No subir tokens.
+   - No subir datos personales reales.
+   - Mantener solo `.env.example` como plantilla.
+   - Si aparece un archivo sensible como pendiente, excluirlo del commit y avisar al usuario.
+
 ## Historial de Cambios de Contexto
 
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.
@@ -299,3 +339,5 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 - 2026-05-15: Creado `MotorReglasTurnos` como servicio backend independiente y testeable con objetos JavaScript. Valida reglas basicas de asignacion de turnos y cuenta con ejemplos y script manual `npm run test:reglas`; sigue sin conectarse a controladores reales ni Prisma.
 - 2026-05-15: Preparada capa de repositories Prisma para Trabajador, Servicio, Turno, AsignacionTurno y Ausencia, con cliente singleton y script manual `npm run test:repos`.
 - 2026-05-15: Creados controladores y rutas REST GET de solo lectura conectados a repositories Prisma para trabajadores, servicios, turnos, asignaciones de turno y ausencias. No se han creado endpoints de escritura, login real, JWT, migraciones ni conexion frontend-backend.
+- 2026-05-15: Creados endpoints `POST` y `PUT` basicos para entidades maestras: empresas, campus, edificios, servicios y trabajadores. Se mantienen fuera escrituras de turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login y JWT.
+- 2026-05-15: Incorporada regla permanente de cierre de paso para validar, actualizar documentacion, revisar `git status`, crear commit descriptivo, excluir archivos sensibles y no publicar con `git push` salvo peticion explicita.

@@ -43,6 +43,43 @@ Lee siempre esa fuente antes de:
 6. Si implementas, valida la zona afectada y cualquier zona conectada.
 7. Al cerrar, revisa si hay que actualizar `references/contexto-operativo.md`.
 
+## Regla obligatoria de cierre de paso
+
+Cada vez que se implemente un paso funcional, tecnico, documental o de arquitectura, el agente debe cerrar el paso con esta secuencia obligatoria:
+
+1. Ejecutar las validaciones correspondientes al tipo de cambio:
+   - `npm run test:reglas` si afecta a reglas de turnos.
+   - `npm run prisma:validate` y `npm run prisma:generate` si afecta a Prisma.
+   - `npm run build` si afecta al frontend.
+   - `node --check` o una validacion equivalente sobre los archivos JavaScript afectados si afecta al backend.
+2. Actualizar la documentacion afectada:
+   - `README.md` si cambia el uso, estructura o estado general del proyecto.
+   - `backend/README.md` si cambia el backend.
+   - `frontend/README.md` si cambia el frontend.
+   - `docs/` si cambia arquitectura, modelo de datos, roadmap o decisiones tecnicas.
+   - `.agents/skills/cuadrantes-vigilantes-context/references/contexto-operativo.md` si cambia estado funcional, arquitectura, rutas, riesgos, validaciones o pasos completados.
+3. Ejecutar `git status`.
+4. Si hay cambios pendientes del paso, hacer commit con un mensaje claro y especifico.
+5. Despues del commit, ejecutar de nuevo `git status`.
+6. Informar siempre al usuario de:
+   - Validaciones ejecutadas.
+   - Documentacion actualizada.
+   - Contexto vivo actualizado.
+   - Commit creado.
+   - Archivos incluidos en el commit.
+   - Estado final de Git.
+   - Si la rama queda por delante de `origin/main`.
+   - Si queda pendiente hacer `git push`.
+7. No empezar el siguiente paso si el paso actual deja cambios sin commit, salvo que el usuario lo pida expresamente.
+8. No hacer `git push` salvo que el usuario lo pida expresamente o el prompt del paso lo indique.
+9. No incluir archivos sensibles en commits:
+   - No subir `.env`.
+   - No subir credenciales.
+   - No subir tokens.
+   - No subir datos personales reales.
+   - Mantener solo `.env.example` como plantilla.
+   - Si aparece un archivo sensible como pendiente, excluirlo del commit y avisar al usuario.
+
 ## Reglas de Consejo
 
 - Habla claro y sin asumir que el usuario conoce arquitectura, APIs, Prisma, React, Express, MariaDB o Git.

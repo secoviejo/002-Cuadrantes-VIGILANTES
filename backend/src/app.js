@@ -32,7 +32,12 @@ export function createApp() {
   })
 
   app.use((err, _req, res, _next) => {
-    const status = err.status || 500
+    const prismaStatusByCode = {
+      P2002: 409,
+      P2003: 400,
+      P2025: 404,
+    }
+    const status = err.status || prismaStatusByCode[err.code] || 500
 
     res.status(status).json({
       error: err.code || 'internal_error',

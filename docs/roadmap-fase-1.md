@@ -64,6 +64,10 @@ Capa de repositories preparada en `backend/src/repositories/` con Prisma. Incluy
 
 Controladores y rutas REST GET de solo lectura creados sobre la capa de repositories Prisma. Recursos expuestos: trabajadores, servicios, turnos, asignaciones de turno y ausencias. No hay endpoints de escritura, login real, JWT funcional, conexion frontend-backend ni migraciones reales.
 
+## Estado del paso 10
+
+Escrituras basicas `POST` y `PUT` creadas para entidades maestras: empresas, campus, edificios, servicios y trabajadores. Se mantienen fuera las escrituras de turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login y JWT. No hay `PATCH`, `DELETE`, conexion frontend-backend ni migraciones reales.
+
 ## Proximo paso recomendado
 
-Preparar una MariaDB de desarrollo, ejecutar la primera migracion controlada y probar los endpoints GET con seed. Despues, decidir si ampliar lecturas o introducir escrituras protegidas por autenticacion, roles y auditoria.
+Preparar una MariaDB de desarrollo, ejecutar la primera migracion controlada y probar los endpoints GET/POST/PUT con seed. Despues, introducir autenticacion/roles o escrituras operativas con auditoria.

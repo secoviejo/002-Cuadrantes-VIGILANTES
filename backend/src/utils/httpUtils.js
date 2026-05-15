@@ -39,6 +39,56 @@ export function parseIdParam(value) {
   return parseInteger(value, 'id')
 }
 
+export function assertRequiredFields(body, fields) {
+  const missingFields = fields.filter((field) => {
+    const value = body[field]
+    return value === undefined || value === null || value === ''
+  })
+
+  if (missingFields.length > 0) {
+    const error = new Error(`Campos obligatorios ausentes: ${missingFields.join(', ')}`)
+    error.status = 400
+    error.code = 'missing_required_fields'
+    error.details = { fields: missingFields }
+    throw error
+  }
+}
+
+export function pickDefinedFields(body, fields) {
+  return fields.reduce((data, field) => {
+    if (body[field] !== undefined) {
+      data[field] = body[field]
+    }
+
+    return data
+  }, {})
+}
+
+export function parseBodyInteger(value, fieldName) {
+  return parseInteger(value, fieldName)
+}
+
+export function parseBodyBoolean(value, fieldName) {
+  if (typeof value === 'boolean') return value
+  return parseBoolean(value, fieldName)
+}
+
+export function assertAllowedValue(value, allowedValues, fieldName) {
+  if (value === undefined) return
+
+  if (!allowedValues.includes(value)) {
+    const error = new Error(`${fieldName} debe ser uno de: ${allowedValues.join(', ')}`)
+    error.status = 400
+    error.code = 'invalid_body_field'
+    error.details = { field: fieldName, allowedValues }
+    throw error
+  }
+}
+
+export function sendCreatedResponse(res, item) {
+  res.status(201).json({ data: item })
+}
+
 export function buildListMeta(result, filters = {}) {
   const items = Array.isArray(result) ? result : result.items
   const total = Array.isArray(result) ? items.length : result.total

@@ -14,7 +14,7 @@ Ya existen bases tecnicas separadas para frontend y backend. La migracion funcio
 ## Estructura preparada
 
 - `frontend/`: aplicacion base inicializada con React + Vite + Tailwind CSS.
-- `backend/`: API Node.js + Express con Prisma, repositories, motor de reglas y rutas GET de solo lectura.
+- `backend/`: API Node.js + Express con Prisma, repositories, motor de reglas, rutas GET y escrituras basicas en entidades maestras.
 - `docs/`: documentacion tecnica y funcional de la migracion.
 - `.agents/skills/cuadrantes-vigilantes-context/`: memoria viva del proyecto para decisiones futuras.
 
@@ -27,12 +27,13 @@ Ya existen bases tecnicas separadas para frontend y backend. La migracion funcio
 - `MotorReglasTurnos` creado como modulo backend independiente.
 - Capa de repositories Prisma preparada.
 - Rutas REST GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
+- Rutas REST `POST` y `PUT` para empresas, campus, edificios, servicios y trabajadores.
 
 ## Pendiente
 
 - No hay MariaDB real configurada ni migraciones ejecutadas.
 - No hay autenticacion JWT real.
-- No hay endpoints de escritura.
+- No hay endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login ni JWT.
 - No hay conexion frontend-backend.
 - No se han migrado pantallas funcionales del HTML a React.
 

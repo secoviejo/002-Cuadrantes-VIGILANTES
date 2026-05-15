@@ -44,12 +44,12 @@ Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, ca
 - Revisar campos con usuarios funcionales.
 - Crear base MariaDB local o de desarrollo.
 - Ejecutar primera migracion Prisma.
-- Probar los endpoints GET contra una base MariaDB migrada y con seed.
+- Probar los endpoints GET/POST/PUT actuales contra una base MariaDB migrada y con seed.
 - Conectar `MotorReglasTurnos` con datos leidos desde Prisma mediante repositories o controladores.
 
 ## Consumo API actual
 
-La primera capa REST de negocio usa los repositories Prisma para exponer datos de solo lectura:
+La primera capa REST de negocio usa los repositories Prisma para exponer datos de lectura:
 
 - Trabajadores.
 - Servicios.
@@ -57,4 +57,12 @@ La primera capa REST de negocio usa los repositories Prisma para exponer datos d
 - Asignaciones de turno.
 - Ausencias.
 
-No hay endpoints de escritura todavia. Las entidades de auditoria, sustituciones, incidencias, verificaciones, calendario, usuarios y roles permanecen modeladas en Prisma, pero no expuestas por API de negocio en este paso.
+La escritura basica esta limitada a:
+
+- Empresas.
+- Campus.
+- Edificios.
+- Servicios.
+- Trabajadores.
+
+No hay endpoints de escritura para turnos, asignaciones, sustituciones, incidencias, verificaciones, calendario, usuarios ni roles.
