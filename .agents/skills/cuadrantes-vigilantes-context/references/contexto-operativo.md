@@ -32,9 +32,8 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
 - Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
-- Prisma esta configurado con MariaDB como base prevista.
-- No hay base MariaDB real configurada, migraciones ejecutadas, autenticacion real ni persistencia operativa.
-- El remoto Git configurado apunta a `git@github.com:secoviejo/002-Cuadrantes-VIGILANTES.git`.
+- Prisma esta configurado con MariaDB.
+- Base de datos MariaDB real levantada vía Docker Compose, con migraciones ejecutadas y seed cargado. La autenticacion real y escrituras operativas complejas quedan para pasos posteriores.- El remoto Git configurado apunta a `git@github.com:secoviejo/002-Cuadrantes-VIGILANTES.git`.
 - La skill `.agents/skills/cuadrantes-vigilantes-context/` esta versionada y se usa como memoria viva.
 
 ## Estado Actual de la Arquitectura
@@ -169,10 +168,9 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras. MariaDB real, migraciones, JWT y escrituras operativas complejas quedan para pasos posteriores.
+Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras. MariaDB está levantada localmente (Docker) y las migraciones se han ejecutado con éxito. JWT y escrituras operativas complejas quedan para pasos posteriores.
 
-La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate funcionan con `DATABASE_URL` de ejemplo en la sesion.
-
+La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate y las migraciones funcionan con la base de datos local en el puerto 3308.
 ## Reglas de Negocio Previstas
 
 - No permitir solapamiento de turnos para el mismo trabajador.
@@ -190,8 +188,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y controladores accedan a datos sin dependencia directa del ORM.
 - Rutas y controladores GET de solo lectura ya disponibles para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
 - Rutas y controladores `POST`/`PUT` basicos ya disponibles para empresas, campus, edificios, servicios y trabajadores.
-- El siguiente paso tecnico recomendado es preparar MariaDB de desarrollo y primera migracion controlada para probar la API contra datos reales.
-
+- El siguiente paso tecnico recomendado es probar los endpoints existentes contra la base de datos MariaDB real.
 ## Riesgos Tecnicos Actuales
 
 - El HTML monolitico mezcla estructura, estilos, datos demo y logica.
@@ -341,4 +338,5 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 - 2026-05-15: Creados controladores y rutas REST GET de solo lectura conectados a repositories Prisma para trabajadores, servicios, turnos, asignaciones de turno y ausencias. No se han creado endpoints de escritura, login real, JWT, migraciones ni conexion frontend-backend.
 - 2026-05-15: Creados endpoints `POST` y `PUT` basicos para entidades maestras: empresas, campus, edificios, servicios y trabajadores. Se mantienen fuera escrituras de turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login y JWT.
 - 2026-05-15: Incorporada regla permanente de cierre de paso para validar, actualizar documentacion, revisar `git status`, crear commit descriptivo, excluir archivos sensibles y no publicar con `git push` salvo peticion explicita.
-- 2026-05-15 (PASO 11): Preparada la documentacion para la primera migracion MariaDB de desarrollo. Schema Prisma validado (`prisma validate`). Prisma Client generado (`prisma generate`). `.env.example` actualizado con nombre de base de datos de desarrollo (`cuadrantes_vigilantes_dev`) y comentarios claros. `backend/README.md` ampliado con instrucciones detalladas de preparacion de MariaDB, migracion, seed y verificacion. `docs/arquitectura.md`, `docs/modelo-datos.md` y `docs/roadmap-fase-1.md` actualizados. La migracion real NO se ha ejecutado: no hay MariaDB local disponible en el entorno. La carpeta `backend/prisma/migrations/` no existe todavia. El siguiente paso es que el usuario instale MariaDB local (o Docker), cree `cuadrantes_vigilantes_dev`, configure `.env` y ejecute `npm run prisma:migrate` y `npm run seed`.
+- 2026-05-15 (PASO 11): Preparada la documentacion para la primera migracion MariaDB de desarrollo. Schema Prisma validado (`prisma validate`). Prisma Client generado (`prisma generate`). `.env.example` actualizado con nombre de base de datos de desarrollo (`cuadrantes_vigilantes_dev`) y comentarios claros. `backend/README.md` ampliado con instrucciones detalladas de preparacion de MariaDB, migracion, seed y verificacion. `docs/arquitectura.md`, `docs/modelo-datos.md` y `docs/roadmap-fase-1.md` actualizados.
+- 2026-05-15 (PASO 12): Levantado entorno MariaDB de desarrollo con Docker Compose (puerto 3308). Configurada `SHADOW_DATABASE_URL` para Prisma. Ejecutada la primera migración real de Prisma (`npx prisma migrate dev --name init`) y cargado el seed de datos. Validado el acceso a base de datos mediante repositorios. El proyecto ahora tiene una base de datos real para desarrollo local.

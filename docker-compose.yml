@@ -1,0 +1,40 @@
+# docker-compose.yml
+# ─────────────────────────────────────────────────────────────────────────────
+# Entorno de desarrollo local para 002-Cuadrantes-VIGILANTES.
+# Levanta MariaDB en el puerto 3308 para no colisionar con otros contenedores.
+#
+# USO:
+#   docker compose up -d          → Levantar en segundo plano
+#   docker compose down           → Parar y eliminar contenedores
+#   docker compose down -v        → Parar y eliminar contenedores + volumen
+#
+# IMPORTANTE:
+#   - Estas credenciales son SOLO para desarrollo local.
+#   - No uses estas credenciales en producción.
+#   - El archivo .env del backend NO debe subirse al repositorio.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  mariadb-cuadrantes:
+    image: mariadb:11
+    container_name: cuadrantes-vigilantes-mariadb
+    restart: unless-stopped
+    ports:
+      - "3308:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpass_dev
+      MARIADB_DATABASE: cuadrantes_vigilantes_dev
+      MARIADB_USER: cuadrantes_user
+      MARIADB_PASSWORD: cuadrantes_pass_dev
+    volumes:
+      - cuadrantes_mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  cuadrantes_mariadb_data:
+    driver: local

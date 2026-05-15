@@ -81,17 +81,11 @@ Documentacion preparada para la primera migracion controlada de MariaDB de desar
 - La migracion real NO se ha ejecutado: no hay MariaDB local disponible en este entorno.
 - La carpeta `backend/prisma/migrations/` NO existe todavia: se creara con el primer `prisma migrate dev`.
 
+## Estado del paso 12
+
+Entorno MariaDB de desarrollo levantado con Docker Compose en el puerto 3308 para evitar conflictos. Configurado el archivo `.env` local (no versionado) con la conexión a la base de datos y la `SHADOW_DATABASE_URL` necesaria para Prisma Migrate. Se ha ejecutado la primera migración real y se ha cargado el seed. Validado el correcto funcionamiento mediante `npm run test:repos`.
+
 ## Proximo paso recomendado
 
-Cuando el usuario disponga de MariaDB local (instalacion directa o Docker):
-
-1. Crear la base de datos `cuadrantes_vigilantes_dev` con el SQL documentado en `backend/README.md`.
-2. Copiar `.env.example` a `.env` y ajustar `DATABASE_URL` con las credenciales reales locales.
-3. Desde `backend/`, ejecutar:
-   ```bash
-   npm run prisma:migrate     # Primera migracion: crea backend/prisma/migrations/
-   npm run seed               # Carga datos ficticios
-   npm run dev                # Arranca el servidor
-   ```
-4. Probar los endpoints GET/POST/PUT contra datos reales.
-5. Si todo funciona, introducir autenticacion JWT o escrituras operativas con auditoria.
+1. Probar y validar los endpoints REST GET, POST y PUT existentes para confirmar la correcta comunicacion entre los controladores de Express y la base de datos MariaDB real.
+2. Si todo funciona correctamente, introducir autenticacion JWT, roles, y securizacion basica de endpoints para avanzar hacia las escrituras operativas de la aplicacion.

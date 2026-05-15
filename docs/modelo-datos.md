@@ -1,7 +1,6 @@
 # Modelo de datos inicial
 
-Prisma ya esta configurado en `backend/prisma/schema.prisma` con proveedor `mysql` para MariaDB. Todavia no se han ejecutado migraciones reales porque no hay base MariaDB configurada en el repositorio.
-
+Prisma ya esta configurado en `backend/prisma/schema.prisma` con proveedor `mysql` para MariaDB. La base de datos de desarrollo se ha levantado mediante Docker Compose y la primera migración ha sido ejecutada con éxito.
 ## Entidades modeladas
 
 - Usuario.
@@ -41,17 +40,10 @@ Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, ca
 
 ## Pendiente
 
-- Revisar campos con usuarios funcionales.
-- Instalar MariaDB local (o levantar con Docker).
-- Crear base de datos `cuadrantes_vigilantes_dev` con el SQL documentado en `backend/README.md`.
-- Configurar `.env` local con `DATABASE_URL` real.
-- Ejecutar primera migracion Prisma: `npm run prisma:migrate`.
-- Ejecutar seed: `npm run seed`.
-- Probar los endpoints GET/POST/PUT actuales contra una base MariaDB migrada y con seed.
+- Validar los endpoints GET/POST/PUT actuales contra la base MariaDB migrada y con seed.
 - Conectar `MotorReglasTurnos` con datos leidos desde Prisma mediante repositories o controladores.
 
-> El schema Prisma esta validado y el Prisma Client esta generado. La migracion real no se ha ejecutado porque no hay MariaDB local disponible en este entorno (PASO 11).
-
+> El schema Prisma esta validado y el Prisma Client esta generado. La primera migración real ha sido ejecutada contra una instancia local de MariaDB en Docker (PASO 12).
 ## Consumo API actual
 
 La primera capa REST de negocio usa los repositories Prisma para exponer datos de lectura:
