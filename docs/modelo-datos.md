@@ -40,7 +40,7 @@ Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, ca
 
 ## Pendiente
 
-- Validar los endpoints GET/POST/PUT actuales contra la base MariaDB migrada y con seed.
+- Empezar a crear y modelar la autenticación con roles.
 - Conectar `MotorReglasTurnos` con datos leidos desde Prisma mediante repositories o controladores.
 
 > El schema Prisma esta validado y el Prisma Client esta generado. La primera migración real ha sido ejecutada contra una instancia local de MariaDB en Docker (PASO 12).

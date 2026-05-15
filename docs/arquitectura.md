@@ -32,4 +32,4 @@ La migracion debe ser progresiva. El HTML original no debe borrarse ni reescribi
 
 La API REST de negocio empezo por endpoints GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias. Despues se han abierto escrituras basicas solo para entidades maestras: empresas, campus, edificios, servicios y trabajadores. No hay escrituras para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios ni login.
 
-El siguiente paso tecnico recomendado es validar que los endpoints GET, POST y PUT existentes funcionen correctamente contra la nueva base de datos real MariaDB local. Una vez validados, se debe empezar a diseñar la estrategia de autenticación (JWT) y manejo de sesiones.
+El siguiente paso tecnico recomendado es implementar la estrategia de autenticacion (JWT), manejo de sesiones y securizacion de los endpoints REST existentes, ya que se ha comprobado su correcto funcionamiento contra la base de datos MariaDB local real.

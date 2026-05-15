@@ -85,7 +85,10 @@ Documentacion preparada para la primera migracion controlada de MariaDB de desar
 
 Entorno MariaDB de desarrollo levantado con Docker Compose en el puerto 3308 para evitar conflictos. Configurado el archivo `.env` local (no versionado) con la conexión a la base de datos y la `SHADOW_DATABASE_URL` necesaria para Prisma Migrate. Se ha ejecutado la primera migración real y se ha cargado el seed. Validado el correcto funcionamiento mediante `npm run test:repos`.
 
+## Estado del paso 13
+
+Se ha validado la comunicación entre el backend Express y MariaDB levantada en Docker (puerto 3308). Los endpoints existentes GET (trabajadores, servicios), POST (empresas, campus) y PUT (empresas) responden correctamente, persistiendo y retornando información desde la base de datos real.
+
 ## Proximo paso recomendado
 
-1. Probar y validar los endpoints REST GET, POST y PUT existentes para confirmar la correcta comunicacion entre los controladores de Express y la base de datos MariaDB real.
-2. Si todo funciona correctamente, introducir autenticacion JWT, roles, y securizacion basica de endpoints para avanzar hacia las escrituras operativas de la aplicacion.
+1. Implementar la autenticación JWT, la gestión de sesiones y securizar las rutas (endpoints) actuales para asegurar el acceso basado en los roles del sistema antes de seguir creando lógicas más complejas como turnos y asignaciones.
