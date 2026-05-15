@@ -114,8 +114,20 @@ Se ha verificado y consolidado el CRUD de Campus. Todo estaba implementado corre
 - Empresas y Dashboard siguen operativos
 - Frontend compila sin errores (npm run build)
 - Prisma validate y migrate status OK
-- Solo se han aÃ±adido las funciones createCampus y updateCampus faltantes en el cliente API
+- Solo se han añadido las funciones createCampus y updateCampus faltantes en el cliente API
+
+## Estado del paso 18
+
+Se ha creado el CRUD basico de Edificios desde React:
+- Creados: EdificioPage.jsx, EdificioTable.jsx, EdificioForm.jsx
+- Agregadas funciones API createEdificio y updateEdificio
+- Agregada navegacion en App.jsx
+- Endpoints backend GET/POST/PUT /api/edificios funcionando y probados
+- Relacion Edificio-Campus verificada (campusId requerido)
+- Empresas, Campus y Dashboard siguen operativos
+- Prisma validate y migrate status OK
+- npm run build OK
 
 ## Proximo paso recomendado
 
-1. **PASO 18**: Replicar el patron CRUD para las entidades Edificios y Servicios.
+1. **PASO 19**: Replicar el patron CRUD para Servicios.

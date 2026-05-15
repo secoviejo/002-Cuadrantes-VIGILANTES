@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Dashboard from './pages/Dashboard'
 import EmpresasPage from './pages/EmpresasPage'
 import CampusPage from './pages/CampusPage'
+import EdificioPage from './pages/EdificioPage'
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState('dashboard')
@@ -12,6 +13,10 @@ function App() {
 
   if (currentRoute === 'campus') {
     return <CampusPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
+  }
+
+  if (currentRoute === 'edificios') {
+    return <EdificioPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
   }
 
   return <Dashboard currentRoute={currentRoute} onNavigate={setCurrentRoute} />

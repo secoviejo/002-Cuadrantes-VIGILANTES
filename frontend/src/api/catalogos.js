@@ -28,6 +28,14 @@ export function getEdificios() {
   return getJson('/edificios');
 }
 
+export function createEdificio(data) {
+  return postJson('/edificios', data);
+}
+
+export function updateEdificio(id, data) {
+  return putJson(`/edificios/${id}`, data);
+}
+
 export function getServicios() {
   return getJson('/servicios');
 }
