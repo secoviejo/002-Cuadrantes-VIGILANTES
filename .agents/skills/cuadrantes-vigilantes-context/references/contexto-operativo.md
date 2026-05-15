@@ -24,7 +24,9 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `backend/src/utils/dateUtils.js`: utilidades de fechas para rangos, solapamientos y calculo de descanso.
 - `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
-- No existen carpetas `server/` ni `tests/`. Prisma vive dentro de `backend/prisma/`.
+- `backend/src/repositories/`: capa de acceso a datos con Prisma. Contiene `base.repository.js` con utilidades de filtrado y paginacion, `trabajador.repository.js`, `servicio.repository.js`, `turno.repository.js`, `asignacionTurno.repository.js`, `ausencia.repository.js` e `index.js` que exporta todos los repositorios.
+- `backend/src/db/prisma.js`: cliente Prisma singleton para evitar conexiones multiples.
+- No existen controladores CRUD reales conectados a los repositories; estos son solo la capa de datos.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
 - Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
@@ -183,6 +185,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Guardar trazabilidad de acciones importantes en auditoria.
 - Centralizar reglas en backend, preferiblemente en un servicio tipo `MotorReglasTurnos`, evitando duplicarlas en componentes React.
 - `MotorReglasTurnos` implementa ya reglas iniciales de solapamiento, descanso, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura.
+- Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y futuros controladores accedan a datos sin dependencia directa del ORM.
 - El siguiente paso tecnico recomendado es crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar primero una capa de repositorios.
 
 ## Riesgos Tecnicos Actuales

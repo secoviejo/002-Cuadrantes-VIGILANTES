@@ -1,0 +1,6 @@
+export * from './base.repository.js'
+export * as TrabajadorRepo from './trabajador.repository.js'
+export * as ServicioRepo from './servicio.repository.js'
+export * as TurnoRepo from './turno.repository.js'
+export * as AsignacionTurnoRepo from './asignacionTurno.repository.js'
+export * as AusenciaRepo from './ausencia.repository.js'

@@ -56,6 +56,10 @@ Prisma ya esta configurado para MariaDB con `schema.prisma`, seed inicial y scri
 
 `MotorReglasTurnos` ya existe como modulo backend independiente y testeable. Valida solapamientos, descanso minimo, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura usando objetos JavaScript normales.
 
+## Estado del paso 8
+
+Capa de repositories preparada en `backend/src/repositories/` con Prisma. Incluye cliente singleton (`prisma.js`), utilidades base de filtrado/paginacion, y repositories para Trabajador, Servicio, Turno, AsignacionTurno y Ausencia. Validado con `prisma validate` y `prisma generate`. Sin controladores reales ni migraciones.
+
 ## Proximo paso recomendado
 
-Crear rutas/controladores reales para trabajadores, servicios y turnos, o preparar primero una capa de repositorios para conectar Prisma manteniendo bajo acoplamiento.
+Crear controladores REST basicos conectados a los repositories para exponer los recursos de API. Esto permitira integrar el frontend React con datos reales desde Prisma cuando se disponga de MariaDB.
