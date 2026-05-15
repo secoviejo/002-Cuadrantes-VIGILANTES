@@ -1,0 +1,40 @@
+# Roadmap de Fase 1
+
+## Objetivo
+
+Transformar progresivamente el prototipo HTML en una aplicacion mantenible con frontend, backend, persistencia y reglas centralizadas.
+
+## Pasos iniciales
+
+1. Preservar el prototipo HTML como referencia visual.
+2. Crear estructura base y documentacion tecnica.
+3. Inicializar frontend cuando se apruebe el siguiente paso.
+4. Inicializar backend cuando se apruebe el siguiente paso.
+5. Definir modelo de datos antes de crear Prisma.
+6. Conectar funcionalidades reales de forma incremental.
+
+## Prioridades funcionales
+
+- Usuarios y roles.
+- Empresas y trabajadores.
+- Campus, edificios y servicios.
+- Turnos y asignaciones.
+- Sustituciones.
+- Incidencias y descubiertos.
+- Verificaciones de cobertura.
+- Informes y exportaciones basicas.
+- Auditoria.
+
+## Fuera de alcance inicial
+
+- GPS.
+- NFC.
+- QR.
+- Geovallas.
+- App movil nativa.
+- Inteligencia artificial.
+- Control de accesos.
+- CAU.
+- Nominas avanzadas.
+- Biometria.
+- SSO real.

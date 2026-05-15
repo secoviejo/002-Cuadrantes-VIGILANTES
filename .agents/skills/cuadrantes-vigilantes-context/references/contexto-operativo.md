@@ -11,11 +11,14 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `cuadrantes_uz_6.html`: prototipo principal de una sola pagina. Contiene estructura HTML, estilos CSS inline, JavaScript inline, datos de demostracion, navegacion interna, modales, pantallas y logica visual.
 - `legacy/html-original/cuadrantes_uz_6.html`: copia historica del prototipo HTML original, conservada como referencia visual para la migracion progresiva.
 - `legacy/html-original/README.md`: documenta el uso de `legacy/html-original/` como referencia visual historica del prototipo.
+- `README.md`: resumen del proyecto, estado actual, estructura preparada y limites del paso actual.
 - `DESCRIPCION_Y_FUNCIONES_APP.md`: documento funcional con objetivo, perfiles, pantallas, informes, incidencias y limitaciones actuales.
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
+- `frontend/`: carpeta base reservada para la futura aplicacion React + Vite + Tailwind CSS. Solo contiene README y estructura `src/` con marcadores `.gitkeep`.
+- `backend/`: carpeta base reservada para la futura API Node.js + Express. Solo contiene README y estructura `src/` con marcadores `.gitkeep`.
+- `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
-- No existe `README.md`.
-- No existen carpetas `frontend/`, `backend/`, `prisma/`, `docs/`, `src/`, `server/` ni `tests/`.
+- No existen carpetas `prisma/`, `server/` ni `tests/`.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - No existen `package.json`, dependencias Node, Vite, React, Express, Prisma ni MariaDB configurados.
 - No hay backend, API REST, base de datos, autenticacion real ni persistencia.
@@ -25,6 +28,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 ## Estado Actual de la Arquitectura
 
 - Stack actual: HTML + CSS inline + JavaScript inline en un unico archivo.
+- La nueva estructura `frontend/` y `backend/` es solo preparatoria; no contiene aplicaciones ejecutables.
 - El HTML tiene CSS embebido entre `<style>` y `</style>`, con estilos generales, responsive, roles, modales e impresion.
 - El JavaScript esta embebido al final del HTML, entre `<script>` y `</script>`.
 - No hay CSS externo propio ni JavaScript externo propio.
@@ -150,6 +154,8 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 
 Importante: React, Express, Prisma, MariaDB, JWT y la estructura full-stack quedan para pasos posteriores. En esta fase solo se consolida memoria operativa y contexto vivo.
 
+La estructura base de carpetas ya existe para orientar la migracion, pero aun no se han creado dependencias, configuraciones ni puntos de entrada ejecutables.
+
 ## Reglas de Negocio Previstas
 
 - No permitir solapamiento de turnos para el mismo trabajador.
@@ -255,3 +261,4 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.
 - 2026-05-15: Actualizada memoria viva tras analisis del repositorio. Se documenta inventario real, estado por pantalla, funcionalidades cliente, simulaciones, datos demo, riesgos y limites de la fase documental previa a la migracion full-stack.
 - 2026-05-15: Aniadida carpeta `legacy/html-original/` con copia del HTML original y README para conservar la referencia visual historica antes de iniciar la migracion.
+- 2026-05-15: Creada estructura base documental con `README.md`, `frontend/`, `backend/` y `docs/`, sin inicializar React, Express, Prisma, MariaDB ni dependencias.
