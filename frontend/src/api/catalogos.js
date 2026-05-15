@@ -100,3 +100,45 @@ export function validarAsignacion(turnoId, trabajadorId) {
 export function validarAsignacionesMasivas(asignaciones) {
   return postJson('/validaciones/validar-asignaciones-masivas', { asignaciones });
 }
+
+export function getSustituciones() {
+  return getJson('/sustituciones');
+}
+
+export function createSustitucion(data) {
+  return postJson('/sustituciones', data);
+}
+
+export function updateSustitucion(id, data) {
+  return putJson(`/sustituciones/${id}`, data);
+}
+
+export function deleteSustitucion(id) {
+  return fetch(`http://localhost:4000/api/sustituciones/${id}`, {
+    method: 'DELETE',
+  }).then(res => {
+    if (!res.ok) throw new Error('Error al eliminar')
+    return res
+  });
+}
+
+export function getIncidencias() {
+  return getJson('/incidencias');
+}
+
+export function createIncidencia(data) {
+  return postJson('/incidencias', data);
+}
+
+export function updateIncidencia(id, data) {
+  return putJson(`/incidencias/${id}`, data);
+}
+
+export function deleteIncidencia(id) {
+  return fetch(`http://localhost:4000/api/incidencias/${id}`, {
+    method: 'DELETE',
+  }).then(res => {
+    if (!res.ok) throw new Error('Error al eliminar')
+    return res
+  });
+}

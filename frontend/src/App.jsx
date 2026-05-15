@@ -7,6 +7,8 @@ import ServiciosPage from './pages/ServiciosPage'
 import TrabajadoresPage from './pages/TrabajadoresPage'
 import TurnosPage from './pages/TurnosPage'
 import AsignacionesPage from './pages/AsignacionesPage'
+import SustitucionesPage from './pages/SustitucionesPage'
+import IncidenciasPage from './pages/IncidenciasPage'
 import CuadrantePage from './pages/CuadrantePage'
 
 function App() {
@@ -38,6 +40,14 @@ function App() {
 
   if (currentRoute === 'asignaciones') {
     return <AsignacionesPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
+  }
+
+  if (currentRoute === 'sustituciones') {
+    return <SustitucionesPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
+  }
+
+  if (currentRoute === 'incidencias') {
+    return <IncidenciasPage currentRoute={currentRoute} onNavigate={setCurrentRoute} />
   }
 
   if (currentRoute === 'cuadrante') {
