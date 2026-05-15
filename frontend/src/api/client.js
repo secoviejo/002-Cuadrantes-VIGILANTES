@@ -1,7 +1,20 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export async function getJson(path) {
-  const response = await fetch(`${API_BASE_URL}${path}`);
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: getAuthHeaders()
+  });
 
   if (!response.ok) {
     throw new Error(`Error ${response.status} al consultar ${path}`);
@@ -13,9 +26,7 @@ export async function getJson(path) {
 export async function postJson(path, data) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
 
@@ -29,9 +40,7 @@ export async function postJson(path, data) {
 export async function putJson(path, data) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
 

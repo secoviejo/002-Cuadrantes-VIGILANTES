@@ -1,6 +1,6 @@
-import { ShieldCheck, Building2, Map, Layers, CalendarDays, Users, Clock, UserCheck, LayoutGrid, ArrowRightLeft, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Building2, Map, Layers, CalendarDays, Users, Clock, UserCheck, LayoutGrid, ArrowRightLeft, AlertTriangle, LogOut } from 'lucide-react';
 
-export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
+export default function Sidebar({ currentRoute = 'dashboard', onNavigate, onLogout, user }) {
   const menuItems = [
     { id: 'dashboard', name: 'Inicio', icon: <ShieldCheck className="w-5 h-5" /> },
     { id: 'empresas', name: 'Empresas', icon: <Building2 className="w-5 h-5" /> },
@@ -20,6 +20,10 @@ export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
     if (onNavigate) onNavigate(id);
   };
 
+  const userInitial = user?.nombre ? user.nombre.charAt(0).toUpperCase() : 'U';
+  const userName = user?.nombre || 'Usuario';
+  const userRol = user?.rol?.nombre || 'Sin rol';
+
   return (
     <aside className="w-64 bg-stone-950 text-stone-200 min-h-screen flex flex-col sticky top-0 h-screen">
       <div className="p-6 border-b border-stone-800">
@@ -34,7 +38,7 @@ export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
 
       <nav className="flex-1 py-5 overflow-y-auto">
         <div className="px-6 py-2 text-[10px] uppercase tracking-widest text-stone-500 font-semibold">
-          Menú Principal
+          Menu Principal
         </div>
         <ul className="mt-2 flex flex-col">
           {menuItems.map((item) => {
@@ -59,14 +63,23 @@ export default function Sidebar({ currentRoute = 'dashboard', onNavigate }) {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-stone-800 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs">
-          A
+      <div className="p-4 border-t border-stone-800">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs">
+            {userInitial}
+          </div>
+          <div className="flex-1 text-xs">
+            <strong className="block text-amber-100 font-medium">{userName}</strong>
+            <span className="text-stone-500">{userRol}</span>
+          </div>
         </div>
-        <div className="text-xs">
-          <strong className="block text-amber-100 font-medium">Administrador</strong>
-          <span className="text-stone-500">Sesión local</span>
-        </div>
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-stone-400 hover:text-stone-200 hover:bg-stone-800 rounded transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          Cerrar Sesion
+        </button>
       </div>
     </aside>
   );
