@@ -9,11 +9,14 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 ## Inventario Actual del Repositorio
 
 - `cuadrantes_uz_6.html`: prototipo principal de una sola pagina. Contiene estructura HTML, estilos CSS inline, JavaScript inline, datos de demostracion, navegacion interna, modales, pantallas y logica visual.
+- `legacy/html-original/cuadrantes_uz_6.html`: copia historica del prototipo HTML original, conservada como referencia visual para la migracion progresiva.
+- `legacy/html-original/README.md`: documenta el uso de `legacy/html-original/` como referencia visual historica del prototipo.
 - `DESCRIPCION_Y_FUNCIONES_APP.md`: documento funcional con objetivo, perfiles, pantallas, informes, incidencias y limitaciones actuales.
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
 - No existe `README.md`.
 - No existen carpetas `frontend/`, `backend/`, `prisma/`, `docs/`, `src/`, `server/` ni `tests/`.
+- Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - No existen `package.json`, dependencias Node, Vite, React, Express, Prisma ni MariaDB configurados.
 - No hay backend, API REST, base de datos, autenticacion real ni persistencia.
 - El remoto Git configurado apunta a `git@github.com:secoviejo/002-Cuadrantes-VIGILANTES.git`.
@@ -178,6 +181,7 @@ Importante: React, Express, Prisma, MariaDB, JWT y la estructura full-stack qued
 ## Recomendaciones para Migracion Progresiva
 
 - No borrar ni mover el HTML original hasta tener una referencia visual versionada.
+- Mantener `legacy/html-original/` como referencia historica del prototipo original antes de la migracion.
 - No reescribir toda la aplicacion de golpe.
 - No crear frontend, backend, Prisma ni MariaDB sin una fase previa de estructura y decisiones tecnicas.
 - Usar el HTML como maqueta funcional y visual, no como fuente de verdad de datos.
@@ -250,3 +254,4 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.
 - 2026-05-15: Actualizada memoria viva tras analisis del repositorio. Se documenta inventario real, estado por pantalla, funcionalidades cliente, simulaciones, datos demo, riesgos y limites de la fase documental previa a la migracion full-stack.
+- 2026-05-15: Aniadida carpeta `legacy/html-original/` con copia del HTML original y README para conservar la referencia visual historica antes de iniciar la migracion.
