@@ -9,7 +9,7 @@ Transformar progresivamente el prototipo HTML en una aplicacion mantenible con f
 1. Preservar el prototipo HTML como referencia visual.
 2. Crear estructura base y documentacion tecnica.
 3. Inicializar frontend con React + Vite + Tailwind CSS.
-4. Inicializar backend cuando se apruebe el siguiente paso.
+4. Inicializar backend con Node.js + Express.
 5. Definir modelo de datos antes de crear Prisma.
 6. Conectar funcionalidades reales de forma incremental.
 
@@ -42,3 +42,7 @@ Transformar progresivamente el prototipo HTML en una aplicacion mantenible con f
 ## Estado del paso 4
 
 El frontend base ya esta inicializado. Todavia no se ha migrado ninguna pantalla funcional del prototipo HTML.
+
+## Estado del paso 5
+
+El backend base ya esta inicializado con Express y rutas minimas. Todavia no hay Prisma, MariaDB, autenticacion JWT ni reglas de negocio.

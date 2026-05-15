@@ -1,23 +1,35 @@
 # Backend
 
-Carpeta reservada para la futura API backend.
+API base de 002-Cuadrantes-VIGILANTES.
 
-Stack previsto para fases posteriores:
+## Stack actual
 
 - Node.js.
 - Express.
-- API REST.
-- Autenticacion preparada con JWT.
-- Roles de usuario.
-- Auditoria basica.
-- MariaDB mediante Prisma en una fase posterior.
 
-Estado actual:
+## Comandos
 
-- No hay `package.json`.
-- No hay servidor Express.
-- No hay rutas API.
-- No hay Prisma.
-- No hay conexion a MariaDB.
+```bash
+npm install
+npm run dev
+npm start
+```
 
-La estructura de `src/` se deja preparada para separar controladores, rutas, servicios, middleware y utilidades cuando empiece la implementacion real.
+Por defecto la API escucha en:
+
+```text
+http://127.0.0.1:4000
+```
+
+Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST` o `FRONTEND_ORIGIN` cuando haga falta.
+
+## Rutas disponibles
+
+- `GET /api`: informacion basica de la API.
+- `GET /api/health`: comprobacion de salud del backend.
+
+## Estado actual
+
+Este backend es una inicializacion minima. No contiene todavia autenticacion JWT, roles reales, Prisma, MariaDB ni reglas de negocio.
+
+La persistencia y el modelo de datos se definiran en pasos posteriores.

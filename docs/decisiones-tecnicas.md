@@ -8,11 +8,11 @@
 - Separar espacios futuros para frontend, backend y documentacion.
 - Mantener la memoria viva del proyecto en `.agents/skills/cuadrantes-vigilantes-context/`.
 - Inicializar el frontend con React + Vite + Tailwind CSS dentro de `frontend/`.
+- Inicializar el backend con Node.js + Express dentro de `backend/`, solo con rutas minimas.
 
 ## Decisiones pendientes
 
 - Convenciones de rutas frontend.
-- Inicializacion de Express.
 - Diseno detallado de API REST.
 - Diseno definitivo de modelo Prisma.
 - Configuracion de MariaDB.

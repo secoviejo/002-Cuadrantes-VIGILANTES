@@ -15,14 +15,15 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `DESCRIPCION_Y_FUNCIONES_APP.md`: documento funcional con objetivo, perfiles, pantallas, informes, incidencias y limitaciones actuales.
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
-- `backend/`: carpeta base reservada para la futura API Node.js + Express. Solo contiene README y estructura `src/` con marcadores `.gitkeep`.
+- `backend/`: API base Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, ruta `src/routes/health.routes.js`, README y estructura preparada.
 - `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
 - No existen carpetas `prisma/`, `server/` ni `tests/`.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
-- No existen dependencias backend, Express, Prisma ni MariaDB configurados.
-- No hay backend, API REST, base de datos, autenticacion real ni persistencia.
+- Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
+- No existen Prisma ni MariaDB configurados.
+- Hay backend Express minimo, pero no hay base de datos, autenticacion real ni persistencia.
 - El remoto Git configurado apunta a `git@github.com:secoviejo/002-Cuadrantes-VIGILANTES.git`.
 - En el estado observado, `.agents/` aparece como no trackeado en Git.
 
@@ -30,7 +31,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 
 - Stack actual: HTML + CSS inline + JavaScript inline en un unico archivo.
 - `frontend/` ya contiene una aplicacion base ejecutable con React + Vite + Tailwind CSS.
-- `backend/` sigue siendo solo preparatorio; no contiene aplicacion ejecutable.
+- `backend/` ya contiene una API Express minima ejecutable.
 - El HTML tiene CSS embebido entre `<style>` y `</style>`, con estilos generales, responsive, roles, modales e impresion.
 - El JavaScript esta embebido al final del HTML, entre `<script>` y `</script>`.
 - No hay CSS externo propio ni JavaScript externo propio.
@@ -40,7 +41,8 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - El SSO institucional es simulado y fuerza el rol UZ.
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
-- No hay `fetch`, `axios`, `localStorage`, `sessionStorage`, API REST ni llamadas a servicios externos.
+- El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
+- La API Express minima expone `GET /api` y `GET /api/health`; todavia no contiene rutas de negocio.
 
 ## Pantallas y Estado Funcional
 
@@ -154,9 +156,9 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React ya esta inicializado como base tecnica. Express, Prisma, MariaDB, JWT y la API REST quedan para pasos posteriores.
+Importante: el frontend React y el backend Express ya estan inicializados como bases tecnicas. Prisma, MariaDB, JWT y la API REST de negocio quedan para pasos posteriores.
 
-La estructura base de carpetas ya existe para orientar la migracion. El unico punto ejecutable actual es el frontend Vite.
+La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima.
 
 ## Reglas de Negocio Previstas
 
@@ -191,7 +193,7 @@ La estructura base de carpetas ya existe para orientar la migracion. El unico pu
 - No borrar ni mover el HTML original hasta tener una referencia visual versionada.
 - Mantener `legacy/html-original/` como referencia historica del prototipo original antes de la migracion.
 - No reescribir toda la aplicacion de golpe.
-- No crear frontend, backend, Prisma ni MariaDB sin una fase previa de estructura y decisiones tecnicas.
+- No crear Prisma ni MariaDB sin una fase previa de modelo de datos y decisiones tecnicas.
 - Usar el HTML como maqueta funcional y visual, no como fuente de verdad de datos.
 - Migrar primero piezas de bajo riesgo: layout, navegacion, dashboard visual y tablas demo.
 - Separar desde el inicio datos, servicios de API, componentes visuales y reglas de negocio.
@@ -265,3 +267,4 @@ Si un cambio no modifica comportamiento, arquitectura ni datos, indicar explicit
 - 2026-05-15: Aniadida carpeta `legacy/html-original/` con copia del HTML original y README para conservar la referencia visual historica antes de iniciar la migracion.
 - 2026-05-15: Creada estructura base documental con `README.md`, `frontend/`, `backend/` y `docs/`, sin inicializar React, Express, Prisma, MariaDB ni dependencias.
 - 2026-05-15: Inicializado frontend base en `frontend/` con React, Vite y Tailwind CSS. Verificado `npm run build`. No se ha creado backend, Prisma ni MariaDB.
+- 2026-05-15: Inicializado backend base en `backend/` con Node.js + Express, CORS y dotenv. Verificadas rutas `GET /api` y `GET /api/health`. No se ha creado Prisma ni MariaDB.
