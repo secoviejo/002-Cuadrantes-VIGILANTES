@@ -6,7 +6,7 @@ import AsignacionesTable from '../components/asignaciones/AsignacionesTable';
 import AsignacionForm from '../components/asignaciones/AsignacionForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function AsignacionesPage({ currentRoute, onNavigate }) {
+export default function AsignacionesPage({ currentRoute, onNavigate, onLogout, user }) {
   const [asignaciones, setAsignaciones] = useState([]);
   const [turnoList, setTurnoList] = useState([]);
   const [trabajadorList, setTrabajadorList] = useState([]);
@@ -107,6 +107,8 @@ export default function AsignacionesPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Asignaciones"
       subtitle="Gestion de asignaciones de trabajadores a turnos"
     >

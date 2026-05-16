@@ -25,6 +25,10 @@ Pantallas operativas recuperadas del HTML original:
 
 - `Dashboard.jsx` implementa el Resumen operativo con KPIs, selector de turno, verificacion por puesto, alertas dinamicas, cobertura por campus y ultimas sustituciones.
 - `CuadrantePage.jsx` muestra el cuadrante mensual completo de mayo 2026 con columnas 1-31, turnos `M`, `T`, `N`, `D` y `x` rojo para descubiertos.
+- `Dashboard.jsx` permite generar informe diario, mensual o anual mediante vista previa imprimible.
+- `HorasAnualesPage.jsx` y `CierreMensualPage.jsx` muestran el seguimiento contractual y la conciliacion de mayo 2026 para UZ/ADMIN.
+- `ServiciosPage.jsx` filtra por campus y `ServicioForm.jsx` ofrece un formulario avanzado con previsualizacion.
+- La navegacion se adapta por rol: Contrata solo ve Operacion; ADMIN y Unidad de Seguridad ven todo.
 - La navegacion de mes queda visible pero bloqueada a mayo 2026 en esta fase para conservar fidelidad con la fuente original.
 
 El cliente API central vive en `src/api/client.js` y:
@@ -34,6 +38,7 @@ El cliente API central vive en `src/api/client.js` y:
 - Normaliza listados recibidos como array, `{ data: [] }` o `{ items: [] }`.
 - Centraliza `GET`, `POST`, `PUT` y `DELETE`.
 - Expone funciones de catalogo para `getResumenOperativo`, `getCuadranteMensual` y `createVerificacionesLote`.
+- Expone funciones de informes y cierre: `getInformeOperativo`, `getHorasAnuales` y `getCierreMensual`.
 
 Usuarios demo tras ejecutar el seed del backend:
 

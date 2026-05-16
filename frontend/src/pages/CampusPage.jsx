@@ -6,7 +6,7 @@ import CampusTable from '../components/campus/CampusTable';
 import CampusForm from '../components/campus/CampusForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function CampusPage({ currentRoute, onNavigate }) {
+export default function CampusPage({ currentRoute, onNavigate, onLogout, user }) {
   const [campusList, setCampusList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,6 +69,8 @@ export default function CampusPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Campus"
       subtitle="Gestión de los campus de la universidad"
     >

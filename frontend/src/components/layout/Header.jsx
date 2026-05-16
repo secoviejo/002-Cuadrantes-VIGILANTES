@@ -1,4 +1,4 @@
-export default function Header({ title = "Dashboard", subtitle = "Visión general del estado actual" }) {
+export default function Header({ title = 'Dashboard', subtitle = 'Vision general del estado actual', actions }) {
   return (
     <header className="mb-8 flex justify-between items-start gap-6">
       <div>
@@ -9,8 +9,9 @@ export default function Header({ title = "Dashboard", subtitle = "Visión genera
           {subtitle}
         </p>
       </div>
-      
-      <div className="flex gap-2">
+
+      <div className="flex gap-2 items-center">
+        {actions}
         <div className="bg-stone-900 text-amber-300 px-3 py-1.5 text-xs font-medium uppercase tracking-wider rounded-md">
           Entorno de desarrollo
         </div>

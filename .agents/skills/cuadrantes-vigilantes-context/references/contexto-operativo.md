@@ -52,7 +52,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
-- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida, verificaciones de cobertura con usuario autenticado, `GET /api/resumen-operativo`, `GET /api/cuadrante-mensual` y `POST /api/verificaciones/lote`.
+- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida, verificaciones de cobertura con usuario autenticado, `GET /api/resumen-operativo`, `GET /api/cuadrante-mensual`, `GET /api/informes-operativos`, `GET /api/horas-anuales`, `GET /api/cierre-mensual` y `POST /api/verificaciones/lote`.
 - Hay controladores conectados a repositories Prisma. El frontend React consume el backend mediante `frontend/src/api/client.js` y normaliza listados en forma de array, `{ data }` o `{ items }`.
 - `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
@@ -62,19 +62,19 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 |---|---|---|
 | Login | Simulado | Permite seleccionar Unidad de Seguridad UZ o Contrata y entrar con cualquier credencial. |
 | SSO UZ | Simulado | Boton visual que fuerza perfil UZ, sin integracion real. |
-| Sidebar y navegacion | Funcional en cliente | Cambia vistas internas con `navTo`, sin URL ni router. |
+| Sidebar y navegacion | Implementado por rol en React | Contrata ve solo Operacion; ADMIN y Unidad de Seguridad ven todas las secciones. |
 | Resumen operativo | Implementado en React con API | Muestra KPIs, alertas, ultimas sustituciones, cobertura por campus y panel de verificacion con datos de mayo 2026. |
 | Verificacion de cobertura | Persistente por API | Permite marcar cubierto, incidencia o descubierto, anadir notas y guardar lote con JWT. |
 | Cuadrante mensual | Implementado en React con API | Renderiza mayo de 2026 completo con turnos reales recuperados del HTML y descubiertos marcados. |
 | Importar Excel | Solo visual | Representa carga e historial, pero no lee ni valida archivos. |
 | Sustituciones | Tabla demo generada | Muestra sustituciones con preaviso, sin alta ni persistencia real. |
-| Horas anuales | Solo visual | Muestra avance anual y desglose estatico. |
-| Cierre mensual | Solo visual | Simula conciliacion y validacion de factura. |
+| Horas anuales | Implementado en React con API | Muestra contrato, acumulado, categorias de hora y variables informativas. |
+| Cierre mensual | Implementado en React con API | Muestra conciliacion planificado/ejecutado y checklist de validacion de factura. |
 | Catalogo de servicios | Visual con filtro cliente | Lista 13 servicios y filtra por campus manipulando filas HTML. |
-| Nuevo servicio | Formulario visual interactivo | Calcula una previsualizacion y horas estimadas, pero no guarda. |
+| Nuevo servicio | Implementado en React con persistencia | Formulario avanzado con metadatos operativos y previsualizacion. |
 | Personal | Tabla demo generada | Lista vigilantes y auxiliares con formacion, acreditacion y estado. |
 | Calendario laboral | Estatico | Muestra festivos y periodos academicos sin CRUD ni reglas conectadas. |
-| Informes | Interactivo con datos demo | Permite elegir informe diario, mensual o anual y previsualizarlo. |
+| Informes | Implementado en React con API | Permite elegir informe diario, mensual o anual y previsualizarlo para imprimir/PDF del navegador. |
 | Impresion/PDF | Dependiente del navegador | Usa `window.print()` para imprimir o guardar PDF desde el navegador. |
 
 ## Funcionalidades que Funcionan Hoy en Cliente
@@ -117,7 +117,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Anadir persona.
 - Anadir festivo.
 - Persistencia de notas, verificaciones, incidencias, descubiertos y formularios.
-- Informes con datos reales.
+- Importacion Excel real.
 - Calculo real de horas, cierre mensual o factura.
 - Auditoria.
 
@@ -338,6 +338,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 
 ## Historial de Cambios de Contexto
 
+- 2026-05-16: Incorporada informacion funcional clave de la conversacion original al React/Express actual. La navegacion queda filtrada por rol, Contrata solo accede a Operacion, ADMIN/Unidad de Seguridad ven todo, se anaden informes operativo diario/mensual/anual con vista previa imprimible, APIs de horas anuales y cierre mensual, paginas React de Horas anuales y Cierre mensual, filtro por campus en Servicios y formulario avanzado de servicio con metadatos operativos persistidos. La importacion Excel queda aplazada hasta disponer de fichero real.
 - 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.
 - 2026-05-15: Actualizada memoria viva tras analisis del repositorio. Se documenta inventario real, estado por pantalla, funcionalidades cliente, simulaciones, datos demo, riesgos y limites de la fase documental previa a la migracion full-stack.

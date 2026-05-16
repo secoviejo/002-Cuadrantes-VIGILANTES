@@ -18,19 +18,16 @@
 - No importar los nombres ficticios de vigilantes del HTML como trabajadores reales.
 - Persistir los datos recuperados mediante Prisma y seed idempotente, no como arrays estaticos del frontend.
 - Mantener mayo 2026 como primer mes fiel y dejar la navegacion a otros meses para una fase posterior.
+- Aplazar importacion Excel hasta disponer de un fichero real de la contrata.
+- Resolver informes como vista previa imprimible en navegador, no como PDF binario de servidor en esta fase.
+- Aplicar permisos basicos por rol: ADMIN/Unidad de Seguridad con acceso completo y Contrata limitada a Operacion.
 
 ## Decisiones pendientes
 
-- Convenciones de rutas frontend.
-- Diseno detallado de API REST.
-- Revision funcional del modelo Prisma inicial.
-- Configuracion de MariaDB local o de desarrollo.
-- Primera migracion Prisma.
-- Ampliar endpoints de lectura a entidades restantes si hace falta.
-- Decidir el orden de introduccion de escrituras operativas protegidas.
-- Estrategia de autenticacion JWT.
 - Estrategia de auditoria.
 - Estrategia de testing.
+- Parser de Excel real para planificado, ejecutado y refuerzos.
+- Generacion real de cuadrantes para meses posteriores a mayo 2026.
 
 ## Restricciones actuales
 

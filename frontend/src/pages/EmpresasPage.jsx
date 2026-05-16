@@ -6,7 +6,7 @@ import EmpresasTable from '../components/empresas/EmpresasTable';
 import EmpresaForm from '../components/empresas/EmpresaForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function EmpresasPage({ currentRoute, onNavigate }) {
+export default function EmpresasPage({ currentRoute, onNavigate, onLogout, user }) {
   const [empresas, setEmpresas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,6 +69,8 @@ export default function EmpresasPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Empresas"
       subtitle="Gestión de empresas contratistas y de seguridad"
     >

@@ -22,7 +22,7 @@ const ESTADOS_VERIFICACION = [
   { value: 'DESCUBIERTO', label: 'Descubierto' },
 ];
 
-export default function TurnosPage({ currentRoute, onNavigate }) {
+export default function TurnosPage({ currentRoute, onNavigate, onLogout, user }) {
   const [turnos, setTurnos] = useState([]);
   const [servicioList, setServicioList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -149,6 +149,8 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Turnos"
       subtitle="Gestion de turnos de vigilancia y cobertura"
     >

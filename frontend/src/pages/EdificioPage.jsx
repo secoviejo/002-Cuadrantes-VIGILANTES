@@ -6,7 +6,7 @@ import EdificioTable from '../components/edificios/EdificioTable';
 import EdificioForm from '../components/edificios/EdificioForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function EdificioPage({ currentRoute, onNavigate }) {
+export default function EdificioPage({ currentRoute, onNavigate, onLogout, user }) {
   const [edificioList, setEdificioList] = useState([]);
   const [campusList, setCampusList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +77,8 @@ export default function EdificioPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Edificios"
       subtitle="Gestion de edificios y campuses de la universidad"
     >

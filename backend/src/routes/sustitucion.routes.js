@@ -6,8 +6,12 @@ import {
   actualizarSustitucion,
   eliminarSustitucion,
 } from '../controllers/sustitucion.controller.js'
+import { authenticateToken, requireRole } from '../middleware/auth.js'
 
 export const sustitucionRouter = Router()
+
+sustitucionRouter.use(authenticateToken)
+sustitucionRouter.use(requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ', 'CONTRATA'))
 
 sustitucionRouter.get('/', listarSustituciones)
 sustitucionRouter.get('/:id', obtenerSustitucion)

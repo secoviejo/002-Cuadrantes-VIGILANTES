@@ -23,7 +23,9 @@ jest.unstable_mockModule('../db/prisma.js', () => ({
 }))
 
 const {
+  obtenerCierreMensual,
   obtenerCuadranteMensual,
+  obtenerHorasAnuales,
   obtenerResumenOperativo,
 } = await import('../services/operativo.service.js')
 
@@ -74,6 +76,32 @@ describe('operativo.service', () => {
     expect(cuadrante.dias).toHaveLength(31)
     expect(cuadrante.servicios).toHaveLength(2)
     expect(descubiertos).toHaveLength(3)
+  })
+
+  it('devuelve cierre mensual con totales planificado y ejecutado', async () => {
+    mockPrisma.horasContratoServicio.findMany.mockResolvedValue([
+      { horasPlanificadas: 1488, horasEjecutadas: 1468, servicioId: 1, servicio: servicio('SERV_SF_24H', 'San Francisco', true, 2, '24/7') },
+      { horasPlanificadas: 40, horasEjecutadas: 0, servicioId: 2, servicio: servicio('SERV_SALAS_ESTUDIO', 'Salas estudio', false, 1, 'A_DEMANDA') },
+    ])
+
+    const cierre = await obtenerCierreMensual({ anio: 2026, mes: 5 })
+
+    expect(cierre.totales.planificadas).toBe(1528)
+    expect(cierre.totales.ejecutadas).toBe(1468)
+    expect(cierre.categorias).toHaveLength(4)
+  })
+
+  it('devuelve horas anuales con contrato y bolsa variable informativa', async () => {
+    mockPrisma.horasContratoServicio.findMany.mockResolvedValue([
+      { horasPlanificadas: 1488, horasEjecutadas: 1468, servicioId: 1, servicio: servicio('SERV_SF_24H', 'San Francisco', true, 2, '24/7') },
+    ])
+
+    const horas = await obtenerHorasAnuales({ anio: 2026 })
+
+    expect(horas.contratoAnual).toBe(63508)
+    expect(horas.acumuladoAnual).toBe(26140)
+    expect(horas.variablesAnuales).toBe(2000)
+    expect(horas.categorias).toHaveLength(4)
   })
 })
 

@@ -6,7 +6,7 @@ import ServiciosTable from '../components/servicios/ServiciosTable';
 import ServicioForm from '../components/servicios/ServicioForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function ServiciosPage({ currentRoute, onNavigate }) {
+export default function ServiciosPage({ currentRoute, onNavigate, onLogout, user }) {
   const [servicios, setServicios] = useState([]);
   const [edificioList, setEdificioList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,6 +16,7 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
   const [servicioToEdit, setServicioToEdit] = useState(null);
   
   const [feedback, setFeedback] = useState(null);
+  const [campusFilter, setCampusFilter] = useState('all');
 
   const loadServicios = async () => {
     setLoading(true);
@@ -72,11 +73,26 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
     loadServicios();
   };
 
+  const campusOptions = servicios.reduce((options, servicio) => {
+    const campus = servicio.edificio?.campus;
+    if (!campus) return options;
+    if (!options.some((item) => item.id === campus.id)) {
+      options.push({ id: campus.id, nombre: campus.nombre });
+    }
+    return options;
+  }, []);
+
+  const serviciosFiltrados = campusFilter === 'all'
+    ? servicios
+    : servicios.filter((servicio) => String(servicio.edificio?.campus?.id) === String(campusFilter));
+
   return (
     <AppLayout 
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Servicios"
       subtitle="Gestion de servicios de vigilancia y auxiliares"
     >
@@ -91,7 +107,7 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
       )}
 
       {showForm ? (
-        <div className="max-w-2xl">
+        <div>
           <ServicioForm 
             servicio={servicioToEdit} 
             onSaved={handleSaved} 
@@ -109,6 +125,19 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
               <Plus className="w-4 h-4" />
               Nuevo servicio
             </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <FilterChip active={campusFilter === 'all'} onClick={() => setCampusFilter('all')} label="Todos" count={servicios.length} />
+            {campusOptions.map((campus) => (
+              <FilterChip
+                key={campus.id}
+                active={String(campusFilter) === String(campus.id)}
+                onClick={() => setCampusFilter(campus.id)}
+                label={campus.nombre}
+                count={servicios.filter((servicio) => servicio.edificio?.campus?.id === campus.id).length}
+              />
+            ))}
           </div>
 
           {loading ? (
@@ -131,10 +160,24 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
               </div>
             </div>
           ) : (
-            <ServiciosTable servicios={servicios} onEdit={handleEdit} />
+            <ServiciosTable servicios={serviciosFiltrados} onEdit={handleEdit} />
           )}
         </div>
       )}
     </AppLayout>
+  );
+}
+
+function FilterChip({ active, onClick, label, count }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+        active ? 'border-stone-900 bg-stone-900 text-white' : 'border-stone-200 bg-white text-stone-700 hover:border-amber-500'
+      }`}
+    >
+      {label} <span className="ml-1 opacity-70">{count}</span>
+    </button>
   );
 }

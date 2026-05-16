@@ -10,7 +10,10 @@ import AsignacionesPage from './pages/AsignacionesPage'
 import SustitucionesPage from './pages/SustitucionesPage'
 import IncidenciasPage from './pages/IncidenciasPage'
 import CuadrantePage from './pages/CuadrantePage'
+import HorasAnualesPage from './pages/HorasAnualesPage'
+import CierreMensualPage from './pages/CierreMensualPage'
 import LoginForm from './components/auth/LoginForm'
+import { canAccessRoute } from './utils/roles'
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState('dashboard')
@@ -26,6 +29,16 @@ function App() {
     setCurrentRoute('dashboard')
   }
 
+  const navigateGuarded = (route) => {
+    setCurrentRoute(canAccessRoute(user, route) ? route : 'dashboard')
+  }
+
+  useEffect(() => {
+    if (isAuthenticated && !canAccessRoute(user, currentRoute)) {
+      setCurrentRoute('dashboard')
+    }
+  }, [currentRoute, isAuthenticated, user])
+
   const handleLogout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -37,47 +50,57 @@ function App() {
     return <LoginForm onSuccess={handleLoginSuccess} />
   }
 
+  if (!canAccessRoute(user, currentRoute)) return null
+
   if (currentRoute === 'empresas') {
-    return <EmpresasPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <EmpresasPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'campus') {
-    return <CampusPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <CampusPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'edificios') {
-    return <EdificioPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <EdificioPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'servicios') {
-    return <ServiciosPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <ServiciosPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'trabajadores') {
-    return <TrabajadoresPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <TrabajadoresPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'turnos') {
-    return <TurnosPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <TurnosPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'asignaciones') {
-    return <AsignacionesPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <AsignacionesPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'sustituciones') {
-    return <SustitucionesPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <SustitucionesPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'incidencias') {
-    return <IncidenciasPage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <IncidenciasPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   if (currentRoute === 'cuadrante') {
-    return <CuadrantePage currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+    return <CuadrantePage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
-  return <Dashboard currentRoute={currentRoute} onNavigate={setCurrentRoute} onLogout={handleLogout} user={user} />
+  if (currentRoute === 'horas') {
+    return <HorasAnualesPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
+  }
+
+  if (currentRoute === 'cierre') {
+    return <CierreMensualPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
+  }
+
+  return <Dashboard currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
 }
 
 export default App

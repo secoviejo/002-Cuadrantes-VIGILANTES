@@ -197,7 +197,17 @@ Se ha recuperado informacion real del HTML original y se ha llevado a la nueva a
 - Resumen operativo React con panel de verificacion, KPIs, alertas y cobertura por campus.
 - Cuadrante mensual React con mayo completo, filtros y descubiertos marcados.
 
+## Estado del paso 25
+
+Se han incorporado reglas funcionales de la conversacion original al desarrollo React/Express:
+
+- Navegacion por rol: Contrata solo ve Operacion; ADMIN y Unidad de Seguridad ven todas las secciones.
+- Backend protegido con JWT y permisos basicos por rol.
+- Informes diario, mensual y anual disponibles desde Resumen operativo con vista previa imprimible.
+- Nuevas pantallas UZ/ADMIN de Horas anuales y Cierre mensual.
+- Servicios incorpora filtro por campus y formulario avanzado con previsualizacion.
+
 ## Proximo paso recomendado
 
-1. **PASO 25**: Reforzar permisos por rol y auditoria en las nuevas acciones operativas.
-2. **PASO 26**: Generalizar el cuadrante mensual para meses posteriores a mayo 2026.
+1. **PASO 26**: Implementar importacion Excel real cuando exista fichero de muestra de la contrata.
+2. **PASO 27**: Generalizar el cuadrante mensual para meses posteriores a mayo 2026.

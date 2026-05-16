@@ -17,6 +17,12 @@ const CAMPOS_SERVICIO = [
   'codigo',
   'nombre',
   'descripcion',
+  'tipoOperativo',
+  'modalidad',
+  'horario',
+  'vehiculo',
+  'orden',
+  'visibleCuadrante',
   'perfilRequerido',
   'dotacionMinima',
   'activo',
@@ -33,6 +39,14 @@ function prepararDatosServicio(body, { partial = false } = {}) {
 
   if (data.dotacionMinima !== undefined) {
     data.dotacionMinima = parseBodyInteger(data.dotacionMinima, 'dotacionMinima')
+  }
+
+  if (data.orden !== undefined) {
+    data.orden = parseBodyInteger(data.orden, 'orden')
+  }
+
+  if (data.visibleCuadrante !== undefined) {
+    data.visibleCuadrante = parseBodyBoolean(data.visibleCuadrante, 'visibleCuadrante')
   }
 
   if (data.edificioId !== undefined) {

@@ -68,6 +68,9 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `POST /api/verificaciones/lote`: crea verificaciones de varios puestos/turnos en una sola operacion. Requiere JWT y usa el usuario autenticado.
 - `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
 - `GET /api/cuadrante-mensual?anio=2026&mes=5`: devuelve dias, servicios y celdas del cuadrante mensual de mayo 2026.
+- `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible.
+- `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato, categorias de hora y variables informativas.
+- `GET /api/cierre-mensual?anio=2026&mes=5`: devuelve conciliacion mensual planificado/ejecutado y checklist de validacion.
 - `GET /api/ausencias`: lista ausencias.
 - `GET /api/ausencias/:id`: obtiene una ausencia.
 - `POST /api/auth/login`: inicia sesion y devuelve JWT.
@@ -219,6 +222,9 @@ npm run seed
 - `POST /api/verificaciones` requiere token JWT y deriva `usuarioId` del usuario autenticado.
 - `GET /api/resumen-operativo` y `GET /api/cuadrante-mensual` sirven los datos reales de mayo 2026 migrados desde el HTML original.
 - `POST /api/verificaciones/lote` persiste verificaciones por puesto de cobertura con el usuario autenticado.
+- Los endpoints operativos y de catalogo se han endurecido con JWT y permisos por rol.
+- `ADMIN` y `UNIDAD_SEGURIDAD_UZ` tienen acceso completo; `CONTRATA` queda limitada a Resumen, Cuadrante, Sustituciones y Verificaciones.
+- Los servicios aceptan metadatos operativos ya presentes en Prisma: tipo operativo, modalidad, horario, vehiculo, orden y visibilidad en cuadrante.
 - Hay tests unitarios y smoke test de arranque de rutas.
 
 El siguiente paso recomendado es reforzar permisos por rol en endpoints operativos y migrar el hash de contrasenas demo a bcrypt/argon2 antes de acercarse a un entorno real.

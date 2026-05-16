@@ -6,7 +6,7 @@ import IncidenciasTable from '../components/incidencias/IncidenciasTable';
 import IncidenciaForm from '../components/incidencias/IncidenciaForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function IncidenciasPage({ currentRoute, onNavigate }) {
+export default function IncidenciasPage({ currentRoute, onNavigate, onLogout, user }) {
   const [incidencias, setIncidencias] = useState([]);
   const [turnoList, setTurnoList] = useState([]);
   const [trabajadorList, setTrabajadorList] = useState([]);
@@ -107,6 +107,8 @@ export default function IncidenciasPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Incidencias"
       subtitle="Gestion de incidencias operativas"
     >

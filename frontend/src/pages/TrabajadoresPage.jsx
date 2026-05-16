@@ -6,7 +6,7 @@ import TrabajadoresTable from '../components/trabajadores/TrabajadoresTable';
 import TrabajadorForm from '../components/trabajadores/TrabajadorForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function TrabajadoresPage({ currentRoute, onNavigate }) {
+export default function TrabajadoresPage({ currentRoute, onNavigate, onLogout, user }) {
   const [trabajadores, setTrabajadores] = useState([]);
   const [empresaList, setEmpresaList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +77,8 @@ export default function TrabajadoresPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Trabajadores"
       subtitle="Gestion de vigilantes, auxiliares y personal de seguridad"
     >

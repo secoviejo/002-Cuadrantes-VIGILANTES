@@ -1,7 +1,17 @@
 import { Router } from 'express'
-import { cuadranteMensual, resumenOperativo } from '../controllers/operativo.controller.js'
+import {
+  cierreMensual,
+  cuadranteMensual,
+  horasAnuales,
+  informeOperativo,
+  resumenOperativo,
+} from '../controllers/operativo.controller.js'
+import { authenticateToken, requireRole } from '../middleware/auth.js'
 
 export const operativoRouter = Router()
 
-operativoRouter.get('/resumen-operativo', resumenOperativo)
-operativoRouter.get('/cuadrante-mensual', cuadranteMensual)
+operativoRouter.get('/resumen-operativo', authenticateToken, requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ', 'CONTRATA'), resumenOperativo)
+operativoRouter.get('/cuadrante-mensual', authenticateToken, requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ', 'CONTRATA'), cuadranteMensual)
+operativoRouter.get('/informes-operativos', authenticateToken, requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ', 'CONTRATA'), informeOperativo)
+operativoRouter.get('/horas-anuales', authenticateToken, requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ'), horasAnuales)
+operativoRouter.get('/cierre-mensual', authenticateToken, requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ'), cierreMensual)

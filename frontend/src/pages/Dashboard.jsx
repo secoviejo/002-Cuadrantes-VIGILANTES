@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   createVerificacionesLote,
+  getInformeOperativo,
   getResumenOperativo,
 } from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
-import { AlertCircle, Check, FileText, Loader2, X } from 'lucide-react';
+import { AlertCircle, Check, FileText, Loader2, Printer, X } from 'lucide-react';
 
 const TURNOS = [
   { codigo: 'M', label: 'Mañana', color: '#5b8a9c' },
@@ -82,6 +83,9 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
   const [notes, setNotes] = useState({});
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [reportPickerOpen, setReportPickerOpen] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [report, setReport] = useState(null);
 
   useEffect(() => {
     async function loadResumen() {
@@ -172,6 +176,19 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
     }
   };
 
+  const openReport = async (tipo) => {
+    setReportPickerOpen(false);
+    setReportLoading(true);
+    try {
+      const payload = await getInformeOperativo({ tipo, fecha: todayForDemo(), anio: 2026, mes: 5 });
+      setReport(payload.data || payload);
+    } catch (err) {
+      setFeedback({ type: 'error', message: err.message });
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
   return (
     <AppLayout
       isConnected={!error}
@@ -181,6 +198,16 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
       user={user}
       title="Resumen operativo"
       subtitle="Mayo 2026 - Vista actual del servicio de vigilancia"
+      actions={
+        <button
+          type="button"
+          onClick={() => setReportPickerOpen(true)}
+          className="inline-flex items-center gap-2 rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-800"
+        >
+          <FileText className="h-4 w-4" />
+          Generar informe
+        </button>
+      }
     >
       {loading ? (
         <div className="flex items-center justify-center p-12 text-stone-500">
@@ -346,8 +373,121 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
               </div>
             )}
           </section>
+
+          {reportLoading && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="rounded-lg bg-white px-6 py-4 text-stone-700 shadow-xl">
+                <Loader2 className="mr-2 inline h-5 w-5 animate-spin" /> Preparando informe...
+              </div>
+            </div>
+          )}
+
+          {reportPickerOpen && <ReportPicker onClose={() => setReportPickerOpen(false)} onSelect={openReport} />}
+          {report && <ReportPreview report={report} onClose={() => setReport(null)} />}
         </div>
       )}
     </AppLayout>
+  );
+}
+
+function ReportPicker({ onClose, onSelect }) {
+  const options = [
+    { id: 'diario', title: 'Dia actual', text: 'Informe basico de cobertura, verificaciones y alertas del dia.' },
+    { id: 'mensual', title: 'Informe mensual', text: 'Resumen de mayo 2026 con horas, incidencias y validacion.' },
+    { id: 'anual', title: 'Informe anual', text: 'Seguimiento acumulado 2026 frente al contrato anual.' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-3xl rounded-lg bg-white shadow-xl">
+        <div className="flex items-start justify-between border-b border-stone-200 px-6 py-5">
+          <div>
+            <h2 className="font-serif text-2xl font-semibold text-stone-900">Seleccionar tipo de informe</h2>
+            <p className="mt-1 text-sm text-stone-500">Elige el alcance antes de generar la vista previa imprimible.</p>
+          </div>
+          <button onClick={onClose} className="rounded-md p-2 text-stone-500 hover:bg-stone-100"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="grid gap-4 p-6 md:grid-cols-3">
+          {options.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => onSelect(option.id)}
+              className="rounded-lg border border-stone-200 p-5 text-left transition hover:border-amber-500 hover:bg-amber-50"
+            >
+              <div className="font-serif text-xl font-semibold text-stone-900">{option.title}</div>
+              <p className="mt-3 text-sm leading-6 text-stone-600">{option.text}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportPreview({ report, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-950/70 p-6 print:static print:bg-white print:p-0">
+      <div className="mx-auto max-w-5xl rounded-lg bg-white shadow-2xl print:shadow-none">
+        <div className="flex items-center justify-between border-b border-stone-200 px-8 py-5 print:hidden">
+          <div>
+            <div className="text-xs uppercase tracking-[0.2em] text-stone-500">Vista previa del informe</div>
+            <div className="font-serif text-xl font-semibold">{report.periodo}</div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-md bg-stone-900 px-4 py-2 text-sm font-semibold text-white"><Printer className="h-4 w-4" /> Imprimir / PDF</button>
+            <button onClick={onClose} className="rounded-md border border-stone-300 px-4 py-2 text-sm font-medium">Cerrar</button>
+          </div>
+        </div>
+        <article className="p-8">
+          <div className="border-b border-stone-200 pb-6">
+            <div className="text-xs uppercase tracking-[0.22em] text-amber-700">Unidad de Seguridad - Universidad de Zaragoza</div>
+            <h1 className="mt-3 font-serif text-3xl font-semibold text-stone-950">{report.titulo}</h1>
+            <div className="mt-2 text-sm text-stone-500">{report.periodo} - Ref. {report.referencia}</div>
+          </div>
+          <div className="mt-6 grid gap-3 md:grid-cols-4">
+            {report.kpis.map((kpi) => (
+              <div key={kpi.label} className="rounded-md border border-stone-200 p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">{kpi.label}</div>
+                <div className="mt-3 font-serif text-2xl font-semibold">{formatNumber(kpi.value)}{kpi.unit && <span className="ml-1 text-sm">{kpi.unit}</span>}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 space-y-8">
+            {report.sections.map((section, index) => (
+              <section key={section.title}>
+                <h2 className="font-serif text-xl font-semibold text-stone-900">{index + 1}. {section.title}</h2>
+                <div className="mt-3 overflow-x-auto">
+                  <GenericRows rows={section.rows} />
+                </div>
+              </section>
+            ))}
+          </div>
+          <div className="mt-10 grid gap-6 border-t border-stone-200 pt-8 md:grid-cols-2">
+            <div className="border-t border-stone-400 pt-3 text-sm text-stone-600">Responsable Unidad de Seguridad</div>
+            <div className="border-t border-stone-400 pt-3 text-sm text-stone-600">Responsable empresa adjudicataria</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function GenericRows({ rows }) {
+  if (!rows?.length) return <div className="rounded-md border border-dashed border-stone-300 p-4 text-sm text-stone-500">Sin registros.</div>;
+  const keys = Object.keys(rows[0]);
+  return (
+    <table className="w-full text-left text-sm">
+      <thead className="text-[11px] uppercase tracking-wider text-stone-500">
+        <tr>{keys.map((key) => <th key={key} className="pb-2 pr-4">{key}</th>)}</tr>
+      </thead>
+      <tbody className="divide-y divide-stone-100">
+        {rows.map((row, index) => (
+          <tr key={index}>
+            {keys.map((key) => <td key={key} className="py-2 pr-4 align-top">{String(row[key] ?? '')}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

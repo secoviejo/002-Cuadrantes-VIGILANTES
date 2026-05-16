@@ -9,6 +9,21 @@ const TURNOS = {
 
 const CONTRATO_ANUAL_HORAS = 63508
 const ACUMULADO_ANUAL_HORAS = 26140
+const VARIABLES_ANUALES_HORAS = 2000
+
+const DESGLOSE_CATEGORIAS_MAYO = [
+  { categoria: 'Laboral diurno', planificadas: 2380, ejecutadas: 2358 },
+  { categoria: 'Laboral nocturno', planificadas: 1380, ejecutadas: 1358 },
+  { categoria: 'Festivo diurno', planificadas: 1040, ejecutadas: 1018 },
+  { categoria: 'Festivo nocturno', planificadas: 594, ejecutadas: 574 },
+]
+
+const DESGLOSE_ANUAL_CATEGORIAS = [
+  { categoria: 'Laboral diurno', ejecutadas: 11420, contrato: 27656 },
+  { categoria: 'Laboral nocturno', ejecutadas: 6580, contrato: 15944 },
+  { categoria: 'Festivo diurno', ejecutadas: 5250, contrato: 12740 },
+  { categoria: 'Festivo nocturno', ejecutadas: 2890, contrato: 7168 },
+]
 
 function toDateOnly(date) {
   return new Date(`${date}T00:00:00.000Z`)
@@ -59,6 +74,21 @@ function buildKpis(horas) {
     contratoAnual: CONTRATO_ANUAL_HORAS,
     avanceContrato: Number(avance.toFixed(1)),
   }
+}
+
+function sumHoras(horas) {
+  const planificadas = horas.reduce((total, item) => total + item.horasPlanificadas, 0)
+  const ejecutadas = horas.reduce((total, item) => total + (item.horasEjecutadas || 0), 0)
+  return { planificadas, ejecutadas, desviacion: ejecutadas - planificadas }
+}
+
+function buildAlertasOperativas() {
+  return [
+    { tipo: 'danger', titulo: 'Franja descubierta - Huesca', meta: 'Sabado 10 mayo - 14:00-22:00 - Sin asignacion' },
+    { tipo: 'warn', titulo: 'Falta jefe de equipo CECO', meta: 'Martes 6 y miercoles 14 mayo - Dia laborable sin cobertura diurna' },
+    { tipo: 'warn', titulo: 'Desvio de horas mensual', meta: '86h menos ejecutadas vs planificadas (1,6%)' },
+    { tipo: 'info', titulo: 'Refuerzo programado', meta: 'Viernes 23 mayo - Acto institucional Paraninfo - 4 auxiliares' },
+  ]
 }
 
 export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N' } = {}) {
@@ -147,12 +177,7 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
     kpis: buildKpis(horas),
     serviciosVerificacion,
     coberturaCampus,
-    alertas: [
-      { tipo: 'danger', titulo: 'Franja descubierta - Huesca', meta: 'Sabado 10 mayo - 14:00-22:00 - Sin asignacion' },
-      { tipo: 'warn', titulo: 'Falta jefe de equipo CECO', meta: 'Martes 6 y miercoles 14 mayo - Dia laborable sin cobertura diurna' },
-      { tipo: 'warn', titulo: 'Desvio de horas mensual', meta: '86h menos ejecutadas vs planificadas (1,6%)' },
-      { tipo: 'info', titulo: 'Refuerzo programado', meta: 'Viernes 23 mayo - Acto institucional Paraninfo - 4 auxiliares' },
-    ],
+    alertas: buildAlertasOperativas(),
     sustituciones: sustituciones.map((item) => ({
       id: item.id,
       fecha: item.turno?.fecha,
@@ -163,6 +188,156 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
       motivo: item.motivo,
       cumplePreaviso: item.cumplePreaviso,
     })),
+  }
+}
+
+export async function obtenerHorasAnuales({ anio = 2026 } = {}) {
+  const prisma = getPrismaClient()
+  const horas = await prisma.horasContratoServicio.findMany({
+    where: { anio, mes: 5 },
+    include: { servicio: { include: { edificio: { include: { campus: true } } } } },
+    orderBy: { servicio: { orden: 'asc' } },
+  })
+
+  return {
+    anio,
+    contratoAnual: CONTRATO_ANUAL_HORAS,
+    acumuladoAnual: ACUMULADO_ANUAL_HORAS,
+    variablesAnuales: VARIABLES_ANUALES_HORAS,
+    variablesAcumuladas: 684,
+    avanceContrato: Number(((ACUMULADO_ANUAL_HORAS / CONTRATO_ANUAL_HORAS) * 100).toFixed(1)),
+    categorias: DESGLOSE_ANUAL_CATEGORIAS.map((item) => ({
+      ...item,
+      desviacionRitmo: item.ejecutadas - Math.round(item.contrato * (5 / 12)),
+      avance: Number(((item.ejecutadas / item.contrato) * 100).toFixed(1)),
+    })),
+    servicios: horas
+      .filter((item) => item.servicio.visibleCuadrante)
+      .map((item) => ({
+        servicioId: item.servicioId,
+        servicio: item.servicio.nombre,
+        campus: item.servicio.edificio?.campus?.nombre || '',
+        mayoPlanificadas: item.horasPlanificadas,
+        mayoEjecutadas: item.horasEjecutadas || 0,
+        acumuladoEstimado: Math.round((item.horasEjecutadas || item.horasPlanificadas) * 4.925),
+      })),
+    variables: [
+      { concepto: 'Actos institucionales', horas: 212, peso: 10.6, observaciones: 'Paraninfo y eventos protocolarios' },
+      { concepto: 'Salas de estudio y examenes', horas: 328, peso: 16.4, observaciones: 'Aperturas ampliadas en periodos docentes criticos' },
+      { concepto: 'Refuerzos de campus', horas: 144, peso: 7.2, observaciones: 'Coberturas puntuales por actividad extraordinaria' },
+    ],
+  }
+}
+
+export async function obtenerCierreMensual({ anio = 2026, mes = 5 } = {}) {
+  const prisma = getPrismaClient()
+  const horas = await prisma.horasContratoServicio.findMany({
+    where: { anio, mes },
+    include: { servicio: { include: { edificio: { include: { campus: true } } } } },
+    orderBy: { servicio: { orden: 'asc' } },
+  })
+  const totales = sumHoras(horas)
+
+  return {
+    anio,
+    mes,
+    periodo: 'Mayo 2026',
+    estado: 'Pendiente de validacion UZ',
+    totales,
+    categorias: DESGLOSE_CATEGORIAS_MAYO.map((item) => ({
+      ...item,
+      desviacion: item.ejecutadas - item.planificadas,
+    })),
+    servicios: horas
+      .filter((item) => item.servicio.visibleCuadrante)
+      .map((item) => ({
+        servicioId: item.servicioId,
+        servicio: item.servicio.nombre,
+        campus: item.servicio.edificio?.campus?.nombre || '',
+        planificadas: item.horasPlanificadas,
+        ejecutadas: item.horasEjecutadas || 0,
+        desviacion: (item.horasEjecutadas || 0) - item.horasPlanificadas,
+      })),
+    incidencias: buildAlertasOperativas().filter((item) => item.tipo !== 'info'),
+    validacion: [
+      'Comparar Excel ejecutado de fin de mes con planificacion importada.',
+      'Revisar descubiertos de Huesca y CECO jefe antes de aprobar factura.',
+      'Confirmar prestaciones variables fuera de bolsa fija antes de cierre.',
+    ],
+  }
+}
+
+export async function obtenerInformeOperativo({ tipo = 'mensual', fecha = '2026-05-16', anio = 2026, mes = 5 } = {}) {
+  const informeTipo = ['diario', 'mensual', 'anual'].includes(tipo) ? tipo : 'mensual'
+  const [resumen, cierre, horasAnuales] = await Promise.all([
+    obtenerResumenOperativo({ fecha, turno: 'N' }),
+    obtenerCierreMensual({ anio, mes }),
+    obtenerHorasAnuales({ anio }),
+  ])
+
+  const base = {
+    tipo: informeTipo,
+    generadoEn: new Date().toISOString(),
+    referencia: informeTipo === 'diario'
+      ? `UZ-SEG-DIA-${fecha.replaceAll('-', '')}`
+      : informeTipo === 'anual'
+        ? `UZ-SEG-ANUAL-${anio}`
+        : `UZ-SEG-MES-${anio}${String(mes).padStart(2, '0')}`,
+  }
+
+  if (informeTipo === 'diario') {
+    return {
+      ...base,
+      titulo: 'Informe basico del dia actual',
+      periodo: fecha,
+      kpis: [
+        { label: 'Servicios a verificar', value: resumen.serviciosVerificacion.length, unit: '' },
+        { label: 'Cobertura mes', value: resumen.kpis.coberturaMes, unit: '%' },
+        { label: 'Incidencias activas', value: resumen.alertas.filter((item) => item.tipo !== 'info').length, unit: '' },
+        { label: 'Sustituciones recientes', value: resumen.sustituciones.length, unit: '' },
+      ],
+      sections: [
+        { title: 'Verificacion del turno', rows: resumen.serviciosVerificacion.map((item) => ({ servicio: item.nombre, detalle: item.etiqueta || item.meta, estado: item.estado, nota: item.nota })) },
+        { title: 'Alertas activas', rows: resumen.alertas },
+      ],
+    }
+  }
+
+  if (informeTipo === 'anual') {
+    return {
+      ...base,
+      titulo: 'Informe resumen anual del servicio de vigilancia',
+      periodo: `Ano ${anio}`,
+      kpis: [
+        { label: 'Avance anual', value: horasAnuales.avanceContrato, unit: '%' },
+        { label: 'Horas acumuladas', value: horasAnuales.acumuladoAnual, unit: 'h' },
+        { label: 'Contrato anual', value: horasAnuales.contratoAnual, unit: 'h' },
+        { label: 'Variables acumuladas', value: horasAnuales.variablesAcumuladas, unit: 'h' },
+      ],
+      sections: [
+        { title: 'Categorias de hora', rows: horasAnuales.categorias },
+        { title: 'Servicios principales', rows: horasAnuales.servicios },
+        { title: 'Prestaciones variables', rows: horasAnuales.variables },
+      ],
+    }
+  }
+
+  return {
+    ...base,
+    titulo: 'Informe de seguimiento mensual del servicio de vigilancia',
+    periodo: cierre.periodo,
+    kpis: [
+      { label: 'Cobertura mensual', value: resumen.kpis.coberturaMes, unit: '%' },
+      { label: 'Planificado', value: cierre.totales.planificadas, unit: 'h' },
+      { label: 'Ejecutado', value: cierre.totales.ejecutadas, unit: 'h' },
+      { label: 'Desviacion', value: cierre.totales.desviacion, unit: 'h' },
+    ],
+    sections: [
+      { title: 'Cobertura por campus y servicio', rows: cierre.servicios },
+      { title: 'Conciliacion horaria', rows: cierre.categorias },
+      { title: 'Incidencias y alertas', rows: cierre.incidencias },
+      { title: 'Validacion para factura', rows: cierre.validacion.map((texto) => ({ texto })) },
+    ],
   }
 }
 

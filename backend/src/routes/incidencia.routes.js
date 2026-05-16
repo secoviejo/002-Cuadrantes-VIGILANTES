@@ -6,8 +6,12 @@ import {
   actualizarIncidencia,
   eliminarIncidencia,
 } from '../controllers/incidencia.controller.js'
+import { authenticateToken, requireRole } from '../middleware/auth.js'
 
 export const incidenciaRouter = Router()
+
+incidenciaRouter.use(authenticateToken)
+incidenciaRouter.use(requireRole('ADMIN', 'UNIDAD_SEGURIDAD_UZ'))
 
 incidenciaRouter.get('/', listarIncidencias)
 incidenciaRouter.get('/:id', obtenerIncidencia)

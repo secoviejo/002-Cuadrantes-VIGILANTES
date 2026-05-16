@@ -6,7 +6,7 @@ import SustitucionesTable from '../components/sustituciones/SustitucionesTable';
 import SustitucionForm from '../components/sustituciones/SustitucionForm';
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function SustitucionesPage({ currentRoute, onNavigate }) {
+export default function SustitucionesPage({ currentRoute, onNavigate, onLogout, user }) {
   const [sustituciones, setSustituciones] = useState([]);
   const [turnoList, setTurnoList] = useState([]);
   const [trabajadorList, setTrabajadorList] = useState([]);
@@ -107,6 +107,8 @@ export default function SustitucionesPage({ currentRoute, onNavigate }) {
       isConnected={!error} 
       currentRoute={currentRoute} 
       onNavigate={onNavigate}
+      onLogout={onLogout}
+      user={user}
       title="Sustituciones"
       subtitle="Gestion de sustituciones de trabajadores en turnos"
     >

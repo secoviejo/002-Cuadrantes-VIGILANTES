@@ -155,3 +155,15 @@ export function getCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
 export function createVerificacionesLote(data) {
   return postJson('/verificaciones/lote', data);
 }
+
+export function getInformeOperativo({ tipo = 'mensual', fecha = '2026-05-16', anio = 2026, mes = 5 } = {}) {
+  return getJson(`/informes-operativos?tipo=${tipo}&fecha=${fecha}&anio=${anio}&mes=${mes}`);
+}
+
+export function getHorasAnuales({ anio = 2026 } = {}) {
+  return getJson(`/horas-anuales?anio=${anio}`);
+}
+
+export function getCierreMensual({ anio = 2026, mes = 5 } = {}) {
+  return getJson(`/cierre-mensual?anio=${anio}&mes=${mes}`);
+}

@@ -93,6 +93,9 @@ npm run dev
 - `GET /api/verificaciones`
 - `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`
 - `GET /api/cuadrante-mensual?anio=2026&mes=5`
+- `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`
+- `GET /api/horas-anuales?anio=2026`
+- `GET /api/cierre-mensual?anio=2026&mes=5`
 - `POST /api/verificaciones/lote`
 
 ### Utilidades
@@ -154,6 +157,10 @@ npm run build        # Produccion
 - Resumen operativo React alimentado por API con datos reales recuperados del HTML original
 - Cuadrante mensual de mayo 2026 con servicios, turnos, horas y descubiertos reales del HTML original
 - Seed idempotente con servicios operativos, horas de contrato y puestos verificables, sin importar nombres ficticios de vigilantes
+- Navegacion y permisos por rol: ADMIN/Unidad de Seguridad con acceso completo; Contrata limitada a Operacion.
+- Informes operativo diario, mensual y anual con vista previa imprimible.
+- Pantallas de Horas anuales y Cierre mensual para validacion de factura.
+- Formulario avanzado de servicios con metadatos operativos y filtro por campus.
 
 **Pendiente:**
 - Reforzar permisos por rol en todos los endpoints operativos
