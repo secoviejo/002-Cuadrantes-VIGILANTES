@@ -207,7 +207,16 @@ Se han incorporado reglas funcionales de la conversacion original al desarrollo 
 - Nuevas pantallas UZ/ADMIN de Horas anuales y Cierre mensual.
 - Servicios incorpora filtro por campus y formulario avanzado con previsualizacion.
 
+## Estado del paso 26
+
+Se ha migrado el Calendario laboral del HTML original a React/Express:
+
+- API `GET /api/calendario-laboral` con festivos 2026 y periodos academicos.
+- API `POST /api/calendario-laboral` para alta manual de festivos por UZ/ADMIN.
+- Seed idempotente con 11 festivos reales de 2026 y limpieza de registros demo antiguos.
+- Pagina React `Calendario laboral` en Configuracion, visible solo para ADMIN y Unidad de Seguridad.
+
 ## Proximo paso recomendado
 
-1. **PASO 26**: Implementar importacion Excel real cuando exista fichero de muestra de la contrata.
-2. **PASO 27**: Generalizar el cuadrante mensual para meses posteriores a mayo 2026.
+1. **PASO 27**: Implementar importacion Excel real cuando exista fichero de muestra de la contrata.
+2. **PASO 28**: Generalizar el cuadrante mensual para meses posteriores a mayo 2026.

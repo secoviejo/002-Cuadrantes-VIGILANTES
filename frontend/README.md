@@ -27,6 +27,7 @@ Pantallas operativas recuperadas del HTML original:
 - `CuadrantePage.jsx` muestra el cuadrante mensual completo de mayo 2026 con columnas 1-31, turnos `M`, `T`, `N`, `D` y `x` rojo para descubiertos.
 - `Dashboard.jsx` permite generar informe diario, mensual o anual mediante vista previa imprimible.
 - `HorasAnualesPage.jsx` y `CierreMensualPage.jsx` muestran el seguimiento contractual y la conciliacion de mayo 2026 para UZ/ADMIN.
+- `CalendarioLaboralPage.jsx` reproduce el calendario laboral 2026 con festivos, periodos academicos y alta manual de festivo.
 - `ServiciosPage.jsx` filtra por campus y `ServicioForm.jsx` ofrece un formulario avanzado con previsualizacion.
 - La navegacion se adapta por rol: Contrata solo ve Operacion; ADMIN y Unidad de Seguridad ven todo.
 - La navegacion de mes queda visible pero bloqueada a mayo 2026 en esta fase para conservar fidelidad con la fuente original.
@@ -39,6 +40,7 @@ El cliente API central vive en `src/api/client.js` y:
 - Centraliza `GET`, `POST`, `PUT` y `DELETE`.
 - Expone funciones de catalogo para `getResumenOperativo`, `getCuadranteMensual` y `createVerificacionesLote`.
 - Expone funciones de informes y cierre: `getInformeOperativo`, `getHorasAnuales` y `getCierreMensual`.
+- Expone funciones de calendario: `getCalendarioLaboral` y `createFestivo`.
 
 Usuarios demo tras ejecutar el seed del backend:
 

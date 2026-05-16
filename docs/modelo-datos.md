@@ -49,6 +49,8 @@ El primer periodo fiel es mayo 2026. Incluye 13 servicios, 5.394 h planificadas,
 
 Los informes, Horas anuales y Cierre mensual usan estos datos persistidos y constantes operativas recuperadas del HTML para los desgloses todavia no normalizados en tablas especificas: categorias laboral diurno/nocturno, festivo diurno/nocturno y bolsa variable de 2.000 h.
 
+`CalendarioLaboral` guarda festivos puntuales por fecha, ambito general o campus local. Los periodos academicos de 2026 se sirven como constantes operativas porque el modelo actual no tiene una tabla de rangos lectivos/no lectivos.
+
 ## Seed inicial
 
 Existe `backend/prisma/seed.js` con roles, usuarios demo, empresa demo, campus, edificios, servicios, trabajadores ficticios, turnos de mayo 2026, horas de contrato y puestos de cobertura. No contiene datos personales reales: los nombres inventados de vigilantes del HTML original no se importan como trabajadores reales.

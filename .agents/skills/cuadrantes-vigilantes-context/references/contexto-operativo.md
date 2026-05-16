@@ -73,7 +73,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 | Catalogo de servicios | Visual con filtro cliente | Lista 13 servicios y filtra por campus manipulando filas HTML. |
 | Nuevo servicio | Implementado en React con persistencia | Formulario avanzado con metadatos operativos y previsualizacion. |
 | Personal | Tabla demo generada | Lista vigilantes y auxiliares con formacion, acreditacion y estado. |
-| Calendario laboral | Estatico | Muestra festivos y periodos academicos sin CRUD ni reglas conectadas. |
+| Calendario laboral | Implementado en React con API | Muestra festivos 2026, periodos academicos y permite alta manual de festivos para UZ/ADMIN. |
 | Informes | Implementado en React con API | Permite elegir informe diario, mensual o anual y previsualizarlo para imprimir/PDF del navegador. |
 | Impresion/PDF | Dependiente del navegador | Usa `window.print()` para imprimir o guardar PDF desde el navegador. |
 
@@ -339,6 +339,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 ## Historial de Cambios de Contexto
 
 - 2026-05-16: Incorporada informacion funcional clave de la conversacion original al React/Express actual. La navegacion queda filtrada por rol, Contrata solo accede a Operacion, ADMIN/Unidad de Seguridad ven todo, se anaden informes operativo diario/mensual/anual con vista previa imprimible, APIs de horas anuales y cierre mensual, paginas React de Horas anuales y Cierre mensual, filtro por campus en Servicios y formulario avanzado de servicio con metadatos operativos persistidos. La importacion Excel queda aplazada hasta disponer de fichero real.
+- 2026-05-16: Migrado Calendario laboral 2026 desde el HTML original. Anadida API `GET/POST /api/calendario-laboral`, seed con 11 festivos reales y periodos academicos servidos como constantes operativas, pagina React de calendario visible para ADMIN/Unidad de Seguridad y alta manual de festivos.
 - 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.
 - 2026-05-15: Actualizada memoria viva tras analisis del repositorio. Se documenta inventario real, estado por pantalla, funcionalidades cliente, simulaciones, datos demo, riesgos y limites de la fase documental previa a la migracion full-stack.

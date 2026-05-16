@@ -9,6 +9,7 @@ describe('roles frontend', () => {
   it('permite acceso completo a ADMIN y Unidad de Seguridad', () => {
     expect(canAccessRoute(admin, 'servicios')).toBe(true);
     expect(canAccessRoute(uz, 'cierre')).toBe(true);
+    expect(canAccessRoute(uz, 'calendario')).toBe(true);
     expect(getVisibleRouteGroups(uz)).toHaveLength(3);
   });
 
@@ -17,6 +18,7 @@ describe('roles frontend', () => {
     expect(canAccessRoute(contrata, 'cuadrante')).toBe(true);
     expect(canAccessRoute(contrata, 'sustituciones')).toBe(true);
     expect(canAccessRoute(contrata, 'servicios')).toBe(false);
+    expect(canAccessRoute(contrata, 'calendario')).toBe(false);
     expect(getVisibleRouteGroups(contrata).map((group) => group.title)).toEqual(['Operacion']);
   });
 });

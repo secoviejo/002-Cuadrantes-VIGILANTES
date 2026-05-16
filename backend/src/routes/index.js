@@ -3,6 +3,7 @@ import { asignacionTurnoRouter } from './asignacionTurno.routes.js'
 import { auditoriaRouter } from './auditoria.routes.js'
 import { ausenciaRouter } from './ausencia.routes.js'
 import { campusRouter } from './campus.routes.js'
+import { calendarioRouter } from './calendario.routes.js'
 import { edificioRouter } from './edificio.routes.js'
 import { empresaRouter } from './empresa.routes.js'
 import { incidenciaRouter } from './incidencia.routes.js'
@@ -21,6 +22,7 @@ apiRouter.use('/auth', authRouter)
 apiRouter.use('/', operativoRouter)
 apiRouter.use('/empresas', empresaRouter)
 apiRouter.use('/campus', campusRouter)
+apiRouter.use('/calendario-laboral', calendarioRouter)
 apiRouter.use('/edificios', edificioRouter)
 apiRouter.use('/incidencias', incidenciaRouter)
 apiRouter.use('/trabajadores', trabajadorRouter)

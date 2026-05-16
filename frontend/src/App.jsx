@@ -12,6 +12,7 @@ import IncidenciasPage from './pages/IncidenciasPage'
 import CuadrantePage from './pages/CuadrantePage'
 import HorasAnualesPage from './pages/HorasAnualesPage'
 import CierreMensualPage from './pages/CierreMensualPage'
+import CalendarioLaboralPage from './pages/CalendarioLaboralPage'
 import LoginForm from './components/auth/LoginForm'
 import { canAccessRoute } from './utils/roles'
 
@@ -98,6 +99,10 @@ function App() {
 
   if (currentRoute === 'cierre') {
     return <CierreMensualPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
+  }
+
+  if (currentRoute === 'calendario') {
+    return <CalendarioLaboralPage currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />
   }
 
   return <Dashboard currentRoute={currentRoute} onNavigate={navigateGuarded} onLogout={handleLogout} user={user} />

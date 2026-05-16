@@ -96,6 +96,8 @@ npm run dev
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`
 - `GET /api/horas-anuales?anio=2026`
 - `GET /api/cierre-mensual?anio=2026&mes=5`
+- `GET /api/calendario-laboral?anio=2026`
+- `POST /api/calendario-laboral`
 - `POST /api/verificaciones/lote`
 
 ### Utilidades
@@ -160,6 +162,7 @@ npm run build        # Produccion
 - Navegacion y permisos por rol: ADMIN/Unidad de Seguridad con acceso completo; Contrata limitada a Operacion.
 - Informes operativo diario, mensual y anual con vista previa imprimible.
 - Pantallas de Horas anuales y Cierre mensual para validacion de factura.
+- Calendario laboral 2026 con festivos reales del HTML original, periodos academicos y alta manual de festivos.
 - Formulario avanzado de servicios con metadatos operativos y filtro por campus.
 
 **Pendiente:**

@@ -71,6 +71,8 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible.
 - `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato, categorias de hora y variables informativas.
 - `GET /api/cierre-mensual?anio=2026&mes=5`: devuelve conciliacion mensual planificado/ejecutado y checklist de validacion.
+- `GET /api/calendario-laboral?anio=2026`: devuelve festivos y periodos academicos del calendario laboral.
+- `POST /api/calendario-laboral`: alta manual de festivo. Requiere JWT y rol `ADMIN` o `UNIDAD_SEGURIDAD_UZ`.
 - `GET /api/ausencias`: lista ausencias.
 - `GET /api/ausencias/:id`: obtiene una ausencia.
 - `POST /api/auth/login`: inicia sesion y devuelve JWT.
@@ -225,6 +227,7 @@ npm run seed
 - Los endpoints operativos y de catalogo se han endurecido con JWT y permisos por rol.
 - `ADMIN` y `UNIDAD_SEGURIDAD_UZ` tienen acceso completo; `CONTRATA` queda limitada a Resumen, Cuadrante, Sustituciones y Verificaciones.
 - Los servicios aceptan metadatos operativos ya presentes en Prisma: tipo operativo, modalidad, horario, vehiculo, orden y visibilidad en cuadrante.
+- El seed carga los festivos 2026 y elimina registros demo antiguos de calendario.
 - Hay tests unitarios y smoke test de arranque de rutas.
 
 El siguiente paso recomendado es reforzar permisos por rol en endpoints operativos y migrar el hash de contrasenas demo a bcrypt/argon2 antes de acercarse a un entorno real.

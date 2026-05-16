@@ -9,7 +9,7 @@ export const ROUTE_GROUPS = [
   },
   {
     title: 'Configuracion',
-    items: ['empresas', 'campus', 'edificios', 'servicios', 'trabajadores'],
+    items: ['empresas', 'campus', 'edificios', 'servicios', 'trabajadores', 'calendario'],
   },
 ];
 

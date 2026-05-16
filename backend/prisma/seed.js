@@ -325,27 +325,42 @@ async function main() {
     },
   })
 
-  await prisma.calendarioLaboral.upsert({
-    where: { codigo: 'CAL_DEMO_2026_05_01_FESTIVO' },
-    update: {},
-    create: {
-      codigo: 'CAL_DEMO_2026_05_01_FESTIVO',
-      fecha: new Date('2026-05-01T00:00:00.000Z'),
-      tipo: 'FESTIVO',
-      descripcion: 'Festivo demo 1 de mayo',
-    },
+  await prisma.calendarioLaboral.deleteMany({
+    where: { codigo: { startsWith: 'CAL_DEMO_' } },
   })
 
-  await prisma.calendarioLaboral.upsert({
-    where: { codigo: 'CAL_DEMO_2026_05_15_LECTIVO' },
-    update: {},
-    create: {
-      codigo: 'CAL_DEMO_2026_05_15_LECTIVO',
-      fecha: new Date('2026-05-15T00:00:00.000Z'),
-      tipo: 'LECTIVO',
-      descripcion: 'Dia lectivo demo',
-    },
-  })
+  const festivos2026 = [
+    { codigo: 'CAL_2026_0101_ANO_NUEVO', fecha: '2026-01-01', descripcion: 'Ano Nuevo', campusId: null },
+    { codigo: 'CAL_2026_0106_REYES', fecha: '2026-01-06', descripcion: 'Reyes', campusId: null },
+    { codigo: 'CAL_2026_0305_CINCOMARZADA', fecha: '2026-03-05', descripcion: 'Cincomarzada', campusId: campus.SAN_FRANCISCO.id },
+    { codigo: 'CAL_2026_0423_SAN_JORGE', fecha: '2026-04-23', descripcion: 'San Jorge - Dia de Aragon', campusId: null },
+    { codigo: 'CAL_2026_0501_TRABAJO', fecha: '2026-05-01', descripcion: 'Dia del Trabajo', campusId: null },
+    { codigo: 'CAL_2026_0529_SAN_FERNANDO_HUESCA', fecha: '2026-05-29', descripcion: 'San Fernando (Huesca)', campusId: campus.HUESCA.id },
+    { codigo: 'CAL_2026_0710_SAN_CRISTOBAL_HUESCA', fecha: '2026-07-10', descripcion: 'San Cristobal (Huesca)', campusId: campus.HUESCA.id },
+    { codigo: 'CAL_2026_0815_ASUNCION', fecha: '2026-08-15', descripcion: 'Asuncion', campusId: null },
+    { codigo: 'CAL_2026_1012_FIESTA_NACIONAL', fecha: '2026-10-12', descripcion: 'Fiesta Nacional', campusId: null },
+    { codigo: 'CAL_2026_1013_PILAR', fecha: '2026-10-13', descripcion: 'Pilar', campusId: campus.SAN_FRANCISCO.id },
+    { codigo: 'CAL_2026_1225_NAVIDAD', fecha: '2026-12-25', descripcion: 'Navidad', campusId: null },
+  ]
+
+  for (const festivo of festivos2026) {
+    await prisma.calendarioLaboral.upsert({
+      where: { codigo: festivo.codigo },
+      update: {
+        fecha: dateOnly(festivo.fecha),
+        tipo: 'FESTIVO',
+        descripcion: festivo.descripcion,
+        campusId: festivo.campusId,
+      },
+      create: {
+        codigo: festivo.codigo,
+        fecha: dateOnly(festivo.fecha),
+        tipo: 'FESTIVO',
+        descripcion: festivo.descripcion,
+        campusId: festivo.campusId,
+      },
+    })
+  }
 }
 
 main()

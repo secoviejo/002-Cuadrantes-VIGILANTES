@@ -167,3 +167,11 @@ export function getHorasAnuales({ anio = 2026 } = {}) {
 export function getCierreMensual({ anio = 2026, mes = 5 } = {}) {
   return getJson(`/cierre-mensual?anio=${anio}&mes=${mes}`);
 }
+
+export function getCalendarioLaboral({ anio = 2026 } = {}) {
+  return getJson(`/calendario-laboral?anio=${anio}`);
+}
+
+export function createFestivo(data) {
+  return postJson('/calendario-laboral', data);
+}

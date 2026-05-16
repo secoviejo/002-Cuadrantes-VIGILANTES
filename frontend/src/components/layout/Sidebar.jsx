@@ -10,6 +10,7 @@ import {
   LayoutGrid,
   LogOut,
   Map,
+  Square,
   ShieldCheck,
   UserCheck,
   Users,
@@ -30,6 +31,7 @@ const MENU = {
   edificios: { name: 'Edificios', icon: <Layers className="w-5 h-5" /> },
   servicios: { name: 'Servicios', icon: <CalendarDays className="w-5 h-5" /> },
   trabajadores: { name: 'Trabajadores', icon: <Users className="w-5 h-5" /> },
+  calendario: { name: 'Calendario laboral', icon: <Square className="w-5 h-5" /> },
 };
 
 export default function Sidebar({ currentRoute = 'dashboard', onNavigate, onLogout, user }) {
