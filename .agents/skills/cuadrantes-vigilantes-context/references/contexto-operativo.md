@@ -17,7 +17,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
 - `backend/`: API Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, rutas, controladores, repositories, README y estructura preparada.
 - `backend/prisma/schema.prisma`: schema Prisma inicial configurado para MariaDB con proveedor `mysql`.
-- `backend/prisma/seed.js`: seed inicial con datos ficticios para roles, usuarios demo, empresa, campus, edificios, servicios, trabajadores y un turno/asignacion demo. Los usuarios demo usan la contrasena comun `Demo1234!`.
+- `backend/prisma/seed.js`: seed idempotente con roles, usuarios demo, empresa, campus, edificios, trabajadores ficticios y datos operativos reales recuperados del HTML original: servicios, horas, puestos de cobertura, turnos de mayo 2026 y descubiertos. Los usuarios demo usan la contrasena comun `Demo1234!`.
 - `backend/src/services/motorReglasTurnos.service.js`: motor central de reglas de turnos, independiente de Prisma y basado en objetos JavaScript.
 - `backend/src/services/motorReglasTurnos.examples.js`: datos mock para entender y probar el motor.
 - `backend/src/scripts/probarMotorReglasTurnos.js`: script manual para ejecutar casos basicos del motor.
@@ -52,7 +52,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
-- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida y verificaciones de cobertura con usuario autenticado.
+- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida, verificaciones de cobertura con usuario autenticado, `GET /api/resumen-operativo`, `GET /api/cuadrante-mensual` y `POST /api/verificaciones/lote`.
 - Hay controladores conectados a repositories Prisma. El frontend React consume el backend mediante `frontend/src/api/client.js` y normaliza listados en forma de array, `{ data }` o `{ items }`.
 - `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
@@ -63,9 +63,9 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 | Login | Simulado | Permite seleccionar Unidad de Seguridad UZ o Contrata y entrar con cualquier credencial. |
 | SSO UZ | Simulado | Boton visual que fuerza perfil UZ, sin integracion real. |
 | Sidebar y navegacion | Funcional en cliente | Cambia vistas internas con `navTo`, sin URL ni router. |
-| Resumen operativo | Visual con partes interactivas | Muestra KPIs, alertas, ultimas sustituciones y panel de verificacion. |
-| Verificacion de cobertura | Interactiva sin persistencia | Permite marcar cubierto, incidencia o descubierto y guardar notas temporales. |
-| Cuadrante mensual | Generado por JS demo | Renderiza mayo de 2026 con turnos y descubiertos simulados. |
+| Resumen operativo | Implementado en React con API | Muestra KPIs, alertas, ultimas sustituciones, cobertura por campus y panel de verificacion con datos de mayo 2026. |
+| Verificacion de cobertura | Persistente por API | Permite marcar cubierto, incidencia o descubierto, anadir notas y guardar lote con JWT. |
+| Cuadrante mensual | Implementado en React con API | Renderiza mayo de 2026 completo con turnos reales recuperados del HTML y descubiertos marcados. |
 | Importar Excel | Solo visual | Representa carga e historial, pero no lee ni valida archivos. |
 | Sustituciones | Tabla demo generada | Muestra sustituciones con preaviso, sin alta ni persistencia real. |
 | Horas anuales | Solo visual | Muestra avance anual y desglose estatico. |
@@ -121,10 +121,19 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Calculo real de horas, cierre mensual o factura.
 - Auditoria.
 
+## Datos Reales Recuperados del HTML Original
+
+- Servicios activos migrados al seed: San Francisco, Paraiso, Veterinaria, Rio Ebro, CECO, CECO jefe equipo, Teruel, Huesca, OCA San Francisco, C.M.U. Pedro Cerbuna, C.M.U. Ramon Acin, Residencia Jaca y Salas estudio.
+- Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas y desviacion -86 h.
+- Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
+- Turnos base: `M` 06:00-14:00, `T` 14:00-22:00, `N` 22:00-06:00 y `D` para CECO jefe.
+- Descubiertos iniciales: Huesca tarde 10/05, CECO jefe 06/05 y CECO jefe 14/05.
+- Los nombres de vigilantes del HTML se consideran inventados y no se migran como trabajadores reales.
+
 ## Datos Simulados Identificados
 
 - `REPORT_TYPES`: define tipos de informe y funciones de render para diario, mensual y anual.
-- `servicios`: array demo para construir el cuadrante mensual.
+- Arrays demo del HTML original: conservados solo como referencia historica; los servicios/horas/turnos de mayo 2026 ya viven en MariaDB mediante seed.
 - `subsData`: sustituciones de ejemplo.
 - `personalData`: trabajadores de ejemplo.
 - `verifyServices`: servicios a cubrir en el turno actual.
@@ -168,7 +177,7 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras y operativas. MariaDB esta levantada localmente (Docker), las migraciones se han ejecutado con exito y JWT basico esta disponible con usuarios demo. Queda pendiente reforzar permisos por rol y endurecer contrasenas antes de uso real.
+Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras y operativas, ademas de endpoints especificos para Resumen operativo y Cuadrante mensual. MariaDB esta levantada localmente (Docker), las migraciones se han ejecutado con exito y JWT basico esta disponible con usuarios demo. Queda pendiente reforzar permisos por rol y endurecer contrasenas antes de uso real.
 
 La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate y las migraciones funcionan con la base de datos local en el puerto 3308.
 ## Reglas de Negocio Previstas

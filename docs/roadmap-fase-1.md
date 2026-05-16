@@ -187,6 +187,17 @@ Se ha creado el CRUD basico de Asignaciones desde React:
 - Endpoints backend: GET, POST, PUT, DELETE /api/asignaciones-turno
 - Pruebas con datos ficticios OK
 
+## Estado del paso 24
+
+Se ha recuperado informacion real del HTML original y se ha llevado a la nueva arquitectura React/Express/Prisma:
+
+- Modelo Prisma ampliado con metadatos operativos de servicios, horas de contrato por periodo y puestos verificables.
+- Seed idempotente con 13 servicios, turnos M/T/N/D de mayo 2026, horas 5.394/5.308, contrato anual 63.508, acumulado inicial 26.140 y descubiertos esperados.
+- APIs nuevas: `GET /api/resumen-operativo`, `GET /api/cuadrante-mensual`, `POST /api/verificaciones/lote`.
+- Resumen operativo React con panel de verificacion, KPIs, alertas y cobertura por campus.
+- Cuadrante mensual React con mayo completo, filtros y descubiertos marcados.
+
 ## Proximo paso recomendado
 
-1. **PASO 24**: Revisar turnos, asignaciones y cobertura basica.
+1. **PASO 25**: Reforzar permisos por rol y auditoria en las nuevas acciones operativas.
+2. **PASO 26**: Generalizar el cuadrante mensual para meses posteriores a mayo 2026.

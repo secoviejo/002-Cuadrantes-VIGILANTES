@@ -1,187 +1,144 @@
-import { useState, useEffect } from 'react';
-import { getTurnos, getAsignaciones } from '../api/catalogos';
-import { normalizeList } from '../api/client';
+import { useEffect, useMemo, useState } from 'react';
+import { getCuadranteMensual } from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+const TURNO_CLASS = {
+  M: 'bg-[#5b8a9c] text-white',
+  T: 'bg-[#c97a3f] text-white',
+  N: 'bg-[#4a4742] text-white',
+  D: 'bg-[#6b7e5b] text-white',
+};
+
+const FILTROS = [
+  { id: 'todos', label: 'Todos' },
+  { id: 'vigilancia', label: 'Vigilancia' },
+  { id: 'auxiliares', label: 'Auxiliares' },
+  { id: 'descubierto', label: 'Solo descubierto' },
+];
+
+function hasDescubierto(servicio) {
+  return servicio.celdas.some((celda) => celda.turnos.some((turno) => turno.estado === 'DESCUBIERTO'));
 }
 
-function formatTime(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
-}
-
-function getWeekDates(weekOffset = 0) {
-  const today = new Date();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - today.getDay() + 1 + (weekOffset * 7));
-  
-  const dates = [];
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(monday);
-    date.setDate(monday.getDate() + i);
-    dates.push(date);
-  }
-  return dates;
-}
-
-function getDayName(date) {
-  const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  return days[date.getDay()];
-}
-
-function TurnoCelda({ turno, asignaciones }) {
-  if (!turno) return <div className="p-2 min-h-[80px] border-t border-stone-100"></div>;
-  
-  const count = asignaciones.filter(a => a.turnoId === turno.id).length;
-  const colorClass = count >= turno.dotacionMinima 
-    ? 'bg-green-50 border-green-300' 
-    : count > 0 
-      ? 'bg-yellow-50 border-yellow-300' 
-      : 'bg-red-50 border-red-300';
-  
-  return (
-    <div className={`p-2 min-h-[80px] border-t border-stone-200 ${colorClass}`}>
-      <div className="font-mono text-xs text-stone-600 mb-1">
-        {formatTime(turno.horaInicio)} - {formatTime(turno.horaFin)}
-      </div>
-      <div className="text-sm font-medium text-stone-800 mb-1">
-        {turno.servicio?.nombre || 'Sin servicio'}
-      </div>
-      <div className="text-xs text-stone-500">
-        {count}/{turno.dotacionMinima} asignados
-      </div>
-    </div>
-  );
-}
-
-export default function CuadrantePage({ currentRoute, onNavigate }) {
-  const [weekOffset, setWeekOffset] = useState(0);
-  const [turnos, setTurnos] = useState([]);
-  const [asignaciones, setAsignaciones] = useState([]);
+export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user }) {
+  const [cuadrante, setCuadrante] = useState(null);
+  const [filtro, setFiltro] = useState('todos');
   const [loading, setLoading] = useState(true);
-  const weekDates = getWeekDates(weekOffset);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadData();
-  }, [weekOffset]);
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [turnosData, asignData] = await Promise.all([
-        getTurnos(),
-        getAsignaciones()
-      ]);
-      setTurnos(normalizeList(turnosData));
-      setAsignaciones(normalizeList(asignData));
-    } catch (err) {
-      console.error('Error cargando datos:', err);
-    } finally {
-      setLoading(false);
+    async function loadCuadrante() {
+      setLoading(true);
+      setError(null);
+      try {
+        const payload = await getCuadranteMensual({ anio: 2026, mes: 5 });
+        setCuadrante(payload.data || payload);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
-  };
+    loadCuadrante();
+  }, []);
 
-  const getTurnosForDate = (date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    return turnos.filter(t => {
-      const turnoDate = new Date(t.fecha).toISOString().split('T')[0];
-      return turnoDate === dateStr;
+  const serviciosFiltrados = useMemo(() => {
+    if (!cuadrante) return [];
+    return cuadrante.servicios.filter((servicio) => {
+      if (filtro === 'vigilancia') return ['Vigilancia', 'Coordinacion'].includes(servicio.tipo);
+      if (filtro === 'auxiliares') return servicio.tipo === 'Auxiliar';
+      if (filtro === 'descubierto') return hasDescubierto(servicio);
+      return true;
     });
-  };
-
-  const weekLabel = () => {
-    const start = weekDates[0];
-    const end = weekDates[6];
-    const startStr = start.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-    const endStr = end.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-    return `${startStr} - ${endStr}`;
-  };
+  }, [cuadrante, filtro]);
 
   return (
-    <AppLayout 
-      isConnected={true} 
-      currentRoute={currentRoute} 
+    <AppLayout
+      isConnected={!error}
+      currentRoute={currentRoute}
       onNavigate={onNavigate}
-      title="Cuadrante Semanal"
-      subtitle="Vista general de turnos por dia"
+      onLogout={onLogout}
+      user={user}
+      title="Cuadrante mensual"
+      subtitle="Visualizacion por servicio - Mayo 2026"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-stone-800">{weekLabel()}</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setWeekOffset(w => w - 1)}
-            className="p-2 hover:bg-stone-100 rounded transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 text-stone-600" />
-          </button>
-          <button
-            onClick={() => setWeekOffset(0)}
-            className="px-3 py-1 text-sm text-amber-600 hover:bg-amber-50 rounded transition-colors"
-          >
-            Hoy
-          </button>
-          <button
-            onClick={() => setWeekOffset(w => w + 1)}
-            className="p-2 hover:bg-stone-100 rounded transition-colors"
-          >
-            <ChevronRight className="w-5 h-5 text-stone-600" />
-          </button>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center rounded-full border border-stone-200 bg-white">
+          <button className="p-2 text-stone-400" title="Disponible en siguientes fases"><ChevronLeft className="h-4 w-4" /></button>
+          <span className="px-4 text-sm font-semibold text-stone-800">Mayo 2026</span>
+          <button className="p-2 text-stone-400" title="Disponible en siguientes fases"><ChevronRight className="h-4 w-4" /></button>
         </div>
+        <div className="flex flex-wrap gap-2">
+          {FILTROS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setFiltro(item.id)}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${filtro === item.id ? 'border-stone-900 bg-stone-900 text-white' : 'border-stone-200 bg-white text-stone-700'}`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <button className="inline-flex items-center gap-2 rounded-md border border-stone-300 px-3 py-2 text-sm text-stone-600">
+          <Download className="h-4 w-4" />
+          Exportar Excel
+        </button>
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-4 text-xs text-stone-500">
+        <span><b className="mr-1 inline-block h-3 w-3 bg-[#5b8a9c] align-middle" />Mañana</span>
+        <span><b className="mr-1 inline-block h-3 w-3 bg-[#c97a3f] align-middle" />Tarde</span>
+        <span><b className="mr-1 inline-block h-3 w-3 bg-[#4a4742] align-middle" />Noche</span>
+        <span><b className="mr-1 inline-block h-3 w-3 bg-[#6b7e5b] align-middle" />Diurno</span>
+        <span><b className="mr-1 inline-block h-3 w-3 bg-red-600 align-middle" />Sin cubrir</span>
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="text-stone-500">Cargando cuadrante...</div>
-        </div>
-      ) : (
-        <div className="bg-white border border-stone-200 rounded-lg overflow-hidden">
-          <div className="grid grid-cols-7">
-            {weekDates.map((date, idx) => {
-              const isToday = date.toDateString() === new Date().toDateString();
-              return (
-                <div key={idx} className={`border-r border-stone-200 last:border-r-0 ${isToday ? 'bg-amber-50' : ''}`}>
-                  <div className={`p-2 text-center border-b border-stone-200 ${isToday ? 'bg-amber-100' : 'bg-stone-50'}`}>
-                    <div className="text-xs text-stone-500 uppercase">{getDayName(date)}</div>
-                    <div className={`text-lg font-bold ${isToday ? 'text-amber-700' : 'text-stone-700'}`}>
-                      {date.getDate()}
+        <div className="rounded-lg border border-stone-200 bg-white p-12 text-center text-stone-500">Cargando cuadrante mensual...</div>
+      ) : error ? (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-700">{error}</div>
+      ) : cuadrante && (
+        <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white shadow-sm">
+          <div className="min-w-[1480px]">
+            <div className="grid border-b border-stone-200 bg-stone-50" style={{ gridTemplateColumns: `190px repeat(${cuadrante.dias.length}, minmax(38px, 1fr))` }}>
+              <div className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-stone-500">Servicio</div>
+              {cuadrante.dias.map((dia) => (
+                <div
+                  key={dia.dia}
+                  className={`px-1 py-3 text-center text-xs font-bold ${dia.festivo ? 'bg-amber-100 text-amber-800' : dia.finSemana ? 'bg-stone-100 text-amber-700' : 'text-stone-500'}`}
+                >
+                  {dia.dia}
+                </div>
+              ))}
+            </div>
+            {serviciosFiltrados.map((servicio) => (
+              <div key={servicio.id} className="grid border-b border-stone-100 last:border-b-0 hover:bg-stone-50" style={{ gridTemplateColumns: `190px repeat(${cuadrante.dias.length}, minmax(38px, 1fr))` }}>
+                <div className="px-4 py-3">
+                  <div className="text-sm font-semibold text-stone-800">{servicio.nombre}</div>
+                  <div className="text-xs text-stone-500">{servicio.subtitulo}</div>
+                </div>
+                {servicio.celdas.map((celda) => (
+                  <div key={`${servicio.id}-${celda.dia}`} className="min-h-[46px] border-l border-stone-100 p-1">
+                    <div className="flex flex-col gap-1">
+                      {celda.turnos.map((turno) => (
+                        <div
+                          key={turno.id}
+                          className={`h-5 rounded-sm text-center text-[10px] font-bold leading-5 ${turno.estado === 'DESCUBIERTO' ? 'bg-red-600 text-white' : TURNO_CLASS[turno.codigo] || 'bg-stone-300 text-stone-800'}`}
+                          title={turno.estado === 'DESCUBIERTO' ? 'Sin cubrir' : turno.estado}
+                        >
+                          {turno.estado === 'DESCUBIERTO' ? 'x' : turno.codigo}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  {getTurnosForDate(date).length > 0 ? (
-                    getTurnosForDate(date).map(turno => (
-                      <TurnoCelda key={turno.id} turno={turno} asignaciones={asignaciones} />
-                    ))
-                  ) : (
-                    <div className="p-2 min-h-[80px] text-center text-stone-400 text-sm border-t border-stone-100">
-                      Sin turnos
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       )}
-
-      <div className="mt-6 flex gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-50 border border-green-300 rounded"></div>
-          <span className="text-stone-600">Cubierto</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-yellow-50 border border-yellow-300 rounded"></div>
-          <span className="text-stone-600">Parcial</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-50 border border-red-300 rounded"></div>
-          <span className="text-stone-600">Sin cubrir</span>
-        </div>
-      </div>
     </AppLayout>
   );
 }

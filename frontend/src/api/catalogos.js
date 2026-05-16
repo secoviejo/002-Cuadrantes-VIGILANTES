@@ -143,3 +143,15 @@ export function updateVerificacion(id, data) {
 export function deleteVerificacion(id) {
   return deleteJson(`/verificaciones/${id}`);
 }
+
+export function getResumenOperativo({ fecha = '2026-05-16', turno = 'N' } = {}) {
+  return getJson(`/resumen-operativo?fecha=${fecha}&turno=${turno}`);
+}
+
+export function getCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
+  return getJson(`/cuadrante-mensual?anio=${anio}&mes=${mes}`);
+}
+
+export function createVerificacionesLote(data) {
+  return postJson('/verificaciones/lote', data);
+}

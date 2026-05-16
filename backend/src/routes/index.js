@@ -13,10 +13,12 @@ import { turnoRouter } from './turno.routes.js'
 import { validacionesRouter } from './validaciones.routes.js'
 import { verificacionRouter } from './verificacion.routes.js'
 import { authRouter } from './auth.routes.js'
+import { operativoRouter } from './operativo.routes.js'
 
 export const apiRouter = Router()
 
 apiRouter.use('/auth', authRouter)
+apiRouter.use('/', operativoRouter)
 apiRouter.use('/empresas', empresaRouter)
 apiRouter.use('/campus', campusRouter)
 apiRouter.use('/edificios', edificioRouter)

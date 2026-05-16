@@ -1,4 +1,5 @@
 import * as verificacionRepository from '../repositories/verificacion.repository.js'
+import { registrarVerificacionesLote } from '../services/operativo.service.js'
 import {
   asyncHandler,
   parseBodyInteger,
@@ -38,6 +39,23 @@ export const crearVerificacion = asyncHandler(async (req, res) => {
 
   const verificacion = await verificacionRepository.create(data)
   sendCreatedResponse(res, verificacion)
+})
+
+export const crearVerificacionesLote = asyncHandler(async (req, res) => {
+  const { fecha, turno, verificaciones = [] } = req.body
+
+  if (!Array.isArray(verificaciones) || verificaciones.length === 0) {
+    return res.status(400).json({ error: 'El campo verificaciones debe contener al menos un elemento' })
+  }
+
+  const creadas = await registrarVerificacionesLote({
+    fecha,
+    turno,
+    verificaciones,
+    usuarioId: req.user.id,
+  })
+
+  res.status(201).json({ data: creadas })
 })
 
 export const actualizarVerificacion = asyncHandler(async (req, res) => {

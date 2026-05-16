@@ -65,6 +65,9 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `DELETE /api/incidencias/:id`: elimina una incidencia.
 - `GET /api/verificaciones`: lista verificaciones.
 - `POST /api/verificaciones`: crea una verificacion de cobertura. Requiere JWT y usa el usuario autenticado.
+- `POST /api/verificaciones/lote`: crea verificaciones de varios puestos/turnos en una sola operacion. Requiere JWT y usa el usuario autenticado.
+- `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
+- `GET /api/cuadrante-mensual?anio=2026&mes=5`: devuelve dias, servicios y celdas del cuadrante mensual de mayo 2026.
 - `GET /api/ausencias`: lista ausencias.
 - `GET /api/ausencias/:id`: obtiene una ausencia.
 - `POST /api/auth/login`: inicia sesion y devuelve JWT.
@@ -180,7 +183,14 @@ npx prisma studio              # Abre un explorador visual de la base de datos (
 npm run seed                   # Requiere MariaDB migrada
 ```
 
-El seed carga datos ficticios: roles, empresa demo, campus, edificios, servicios y trabajadores. No contiene datos personales reales.
+El seed carga roles, empresa demo, usuarios demo, campus, edificios, trabajadores ficticios y datos operativos reales recuperados del HTML original. Los servicios, horarios, horas de contrato y descubiertos de mayo 2026 se consideran datos funcionales reales; los nombres de vigilantes del HTML no se importan como trabajadores reales.
+
+Datos operativos recuperados:
+
+- Servicios activos: San Francisco, Paraiso, Veterinaria, Rio Ebro, CECO, CECO jefe equipo, Teruel, Huesca, OCA San Francisco, C.M.U. Pedro Cerbuna, C.M.U. Ramon Acin, Residencia Jaca y Salas estudio.
+- Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas, desviacion -86 h.
+- Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
+- Descubiertos iniciales: Huesca tarde 10/05, CECO jefe 06/05 y 14/05.
 
 Usuarios demo creados o actualizados por el seed:
 
@@ -207,6 +217,8 @@ npm run seed
 - API Express registra correctamente todas las rutas desde `createApp()`.
 - Autenticacion JWT basica disponible con usuarios demo.
 - `POST /api/verificaciones` requiere token JWT y deriva `usuarioId` del usuario autenticado.
+- `GET /api/resumen-operativo` y `GET /api/cuadrante-mensual` sirven los datos reales de mayo 2026 migrados desde el HTML original.
+- `POST /api/verificaciones/lote` persiste verificaciones por puesto de cobertura con el usuario autenticado.
 - Hay tests unitarios y smoke test de arranque de rutas.
 
 El siguiente paso recomendado es reforzar permisos por rol en endpoints operativos y migrar el hash de contrasenas demo a bcrypt/argon2 antes de acercarse a un entorno real.

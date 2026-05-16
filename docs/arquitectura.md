@@ -4,14 +4,15 @@
 
 El proyecto conserva un prototipo HTML monolitico como referencia funcional y visual. La copia historica esta en `legacy/html-original/`.
 
-El frontend ya tiene una aplicacion base React + Vite + Tailwind CSS dentro de `frontend/`. El backend ya tiene una API Express dentro de `backend/`, con Prisma configurado para MariaDB, repositories, rutas REST GET y escrituras basicas para entidades maestras.
+El frontend ya tiene una aplicacion React + Vite + Tailwind CSS dentro de `frontend/`. El backend ya tiene una API Express dentro de `backend/`, con Prisma configurado para MariaDB, repositories, rutas REST y escrituras basicas para entidades maestras y operativas.
 
-El schema Prisma ha sido validado (`prisma validate`) y el Prisma Client ha sido generado (`prisma generate`). Se ha levantado un entorno de base de datos MariaDB local mediante Docker Compose y se ha ejecutado la migración inicial exitosamente, poblando la base de datos con un seed inicial de desarrollo.
+El schema Prisma esta validado, Prisma Client esta generado y la base de datos MariaDB de desarrollo se puede poblar con `backend/prisma/seed.js`.
+
 ## Arquitectura objetivo
 
 - Frontend: React + Vite + Tailwind CSS.
 - Backend: Node.js + Express.
-- Base de datos: MariaDB (base de desarrollo: `cuadrantes_vigilantes_dev`).
+- Base de datos: MariaDB.
 - ORM: Prisma configurado en `backend/prisma/schema.prisma`.
 - API: REST.
 - Seguridad: autenticacion JWT y roles.
@@ -19,19 +20,25 @@ El schema Prisma ha sido validado (`prisma validate`) y el Prisma Client ha sido
 
 ## Separacion prevista
 
-- `frontend/`: aplicacion React + Vite + Tailwind CSS, componentes, paginas, layouts, hooks, servicios de cliente, utilidades y datos demo temporales.
-- `backend/`: API Express base, Prisma, `MotorReglasTurnos`, repositories, controladores REST, rutas, servicios de negocio, middleware y utilidades.
-- `docs/`: decisiones tecnicas, modelo de datos previsto y roadmap.
+- `frontend/`: aplicacion React, componentes, paginas, layouts, servicios de cliente, utilidades y estilos.
+- `backend/`: API Express, Prisma, repositories, controladores REST, rutas, servicios de negocio, middleware y utilidades.
+- `docs/`: decisiones tecnicas, modelo de datos, arquitectura y roadmap.
 - `legacy/`: referencias historicas que no deben convertirse en codigo activo.
 
 ## Regla de migracion
 
 La migracion debe ser progresiva. El HTML original no debe borrarse ni reescribirse de golpe. Las reglas de negocio deben tender a centralizarse en backend y no en componentes visuales.
 
-`MotorReglasTurnos` ya existe como servicio backend puro y testeable con objetos JavaScript normales. Todavia no esta conectado a los endpoints reales ni a Prisma.
+`MotorReglasTurnos` existe como servicio backend puro y testeable con objetos JavaScript normales. Algunas reglas de asignacion siguen pendientes de integrarse de forma completa con todos los flujos reales.
 
-La API REST de negocio empezo por endpoints GET de solo lectura para trabajadores, servicios, turnos, asignaciones de turno y ausencias. Despues se han abierto escrituras basicas solo para entidades maestras: empresas, campus, edificios, servicios y trabajadores. No hay escrituras para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios ni login.
+## Estado operativo recuperado
 
-El frontend ya cuenta con una estructura de Dashboard en React + Vite + Tailwind CSS que se comunica con el backend mediante `fetch` (cliente genérico). Este panel inicial ya es capaz de mostrar estadísticas básicas obtenidas en tiempo real de MariaDB.
+El Resumen operativo y el Cuadrante mensual ya consumen servicios backend especificos para datos operativos de mayo 2026 recuperados desde el HTML original:
 
-El siguiente paso técnico recomendado es implementar las funcionalidades de escritura (CRUD básico) desde este nuevo panel de React, para validar el flujo completo, ahora que las lecturas y el contrato de API están estabilizados, antes de abordar la estrategia de autenticación (JWT) y el control de roles.
+- `GET /api/resumen-operativo`: KPIs, horas, servicios verificables, alertas, cobertura por campus y ultimas sustituciones.
+- `GET /api/cuadrante-mensual`: dias, servicios y celdas M/T/N/D del mes.
+- `POST /api/verificaciones/lote`: persistencia de verificaciones por puesto, siempre con JWT.
+
+El seed idempotente carga servicios, turnos, horas de contrato y descubiertos de mayo 2026. Los nombres ficticios de vigilantes del HTML no se importan como trabajadores reales.
+
+La navegacion de meses queda visible pero limitada a mayo 2026 hasta completar una generacion mensual general. El siguiente paso tecnico recomendado es reforzar permisos por rol y ampliar la operativa mensual a periodos futuros sin perder la trazabilidad de horas y descubiertos.

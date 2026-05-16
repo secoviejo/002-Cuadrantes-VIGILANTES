@@ -153,18 +153,27 @@ model Servicio {
   codigo          String              @unique @db.VarChar(80)
   nombre          String              @db.VarChar(191)
   descripcion     String?             @db.Text
+  tipoOperativo   String?             @db.VarChar(80)
+  modalidad       String?             @db.VarChar(80)
+  horario         String?             @db.VarChar(191)
+  vehiculo        String?             @db.VarChar(191)
+  orden           Int                 @default(0)
+  visibleCuadrante Boolean            @default(true)
   perfilRequerido TipoPerfilRequerido
   dotacionMinima  Int                 @default(1)
   activo          Boolean             @default(true)
   edificioId      Int
   edificio        Edificio            @relation(fields: [edificioId], references: [id])
   turnos          Turno[]
+  horasContrato   HorasContratoServicio[]
+  puestosCobertura PuestoCobertura[]
   creadoEn        DateTime            @default(now())
   actualizadoEn   DateTime            @updatedAt
 
   @@index([edificioId])
   @@index([perfilRequerido])
   @@index([activo])
+  @@index([orden])
 }
 
 model Turno {
@@ -261,15 +270,57 @@ model VerificacionCobertura {
   id           Int             @id @default(autoincrement())
   turnoId      Int
   usuarioId    Int
+  puestoId     Int?
   estado       EstadoCobertura
   nota         String?         @db.Text
   turno        Turno           @relation(fields: [turnoId], references: [id])
   usuario      Usuario         @relation(fields: [usuarioId], references: [id])
+  puesto       PuestoCobertura? @relation(fields: [puestoId], references: [id])
   verificadaEn DateTime        @default(now())
 
   @@index([turnoId])
   @@index([usuarioId])
+  @@index([puestoId])
   @@index([estado])
+}
+
+model HorasContratoServicio {
+  id               Int      @id @default(autoincrement())
+  servicioId       Int
+  servicio         Servicio @relation(fields: [servicioId], references: [id])
+  anio             Int
+  mes              Int?
+  horasPlanificadas Int     @default(0)
+  horasEjecutadas  Int?
+  horasAnuales     Int?
+  observacion      String?  @db.VarChar(255)
+  creadoEn         DateTime @default(now())
+  actualizadoEn    DateTime @updatedAt
+
+  @@unique([servicioId, anio, mes])
+  @@index([anio, mes])
+}
+
+model PuestoCobertura {
+  id            Int                     @id @default(autoincrement())
+  codigo        String                  @unique @db.VarChar(120)
+  nombre        String                  @db.VarChar(191)
+  etiqueta      String?                 @db.VarChar(80)
+  meta          String?                 @db.VarChar(191)
+  iniciales     String?                 @db.VarChar(10)
+  turnoCodigo   String                  @db.VarChar(10)
+  orden         Int                     @default(0)
+  activo        Boolean                 @default(true)
+  servicioId    Int
+  servicio      Servicio                @relation(fields: [servicioId], references: [id])
+  verificaciones VerificacionCobertura[]
+  creadoEn      DateTime                @default(now())
+  actualizadoEn DateTime                @updatedAt
+
+  @@index([servicioId])
+  @@index([turnoCodigo])
+  @@index([activo])
+  @@index([orden])
 }
 
 model CalendarioLaboral {

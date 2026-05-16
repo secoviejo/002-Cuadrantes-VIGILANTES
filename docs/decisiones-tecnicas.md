@@ -14,6 +14,10 @@
 - Crear `MotorReglasTurnos` como servicio backend puro que trabaja con objetos JavaScript y no depende directamente de Prisma.
 - Exponer primero endpoints REST GET de solo lectura conectados a repositories Prisma antes de abrir escrituras.
 - Introducir escrituras de forma limitada en entidades maestras (`POST` y `PUT` para empresas, campus, edificios, servicios y trabajadores), manteniendo fuera operaciones de turnos/asignaciones hasta tener mas controles.
+- Tratar `legacy/html-original/cuadrantes_uz_6.html` como fuente funcional para servicios, turnos, horas de contrato y descubiertos de mayo 2026.
+- No importar los nombres ficticios de vigilantes del HTML como trabajadores reales.
+- Persistir los datos recuperados mediante Prisma y seed idempotente, no como arrays estaticos del frontend.
+- Mantener mayo 2026 como primer mes fiel y dejar la navegacion a otros meses para una fase posterior.
 
 ## Decisiones pendientes
 
@@ -33,5 +37,5 @@
 - No mover ni borrar el HTML original.
 - No mezclar datos demo con modelo real.
 - No implementar funcionalidades avanzadas antes de estabilizar la base.
-- No exponer endpoints de escritura para turnos, asignaciones, sustituciones, incidencias o verificaciones hasta validar autenticacion, permisos y auditoria.
+- No abrir nuevas escrituras operativas sin JWT, permisos y auditoria.
 - Mantener reglas de turnos en `MotorReglasTurnos`, no duplicarlas en frontend.

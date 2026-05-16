@@ -1,226 +1,353 @@
-import { useState, useEffect } from 'react';
-import { getEmpresas, getCampus, getEdificios, getServicios, getTrabajadores, getTurnos, getAsignaciones, getIncidencias, getSustituciones } from '../api/catalogos';
-import { normalizeList } from '../api/client';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  createVerificacionesLote,
+  getResumenOperativo,
+} from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
-import StatCard from '../components/ui/StatCard';
-import { Users, CalendarDays, Loader2, AlertCircle, Clock, AlertTriangle, ArrowRightLeft, CheckCircle } from 'lucide-react';
+import { AlertCircle, Check, FileText, Loader2, X } from 'lucide-react';
 
-export default function Dashboard({ currentRoute, onNavigate }) {
-  const [data, setData] = useState({
-    empresas: [],
-    campus: [],
-    edificios: [],
-    servicios: [],
-    trabajadores: [],
-    turnos: [],
-    asignaciones: [],
-    incidencias: [],
-    sustituciones: []
-  });
-  
-  const [status, setStatus] = useState({
-    loading: true,
-    error: null,
-    connected: null
-  });
+const TURNOS = [
+  { codigo: 'M', label: 'Mañana', color: '#5b8a9c' },
+  { codigo: 'T', label: 'Tarde', color: '#c97a3f' },
+  { codigo: 'N', label: 'Noche', color: '#4a4742' },
+];
+
+const ESTADOS = {
+  PENDIENTE: 'pending',
+  CUBIERTO: 'ok',
+  INCIDENCIA: 'warn',
+  DESCUBIERTO: 'danger',
+};
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString('es-ES');
+}
+
+function todayForDemo() {
+  return '2026-05-16';
+}
+
+function KpiCard({ label, value, unit, sub, tone = 'neutral', progress }) {
+  const toneClass = {
+    neutral: 'text-stone-900',
+    good: 'text-emerald-700',
+    warn: 'text-amber-700',
+    danger: 'text-red-700',
+  }[tone];
+
+  return (
+    <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">{label}</div>
+      <div className={`mt-5 font-serif text-4xl font-semibold ${toneClass}`}>
+        {value}<span className="ml-1 font-sans text-sm font-semibold">{unit}</span>
+      </div>
+      <div className="mt-2 text-xs text-stone-500">{sub}</div>
+      {progress !== undefined && (
+        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-stone-100">
+          <div className="h-full rounded-full bg-amber-600" style={{ width: `${progress}%` }} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function statusClass(status) {
+  if (status === 'ok') return 'border-emerald-300 bg-emerald-50';
+  if (status === 'warn') return 'border-amber-300 bg-amber-50';
+  if (status === 'danger') return 'border-red-300 bg-red-50';
+  return 'border-stone-200 bg-white';
+}
+
+function AlertItem({ alerta }) {
+  const classes = {
+    danger: 'border-red-200 bg-red-50 text-red-800',
+    warn: 'border-amber-200 bg-amber-50 text-amber-800',
+    info: 'border-blue-200 bg-blue-50 text-blue-800',
+  }[alerta.tipo] || 'border-stone-200 bg-stone-50 text-stone-700';
+
+  return (
+    <div className={`rounded-md border p-4 ${classes}`}>
+      <div className="font-semibold">{alerta.titulo}</div>
+      <div className="mt-1 text-xs opacity-80">{alerta.meta}</div>
+    </div>
+  );
+}
+
+export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) {
+  const [turno, setTurno] = useState('N');
+  const [resumen, setResumen] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [states, setStates] = useState({});
+  const [notes, setNotes] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    async function loadData() {
+    async function loadResumen() {
+      setLoading(true);
+      setError(null);
       try {
-        const results = await Promise.all([
-          getEmpresas(),
-          getCampus(),
-          getEdificios(),
-          getServicios(),
-          getTrabajadores(),
-          getTurnos(),
-          getAsignaciones(),
-          getIncidencias(),
-          getSustituciones()
-        ]);
-        
-        setData({
-          empresas: normalizeList(results[0]),
-          campus: normalizeList(results[1]),
-          edificios: normalizeList(results[2]),
-          servicios: normalizeList(results[3]),
-          trabajadores: normalizeList(results[4]),
-          turnos: normalizeList(results[5]),
-          asignaciones: normalizeList(results[6]),
-          incidencias: normalizeList(results[7]),
-          sustituciones: normalizeList(results[8])
-        });
-        setStatus({ loading: false, error: null, connected: true });
+        const payload = await getResumenOperativo({ fecha: todayForDemo(), turno });
+        const data = payload.data || payload;
+        setResumen(data);
+        setStates(Object.fromEntries(data.serviciosVerificacion.map((item) => [
+          item.puestoId,
+          ESTADOS[item.estado] || 'pending',
+        ])));
+        setNotes(Object.fromEntries(data.serviciosVerificacion.map((item) => [item.puestoId, item.nota || ''])));
       } catch (err) {
-        setStatus({ loading: false, error: err.message, connected: false });
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     }
-    
-    loadData();
-  }, []);
+    loadResumen();
+  }, [turno]);
 
-  const getTurnosSinCubrir = () => {
-    return data.turnos.filter(t => t.estado === 'SIN_CUBRIR').length;
+  const dynamicAlerts = useMemo(() => {
+    if (!resumen) return [];
+    return resumen.serviciosVerificacion.flatMap((servicio) => {
+      const state = states[servicio.puestoId];
+      const note = notes[servicio.puestoId];
+      if (state === 'danger') {
+        return [{
+          tipo: 'danger',
+          titulo: `Servicio descubierto - ${servicio.nombre}${servicio.etiqueta ? ` (${servicio.etiqueta})` : ''}`,
+          meta: `${resumen.turno.nombre} en curso - Marcado por la contrata - Sin cobertura${note ? ` - ${note}` : ''}`,
+        }];
+      }
+      if (state === 'warn') {
+        return [{
+          tipo: 'warn',
+          titulo: `Incidencia en ${servicio.nombre}${servicio.etiqueta ? ` (${servicio.etiqueta})` : ''}`,
+          meta: `${resumen.turno.nombre} en curso - Requiere revision${note ? ` - ${note}` : ''}`,
+        }];
+      }
+      return [];
+    });
+  }, [notes, resumen, states]);
+
+  const doneCount = resumen
+    ? resumen.serviciosVerificacion.filter((item) => states[item.puestoId] !== 'pending').length
+    : 0;
+
+  const setServiceStatus = (puestoId, status) => {
+    setStates((prev) => ({
+      ...prev,
+      [puestoId]: prev[puestoId] === status ? 'pending' : status,
+    }));
   };
 
-  const getIncidenciasAbiertas = () => {
-    return data.incidencias.filter(i => i.estado === 'ABIERTA').length;
+  const markAllOk = () => {
+    if (!resumen) return;
+    setStates(Object.fromEntries(resumen.serviciosVerificacion.map((item) => [item.puestoId, 'ok'])));
+    setNotes({});
   };
 
-  const getIncidenciasEnCurso = () => {
-    return data.incidencias.filter(i => i.estado === 'EN_CURSO').length;
-  };
+  const confirmVerification = async () => {
+    if (!resumen) return;
+    const pendientes = resumen.serviciosVerificacion.filter((item) => states[item.puestoId] === 'pending');
+    if (pendientes.length > 0) {
+      setFeedback({ type: 'error', message: `Quedan ${pendientes.length} servicios sin marcar.` });
+      return;
+    }
 
-  const getAsignacionesHoy = () => {
-    const hoy = new Date().toISOString().split('T')[0];
-    return data.asignaciones.filter(a => {
-      const fechaAsign = new Date(a.turno?.fecha).toISOString().split('T')[0];
-      return fechaAsign === hoy;
-    }).length;
+    setSaving(true);
+    try {
+      await createVerificacionesLote({
+        fecha: resumen.fecha,
+        turno: resumen.turno.codigo,
+        verificaciones: resumen.serviciosVerificacion.map((item) => ({
+          puestoId: item.puestoId,
+          estado: states[item.puestoId],
+          nota: notes[item.puestoId] || null,
+        })),
+      });
+      setFeedback({ type: 'success', message: 'Turno verificado correctamente.' });
+    } catch (err) {
+      setFeedback({ type: 'error', message: err.message });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <AppLayout 
-      isConnected={status.connected} 
-      currentRoute={currentRoute} 
+    <AppLayout
+      isConnected={!error}
+      currentRoute={currentRoute}
       onNavigate={onNavigate}
-      title="Dashboard"
-      subtitle="Visión general del estado actual"
+      onLogout={onLogout}
+      user={user}
+      title="Resumen operativo"
+      subtitle="Mayo 2026 - Vista actual del servicio de vigilancia"
     >
-      {/* KPIs Operativos */}
-      <div className="mb-8">
-        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3">Estado Operativo</h2>
-        <div className="grid grid-cols-5 gap-4">
-          <StatCard label="Turnos totales" value={data.turnos.length} loading={status.loading} icon={<Clock className="w-4 h-4" />} />
-          <StatCard label="Sin cubrir" value={getTurnosSinCubrir()} loading={status.loading} icon={<Clock className="w-4 h-4 text-red-600" />} />
-          <StatCard label="Incidencias abiertas" value={getIncidenciasAbiertas()} loading={status.loading} icon={<AlertTriangle className="w-4 h-4 text-red-600" />} />
-          <StatCard label="Sustituciones" value={data.sustituciones.length} loading={status.loading} icon={<ArrowRightLeft className="w-4 h-4" />} />
-          <StatCard label="Verificaciones" value={0} loading={status.loading} icon={<CheckCircle className="w-4 h-4" />} />
+      {loading ? (
+        <div className="flex items-center justify-center p-12 text-stone-500">
+          <Loader2 className="mr-2 h-6 w-6 animate-spin" /> Cargando resumen operativo...
         </div>
-      </div>
-
-      {/* KPIs Generales */}
-      <div className="mb-8">
-        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3">Catalogos</h2>
-        <div className="grid grid-cols-5 gap-4">
-          <StatCard label="Empresas" value={data.empresas.length} loading={status.loading} />
-          <StatCard label="Campus" value={data.campus.length} loading={status.loading} />
-          <StatCard label="Edificios" value={data.edificios.length} loading={status.loading} />
-          <StatCard label="Trabajadores" value={data.trabajadores.length} loading={status.loading} />
-          <StatCard label="Servicios" value={data.servicios.length} loading={status.loading} />
+      ) : error ? (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-700">
+          <AlertCircle className="mr-2 inline h-5 w-5" />
+          {error}
         </div>
-      </div>
-
-      {/* Tables */}
-      <div className="grid grid-cols-2 gap-6">
-        
-        {/* Trabajadores */}
-        <div className="bg-stone-50 border border-stone-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-serif text-xl font-medium text-stone-900 flex items-center gap-2">
-              <Users className="text-amber-700 w-5 h-5" />
-              Trabajadores
-            </h2>
-          </div>
-          
-          {status.loading ? (
-            <div className="flex items-center justify-center p-8 text-stone-400">
-              <Loader2 className="animate-spin w-6 h-6 mr-2" /> Cargando datos...
-            </div>
-          ) : status.error ? (
-            <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
-              <AlertCircle className="inline w-4 h-4 mr-1" />
-              Error: {status.error}
-            </div>
-          ) : data.trabajadores.length === 0 ? (
-            <div className="p-8 text-center text-stone-500 text-sm border border-dashed border-stone-300 rounded">
-              No hay trabajadores registrados.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-stone-300 text-[11px] uppercase tracking-wider text-stone-500">
-                    <th className="pb-3 font-semibold">Nombre Completo</th>
-                    <th className="pb-3 font-semibold">Codigo</th>
-                    <th className="pb-3 font-semibold">Tipo</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-200">
-                  {data.trabajadores.slice(0, 5).map(t => (
-                    <tr key={t.id} className="hover:bg-stone-100 transition-colors">
-                      <td className="py-3">{t.nombre}</td>
-                      <td className="py-3 font-mono text-xs text-stone-600">{t.codigo}</td>
-                      <td className="py-3">{t.tipo}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {data.trabajadores.length > 5 && (
-                <div className="mt-3 text-xs text-stone-500 text-center">
-                  Mostrando 5 de {data.trabajadores.length}
+      ) : resumen && (
+        <div className="space-y-8">
+          <section className="rounded-lg border border-stone-300 bg-white p-6 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-700 font-serif text-2xl text-white">
+                  {resumen.turno.codigo}
                 </div>
-              )}
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">Verificacion de cobertura</div>
+                  <h2 className="font-serif text-2xl font-semibold text-stone-900">
+                    {resumen.turno.nombre} - {resumen.turno.rango}
+                  </h2>
+                  <p className="text-sm text-stone-500">Hoy, sabado 16 de mayo de 2026</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-3">
+                <div className="text-right">
+                  <div className="font-serif text-4xl font-semibold text-stone-900">{doneCount}<span className="text-xl text-stone-500">/{resumen.serviciosVerificacion.length}</span></div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">Verificados</div>
+                </div>
+                <div className="flex gap-2">
+                  {TURNOS.map((item) => (
+                    <button
+                      key={item.codigo}
+                      type="button"
+                      onClick={() => setTurno(item.codigo)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${turno === item.codigo ? 'border-stone-900 bg-stone-900 text-white' : 'border-stone-200 bg-white text-stone-700'}`}
+                    >
+                      <span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ background: item.color }} />
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-2">
+              {resumen.serviciosVerificacion.map((servicio) => {
+                const state = states[servicio.puestoId] || 'pending';
+                const needsNote = state === 'warn' || state === 'danger';
+                return (
+                  <div key={servicio.puestoId} className={`rounded-md border p-4 transition-colors ${statusClass(state)}`}>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-stone-800">
+                          {servicio.nombre}
+                          {servicio.etiqueta && <span className="ml-2 rounded bg-stone-200 px-2 py-0.5 text-[10px] uppercase text-stone-600">{servicio.etiqueta}</span>}
+                        </div>
+                        <div className="text-xs text-stone-500">{servicio.meta}</div>
+                      </div>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-700 text-xs font-bold text-white">
+                        {servicio.iniciales}
+                      </div>
+                      <div className="flex gap-1">
+                        <button onClick={() => setServiceStatus(servicio.puestoId, 'ok')} className={`h-10 w-10 rounded border ${state === 'ok' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}><Check className="mx-auto h-4 w-4" /></button>
+                        <button onClick={() => setServiceStatus(servicio.puestoId, 'warn')} className={`h-10 w-10 rounded border font-bold ${state === 'warn' ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}>!</button>
+                        <button onClick={() => setServiceStatus(servicio.puestoId, 'danger')} className={`h-10 w-10 rounded border ${state === 'danger' ? 'border-red-600 bg-red-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}><X className="mx-auto h-4 w-4" /></button>
+                      </div>
+                    </div>
+                    {needsNote && (
+                      <textarea
+                        value={notes[servicio.puestoId] || ''}
+                        onChange={(event) => setNotes((prev) => ({ ...prev, [servicio.puestoId]: event.target.value }))}
+                        className="mt-3 w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        rows="2"
+                        placeholder={state === 'danger' ? 'Descripcion del descubierto' : 'Descripcion de la incidencia'}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 pt-4">
+              <div className="text-sm text-stone-500">Solo lectura UZ - la verificacion la realiza el operador CECO de la contrata</div>
+              <div className="flex gap-2">
+                <button onClick={markAllOk} className="rounded-md border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50">Marcar todos cubiertos</button>
+                <button onClick={confirmVerification} disabled={saving} className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-60">
+                  {saving ? 'Guardando...' : 'Confirmar verificacion'}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {feedback && (
+            <div className={`rounded-md border p-4 text-sm ${feedback.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-red-200 bg-red-50 text-red-800'}`}>
+              {feedback.message}
             </div>
           )}
-        </div>
 
-        {/* Servicios */}
-        <div className="bg-stone-50 border border-stone-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-serif text-xl font-medium text-stone-900 flex items-center gap-2">
-              <CalendarDays className="text-amber-700 w-5 h-5" />
-              Servicios Activos
-            </h2>
+          <div className="grid gap-4 lg:grid-cols-4">
+            <KpiCard label="Cobertura del mes" value={String(resumen.kpis.coberturaMes).replace('.', ',')} unit="%" sub="1,2% vs abril" tone="good" progress={resumen.kpis.coberturaMes} />
+            <KpiCard label="Horas planificadas" value={formatNumber(resumen.kpis.horasPlanificadas)} unit="h" sub="Mayo 2026" />
+            <KpiCard label="Horas ejecutadas" value={formatNumber(resumen.kpis.horasEjecutadas)} unit="h" sub={`${Math.abs(resumen.kpis.desviacionHoras)}h sobre planificado`} tone="warn" />
+            <KpiCard label="Acumulado anual" value={formatNumber(resumen.kpis.acumuladoAnual)} unit={`/ ${formatNumber(resumen.kpis.contratoAnual)}h`} sub={`${String(resumen.kpis.avanceContrato).replace('.', ',')}% del contrato`} progress={resumen.kpis.avanceContrato} />
           </div>
 
-          {status.loading ? (
-            <div className="flex items-center justify-center p-8 text-stone-400">
-              <Loader2 className="animate-spin w-6 h-6 mr-2" /> Cargando datos...
-            </div>
-          ) : status.error ? (
-             <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
-               <AlertCircle className="inline w-4 h-4 mr-1" />
-               Error: {status.error}
-             </div>
-          ) : data.servicios.length === 0 ? (
-            <div className="p-8 text-center text-stone-500 text-sm border border-dashed border-stone-300 rounded">
-              No hay servicios registrados.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-stone-300 text-[11px] uppercase tracking-wider text-stone-500">
-                    <th className="pb-3 font-semibold">Código</th>
-                    <th className="pb-3 font-semibold">Perfil</th>
-                    <th className="pb-3 font-semibold">Campus</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-200">
-                  {data.servicios.slice(0, 5).map(s => (
-                    <tr key={s.id} className="hover:bg-stone-100 transition-colors">
-                      <td className="py-3 font-medium text-amber-800">{s.codigo}</td>
-                      <td className="py-3">
-                        <span className="bg-stone-200 text-stone-700 px-2 py-0.5 rounded text-xs">
-                          {s.perfilRequerido}
-                        </span>
-                      </td>
-                      <td className="py-3">{s.edificio?.campus?.nombre || 'Sin campus'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {data.servicios.length > 5 && (
-                <div className="mt-3 text-xs text-stone-500 text-center">
-                  Mostrando 5 de {data.servicios.length}
+          <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+            <section className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="font-serif text-xl font-semibold text-stone-900">Cobertura por campus</h2>
+                  <p className="text-sm text-stone-500">Servicios fijos 24/7 - Mayo 2026</p>
                 </div>
-              )}
-            </div>
-          )}
-        </div>
+                <button onClick={() => onNavigate?.('cuadrante')} className="text-sm font-semibold text-amber-700">Ver cuadrante</button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="text-[11px] uppercase tracking-wider text-stone-500">
+                    <tr><th className="pb-3">Servicio</th><th className="pb-3">Dotacion</th><th className="pb-3">Horas mes</th><th className="pb-3">Estado</th></tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {resumen.coberturaCampus.map((item) => (
+                      <tr key={item.servicioId}>
+                        <td className="py-3"><strong>{item.servicio}</strong><div className="text-xs text-stone-500">{item.detalle}</div></td>
+                        <td className="py-3 font-mono text-xs">{item.dotacion}</td>
+                        <td className="py-3 font-mono text-xs">{formatNumber(item.horasMes)} h</td>
+                        <td className="py-3"><span className={`rounded-full px-2 py-1 text-xs font-semibold ${item.severidad === 'success' ? 'bg-emerald-100 text-emerald-800' : item.severidad === 'warn' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>{item.estado}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
 
-      </div>
+            <section className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+              <h2 className="font-serif text-xl font-semibold text-stone-900">Alertas activas</h2>
+              <p className="mb-4 text-sm text-stone-500">Pendientes de revision</p>
+              <div className="space-y-3">
+                {[...dynamicAlerts, ...resumen.alertas].map((alerta, index) => (
+                  <AlertItem key={`${alerta.titulo}-${index}`} alerta={alerta} />
+                ))}
+              </div>
+            </section>
+          </div>
+
+          <section className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-2">
+              <FileText className="h-5 w-5 text-amber-700" />
+              <h2 className="font-serif text-xl font-semibold text-stone-900">Ultimas sustituciones</h2>
+            </div>
+            {resumen.sustituciones.length === 0 ? (
+              <div className="rounded-md border border-dashed border-stone-300 p-6 text-center text-sm text-stone-500">No hay sustituciones reales recientes registradas.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="text-[11px] uppercase tracking-wider text-stone-500">
+                    <tr><th>Fecha turno</th><th>Servicio</th><th>Original</th><th>Sustituto</th><th>Motivo</th><th>Aviso</th></tr>
+                  </thead>
+                  <tbody>{resumen.sustituciones.map((item) => <tr key={item.id}><td>{item.fecha}</td><td>{item.servicio}</td><td>{item.original}</td><td>{item.sustituto}</td><td>{item.motivo}</td><td>{item.cumplePreaviso ? 'En plazo' : 'Revisar'}</td></tr>)}</tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </div>
+      )}
     </AppLayout>
   );
 }

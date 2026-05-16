@@ -16,6 +16,8 @@ Prisma ya esta configurado en `backend/prisma/schema.prisma` con proveedor `mysq
 - Sustitucion.
 - Incidencia.
 - VerificacionCobertura.
+- HorasContratoServicio.
+- PuestoCobertura.
 - CalendarioLaboral.
 - Auditoria.
 
@@ -34,9 +36,20 @@ Prisma ya esta configurado en `backend/prisma/schema.prisma` con proveedor `mysq
 
 El modelo no debe copiar directamente tablas o secciones visuales del prototipo HTML. Debe representar entidades reales de operacion, relaciones, fechas, estados y trazabilidad.
 
+## Datos operativos recuperados del HTML original
+
+Se ha ampliado el modelo para que los datos reales de `legacy/html-original/cuadrantes_uz_6.html` vivan en MariaDB y no en arrays del frontend:
+
+- `Servicio` incorpora metadatos operativos: tipo operativo, modalidad, horario descriptivo, vehiculo, orden y visibilidad en cuadrante.
+- `HorasContratoServicio` guarda horas planificadas y ejecutadas por periodo y servicio.
+- `PuestoCobertura` define los puestos verificables por servicio, turno y etiqueta operativa.
+- `VerificacionCobertura` puede asociarse opcionalmente a un puesto de cobertura ademas de a un turno.
+
+El primer periodo fiel es mayo 2026. Incluye 13 servicios, 5.394 h planificadas, 5.308 h ejecutadas, contrato anual de 63.508 h, acumulado inicial de 26.140 h y los descubiertos de Huesca tarde 10/05, CECO jefe 06/05 y CECO jefe 14/05.
+
 ## Seed inicial
 
-Existe `backend/prisma/seed.js` con datos ficticios para roles, empresa demo, campus, edificios, servicios, trabajadores y un turno/asignacion de ejemplo. No contiene datos personales reales.
+Existe `backend/prisma/seed.js` con roles, usuarios demo, empresa demo, campus, edificios, servicios, trabajadores ficticios, turnos de mayo 2026, horas de contrato y puestos de cobertura. No contiene datos personales reales: los nombres inventados de vigilantes del HTML original no se importan como trabajadores reales.
 
 ## Pendiente
 
