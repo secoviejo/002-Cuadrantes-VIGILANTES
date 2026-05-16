@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { Save, Loader2, AlertCircle } from 'lucide-react';
 import { postJson } from '../../api/client';
 
+const DEMO_USERS = [
+  { label: 'Admin', email: 'admin.demo@example.com' },
+  { label: 'Unidad Seguridad', email: 'supervision.demo@unizar.example' },
+  { label: 'Contrata', email: 'contrata.demo@example.com' },
+];
+
+const DEMO_PASSWORD = 'Demo1234!';
+
 export default function LoginForm({ onSuccess, onError }) {
   const [formData, setFormData] = useState({
     email: '',
@@ -16,6 +24,14 @@ export default function LoginForm({ onSuccess, onError }) {
       ...prev,
       [name]: value
     }));
+  };
+
+  const fillDemoUser = (email) => {
+    setFormData({
+      email,
+      password: DEMO_PASSWORD,
+    });
+    setError(null);
   };
 
   const handleSubmit = async (e) => {
@@ -56,6 +72,28 @@ export default function LoginForm({ onSuccess, onError }) {
             <h2 className="text-xl font-semibold text-stone-800 text-center">
               Iniciar Sesion
             </h2>
+
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">
+                Acceso demo
+              </p>
+              <p className="mt-1 text-xs text-amber-900">
+                Contrasena comun: <strong>{DEMO_PASSWORD}</strong>
+              </p>
+              <div className="mt-3 grid gap-2">
+                {DEMO_USERS.map((user) => (
+                  <button
+                    key={user.email}
+                    type="button"
+                    onClick={() => fillDemoUser(user.email)}
+                    className="flex items-center justify-between rounded border border-amber-200 bg-white px-3 py-2 text-left text-xs text-stone-700 hover:border-amber-500 hover:bg-amber-100"
+                  >
+                    <span className="font-semibold">{user.label}</span>
+                    <span className="font-mono">{user.email}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600 flex items-center gap-2">
