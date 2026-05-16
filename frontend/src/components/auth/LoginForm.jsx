@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Save, Loader2, AlertCircle } from 'lucide-react';
+import { postJson } from '../../api/client';
 
 export default function LoginForm({ onSuccess, onError }) {
   const [formData, setFormData] = useState({
@@ -23,17 +24,7 @@ export default function LoginForm({ onSuccess, onError }) {
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:4000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al iniciar sesion');
-      }
+      const data = await postJson('/auth/login', formData);
 
       localStorage.setItem('token', data.data.token);
       localStorage.setItem('user', JSON.stringify(data.data.usuario));

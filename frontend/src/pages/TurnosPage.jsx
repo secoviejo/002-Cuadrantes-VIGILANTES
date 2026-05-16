@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTurnos, getServicios, createVerificacion } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import { exportTurnos } from '../utils/exportUtils';
 import AppLayout from '../components/layout/AppLayout';
 import TurnosTable from '../components/turnos/TurnosTable';
@@ -46,8 +47,7 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getTurnos();
-      const items = Array.isArray(data) ? data : (data.items || []);
-      setTurnos(items);
+      setTurnos(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -59,8 +59,7 @@ export default function TurnosPage({ currentRoute, onNavigate }) {
   const loadServicios = async () => {
     try {
       const data = await getServicios();
-      const items = Array.isArray(data) ? data : (data.items || []);
-      setServicioList(items);
+      setServicioList(normalizeList(data));
     } catch (err) {
       console.error('Error cargando servicios:', err);
     }

@@ -26,12 +26,10 @@ export const obtenerVerificacion = asyncHandler(async (req, res) => {
 
 export const crearVerificacion = asyncHandler(async (req, res) => {
   const data = pickDefinedFields(req.body, CAMPOS_VERIFICACION)
+  data.usuarioId = req.user.id
 
   if (data.turnoId !== undefined) {
     data.turnoId = parseBodyInteger(data.turnoId, 'turnoId')
-  }
-  if (data.usuarioId !== undefined) {
-    data.usuarioId = data.usuarioId ? parseBodyInteger(data.usuarioId, 'usuarioId') : null
   }
 
   if (!data.turnoId || !data.estado) {

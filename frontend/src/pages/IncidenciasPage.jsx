@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getIncidencias, getTurnos, getTrabajadores, deleteIncidencia } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import IncidenciasTable from '../components/incidencias/IncidenciasTable';
 import IncidenciaForm from '../components/incidencias/IncidenciaForm';
@@ -21,7 +22,7 @@ export default function IncidenciasPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getIncidencias();
-      setIncidencias(Array.isArray(data) ? data : (data.items || []));
+      setIncidencias(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -33,7 +34,7 @@ export default function IncidenciasPage({ currentRoute, onNavigate }) {
   const loadTurnos = async () => {
     try {
       const data = await getTurnos();
-      setTurnoList(Array.isArray(data) ? data : (data.items || []));
+      setTurnoList(normalizeList(data));
     } catch (err) {
       console.error('Error cargando turnos:', err);
     }
@@ -42,7 +43,7 @@ export default function IncidenciasPage({ currentRoute, onNavigate }) {
   const loadTrabajadores = async () => {
     try {
       const data = await getTrabajadores();
-      setTrabajadorList(Array.isArray(data) ? data : (data.items || []));
+      setTrabajadorList(normalizeList(data));
     } catch (err) {
       console.error('Error cargando trabajadores:', err);
     }

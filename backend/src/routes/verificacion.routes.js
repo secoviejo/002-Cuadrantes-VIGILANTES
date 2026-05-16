@@ -6,11 +6,12 @@ import {
   actualizarVerificacion,
   eliminarVerificacion,
 } from '../controllers/verificacion.controller.js'
+import { authenticateToken } from '../middleware/auth.js'
 
 export const verificacionRouter = Router()
 
 verificacionRouter.get('/', listarVerificaciones)
 verificacionRouter.get('/:id', obtenerVerificacion)
-verificacionRouter.post('/', crearVerificacion)
+verificacionRouter.post('/', authenticateToken, crearVerificacion)
 verificacionRouter.put('/:id', actualizarVerificacion)
 verificacionRouter.delete('/:id', eliminarVerificacion)

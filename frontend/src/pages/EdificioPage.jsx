@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getEdificios, getCampus } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import EdificioTable from '../components/edificios/EdificioTable';
 import EdificioForm from '../components/edificios/EdificioForm';
@@ -20,7 +21,7 @@ export default function EdificioPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getEdificios();
-      setEdificioList(data);
+      setEdificioList(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -32,7 +33,7 @@ export default function EdificioPage({ currentRoute, onNavigate }) {
   const loadCampus = async () => {
     try {
       const data = await getCampus();
-      setCampusList(data);
+      setCampusList(normalizeList(data));
     } catch (err) {
       console.error('Error cargando campus:', err);
     }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getServicios, getEdificios } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import ServiciosTable from '../components/servicios/ServiciosTable';
 import ServicioForm from '../components/servicios/ServicioForm';
@@ -20,8 +21,7 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getServicios();
-      const items = Array.isArray(data) ? data : (data.items || []);
-      setServicios(items);
+      setServicios(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -33,7 +33,7 @@ export default function ServiciosPage({ currentRoute, onNavigate }) {
   const loadEdificios = async () => {
     try {
       const data = await getEdificios();
-      setEdificioList(Array.isArray(data) ? data : (data.items || []));
+      setEdificioList(normalizeList(data));
     } catch (err) {
       console.error('Error cargando edificios:', err);
     }

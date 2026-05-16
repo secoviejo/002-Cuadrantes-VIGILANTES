@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCampus } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import CampusTable from '../components/campus/CampusTable';
 import CampusForm from '../components/campus/CampusForm';
@@ -21,7 +22,7 @@ export default function CampusPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getCampus();
-      setCampusList(data);
+      setCampusList(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);

@@ -48,12 +48,31 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `PUT /api/servicios/:id`: actualiza un servicio.
 - `GET /api/turnos`: lista turnos con filtros basicos.
 - `GET /api/turnos/:id`: obtiene un turno.
+- `POST /api/turnos`: crea un turno.
+- `PUT /api/turnos/:id`: actualiza un turno.
 - `GET /api/asignaciones-turno`: lista asignaciones de turno.
 - `GET /api/asignaciones-turno/:id`: obtiene una asignacion de turno.
+- `POST /api/asignaciones-turno`: crea una asignacion de turno.
+- `PUT /api/asignaciones-turno/:id`: actualiza una asignacion de turno.
+- `DELETE /api/asignaciones-turno/:id`: elimina una asignacion de turno.
+- `GET /api/sustituciones`: lista sustituciones.
+- `POST /api/sustituciones`: crea una sustitucion.
+- `PUT /api/sustituciones/:id`: actualiza una sustitucion.
+- `DELETE /api/sustituciones/:id`: elimina una sustitucion.
+- `GET /api/incidencias`: lista incidencias.
+- `POST /api/incidencias`: crea una incidencia.
+- `PUT /api/incidencias/:id`: actualiza una incidencia.
+- `DELETE /api/incidencias/:id`: elimina una incidencia.
+- `GET /api/verificaciones`: lista verificaciones.
+- `POST /api/verificaciones`: crea una verificacion de cobertura. Requiere JWT y usa el usuario autenticado.
 - `GET /api/ausencias`: lista ausencias.
 - `GET /api/ausencias/:id`: obtiene una ausencia.
+- `POST /api/auth/login`: inicia sesion y devuelve JWT.
+- `GET /api/auth/profile`: devuelve el perfil autenticado.
+- `GET /api/auth/roles`: lista roles.
+- `GET /api/auditoria`: lista auditoria. Requiere JWT y rol `ADMIN` o `GESTOR`.
 
-Las escrituras estan limitadas a entidades maestras: empresas, campus, edificios, servicios y trabajadores. No existen todavia escrituras para turnos, asignaciones, sustituciones, incidencias, verificaciones, usuarios, login ni JWT. Tampoco hay endpoints `PATCH` ni `DELETE` de negocio.
+Hay escrituras basicas para entidades maestras y varias entidades operativas. No hay endpoints `PATCH`. Los permisos por rol aun deben endurecerse en algunos endpoints operativos.
 
 Filtros soportados segun recurso:
 
@@ -163,6 +182,14 @@ npm run seed                   # Requiere MariaDB migrada
 
 El seed carga datos ficticios: roles, empresa demo, campus, edificios, servicios y trabajadores. No contiene datos personales reales.
 
+Usuarios demo creados o actualizados por el seed:
+
+| Email | Rol | Contrasena |
+|-------|-----|------------|
+| `admin.demo@example.com` | ADMIN | `Demo1234!` |
+| `supervision.demo@unizar.example` | UNIDAD_SEGURIDAD_UZ | `Demo1234!` |
+| `contrata.demo@example.com` | CONTRATA | `Demo1234!` |
+
 ### Comandos disponibles
 
 ```bash
@@ -173,14 +200,13 @@ npm run prisma:studio
 npm run seed
 ```
 
-## Estado actual (PASO 11)
+## Estado actual
 
-- Schema Prisma validado (`prisma validate` ejecutado con URL de entorno temporal).
-- Prisma Client generado (`prisma generate` ejecutado correctamente).
-- `.env.example` actualizado con comentarios claros y nombre de base de datos de desarrollo.
-- No hay MariaDB local configurada en este entorno: **la migracion real no se ha ejecutado**.
-- La carpeta `backend/prisma/migrations/` no existe todavia: se creara con la primera migracion.
-- No hay conexion frontend-backend todavia.
-- No hay autenticacion JWT funcional todavia.
+- Schema Prisma validado y Prisma Client generado.
+- MariaDB de desarrollo puede ejecutarse con Docker Compose y seed local.
+- API Express registra correctamente todas las rutas desde `createApp()`.
+- Autenticacion JWT basica disponible con usuarios demo.
+- `POST /api/verificaciones` requiere token JWT y deriva `usuarioId` del usuario autenticado.
+- Hay tests unitarios y smoke test de arranque de rutas.
 
-El siguiente paso, cuando el usuario disponga de MariaDB local, es ejecutar `npm run prisma:migrate` y `npm run seed` para probar los endpoints contra datos reales.
+El siguiente paso recomendado es reforzar permisos por rol en endpoints operativos y migrar el hash de contrasenas demo a bcrypt/argon2 antes de acercarse a un entorno real.

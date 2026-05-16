@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTrabajadores, getEmpresas } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import TrabajadoresTable from '../components/trabajadores/TrabajadoresTable';
 import TrabajadorForm from '../components/trabajadores/TrabajadorForm';
@@ -20,8 +21,7 @@ export default function TrabajadoresPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getTrabajadores();
-      const items = Array.isArray(data) ? data : (data.items || []);
-      setTrabajadores(items);
+      setTrabajadores(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -33,7 +33,7 @@ export default function TrabajadoresPage({ currentRoute, onNavigate }) {
   const loadEmpresas = async () => {
     try {
       const data = await getEmpresas();
-      setEmpresaList(Array.isArray(data) ? data : (data.items || []));
+      setEmpresaList(normalizeList(data));
     } catch (err) {
       console.error('Error cargando empresas:', err);
     }

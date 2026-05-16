@@ -1,4 +1,4 @@
-import { getJson, postJson, putJson } from './client';
+import { deleteJson, getJson, postJson, putJson } from './client';
 
 export function getEmpresas() {
   return getJson('/empresas');
@@ -85,12 +85,7 @@ export function updateAsignacion(id, data) {
 }
 
 export function deleteAsignacion(id) {
-  return fetch(`http://localhost:4000/api/asignaciones-turno/${id}`, {
-    method: 'DELETE',
-  }).then(res => {
-    if (!res.ok) throw new Error('Error al eliminar')
-    return res
-  });
+  return deleteJson(`/asignaciones-turno/${id}`);
 }
 
 export function validarAsignacion(turnoId, trabajadorId) {
@@ -114,12 +109,7 @@ export function updateSustitucion(id, data) {
 }
 
 export function deleteSustitucion(id) {
-  return fetch(`http://localhost:4000/api/sustituciones/${id}`, {
-    method: 'DELETE',
-  }).then(res => {
-    if (!res.ok) throw new Error('Error al eliminar')
-    return res
-  });
+  return deleteJson(`/sustituciones/${id}`);
 }
 
 export function getIncidencias() {
@@ -135,12 +125,7 @@ export function updateIncidencia(id, data) {
 }
 
 export function deleteIncidencia(id) {
-  return fetch(`http://localhost:4000/api/incidencias/${id}`, {
-    method: 'DELETE',
-  }).then(res => {
-    if (!res.ok) throw new Error('Error al eliminar')
-    return res
-  });
+  return deleteJson(`/incidencias/${id}`);
 }
 
 export function getVerificaciones() {
@@ -156,10 +141,5 @@ export function updateVerificacion(id, data) {
 }
 
 export function deleteVerificacion(id) {
-  return fetch(`http://localhost:4000/api/verificaciones/${id}`, {
-    method: 'DELETE',
-  }).then(res => {
-    if (!res.ok) throw new Error('Error al eliminar')
-    return res
-  });
+  return deleteJson(`/verificaciones/${id}`);
 }

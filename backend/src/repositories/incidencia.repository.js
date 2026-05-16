@@ -14,7 +14,7 @@ export async function findAll(filters = {}) {
       turno: { include: { servicio: true } },
       trabajador: true,
     },
-    orderBy: { creadoEn: 'desc' },
+    orderBy: { creadaEn: 'desc' },
   })
 }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getEmpresas } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import EmpresasTable from '../components/empresas/EmpresasTable';
 import EmpresaForm from '../components/empresas/EmpresaForm';
@@ -21,7 +22,7 @@ export default function EmpresasPage({ currentRoute, onNavigate }) {
     setLoading(true);
     try {
       const data = await getEmpresas();
-      setEmpresas(data);
+      setEmpresas(normalizeList(data));
       setError(null);
     } catch (err) {
       setError(err.message);

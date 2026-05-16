@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getEmpresas, getCampus, getEdificios, getServicios, getTrabajadores, getTurnos, getAsignaciones, getIncidencias, getSustituciones } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import StatCard from '../components/ui/StatCard';
 import { Users, CalendarDays, Loader2, AlertCircle, Clock, AlertTriangle, ArrowRightLeft, CheckCircle } from 'lucide-react';
@@ -38,21 +39,16 @@ export default function Dashboard({ currentRoute, onNavigate }) {
           getSustituciones()
         ]);
         
-        const turnosData = Array.isArray(results[5]) ? results[5] : (results[5].items || []);
-        const asignacionesData = Array.isArray(results[6]) ? results[6] : (results[6].items || []);
-        const incidenciasData = Array.isArray(results[7]) ? results[7] : (results[7].items || []);
-        const sustitucionesData = Array.isArray(results[8]) ? results[8] : (results[8].items || []);
-        
         setData({
-          empresas: results[0],
-          campus: results[1],
-          edificios: results[2],
-          servicios: results[3],
-          trabajadores: results[4],
-          turnos: turnosData,
-          asignaciones: asignacionesData,
-          incidencias: incidenciasData,
-          sustituciones: sustitucionesData
+          empresas: normalizeList(results[0]),
+          campus: normalizeList(results[1]),
+          edificios: normalizeList(results[2]),
+          servicios: normalizeList(results[3]),
+          trabajadores: normalizeList(results[4]),
+          turnos: normalizeList(results[5]),
+          asignaciones: normalizeList(results[6]),
+          incidencias: normalizeList(results[7]),
+          sustituciones: normalizeList(results[8])
         });
         setStatus({ loading: false, error: null, connected: true });
       } catch (err) {
@@ -146,16 +142,16 @@ export default function Dashboard({ currentRoute, onNavigate }) {
                 <thead>
                   <tr className="border-b border-stone-300 text-[11px] uppercase tracking-wider text-stone-500">
                     <th className="pb-3 font-semibold">Nombre Completo</th>
-                    <th className="pb-3 font-semibold">DNI</th>
-                    <th className="pb-3 font-semibold">Empresa ID</th>
+                    <th className="pb-3 font-semibold">Codigo</th>
+                    <th className="pb-3 font-semibold">Tipo</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-200">
                   {data.trabajadores.slice(0, 5).map(t => (
                     <tr key={t.id} className="hover:bg-stone-100 transition-colors">
-                      <td className="py-3">{t.nombre} {t.apellidos}</td>
-                      <td className="py-3 font-mono text-xs text-stone-600">{t.dni}</td>
-                      <td className="py-3">{t.empresaId}</td>
+                      <td className="py-3">{t.nombre}</td>
+                      <td className="py-3 font-mono text-xs text-stone-600">{t.codigo}</td>
+                      <td className="py-3">{t.tipo}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -197,8 +193,8 @@ export default function Dashboard({ currentRoute, onNavigate }) {
                 <thead>
                   <tr className="border-b border-stone-300 text-[11px] uppercase tracking-wider text-stone-500">
                     <th className="pb-3 font-semibold">Código</th>
-                    <th className="pb-3 font-semibold">Tipo</th>
-                    <th className="pb-3 font-semibold">Campus ID</th>
+                    <th className="pb-3 font-semibold">Perfil</th>
+                    <th className="pb-3 font-semibold">Campus</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-200">
@@ -207,10 +203,10 @@ export default function Dashboard({ currentRoute, onNavigate }) {
                       <td className="py-3 font-medium text-amber-800">{s.codigo}</td>
                       <td className="py-3">
                         <span className="bg-stone-200 text-stone-700 px-2 py-0.5 rounded text-xs">
-                          {s.tipo}
+                          {s.perfilRequerido}
                         </span>
                       </td>
-                      <td className="py-3">{s.campusId}</td>
+                      <td className="py-3">{s.edificio?.campus?.nombre || 'Sin campus'}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -101,6 +101,14 @@ npm run dev
 - `GET /api/auth/profile`
 - `GET /api/auth/roles`
 
+Usuarios demo tras ejecutar `npm run seed` en `backend/`:
+
+| Email | Rol | Contrasena |
+|-------|-----|------------|
+| `admin.demo@example.com` | ADMIN | `Demo1234!` |
+| `supervision.demo@unizar.example` | UNIDAD_SEGURIDAD_UZ | `Demo1234!` |
+| `contrata.demo@example.com` | CONTRATA | `Demo1234!` |
+
 ## Configuracion
 
 Variables de entorno necesarias en `backend/.env`:
@@ -138,10 +146,12 @@ npm run build        # Produccion
 - Autenticacion JWT
 - Roles y permisos
 - Auditoria de acciones
+- Normalizacion del contrato API en frontend para listados `array`, `{ data }` y `{ items }`
+- Verificaciones de cobertura creadas con token JWT
 
 **Pendiente:**
-- Tests unitarios
-- Documentacion completa
+- Reforzar permisos por rol en todos los endpoints operativos
+- Migrar hash de contrasenas demo de SHA-256 a bcrypt/argon2
 - Despliegue en produccion
 
 ## Licencia

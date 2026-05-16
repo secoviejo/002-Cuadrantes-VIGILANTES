@@ -11,13 +11,13 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `cuadrantes_uz_6.html`: prototipo principal de una sola pagina. Contiene estructura HTML, estilos CSS inline, JavaScript inline, datos de demostracion, navegacion interna, modales, pantallas y logica visual.
 - `legacy/html-original/cuadrantes_uz_6.html`: copia historica del prototipo HTML original, conservada como referencia visual para la migracion progresiva.
 - `legacy/html-original/README.md`: documenta el uso de `legacy/html-original/` como referencia visual historica del prototipo.
-- `README.md`: resumen del proyecto, estado actual, estructura preparada, backend con Prisma/repositories/rutas GET, escrituras basicas maestras y limites pendientes.
+- `README.md`: resumen del proyecto, estado actual, rutas API, usuarios demo, validaciones y limites pendientes.
 - `DESCRIPCION_Y_FUNCIONES_APP.md`: documento funcional con objetivo, perfiles, pantallas, informes, incidencias y limitaciones actuales.
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
 - `backend/`: API Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, rutas, controladores, repositories, README y estructura preparada.
 - `backend/prisma/schema.prisma`: schema Prisma inicial configurado para MariaDB con proveedor `mysql`.
-- `backend/prisma/seed.js`: seed inicial con datos ficticios para roles, empresa, campus, edificios, servicios, trabajadores y un turno/asignacion demo.
+- `backend/prisma/seed.js`: seed inicial con datos ficticios para roles, usuarios demo, empresa, campus, edificios, servicios, trabajadores y un turno/asignacion demo. Los usuarios demo usan la contrasena comun `Demo1234!`.
 - `backend/src/services/motorReglasTurnos.service.js`: motor central de reglas de turnos, independiente de Prisma y basado en objetos JavaScript.
 - `backend/src/services/motorReglasTurnos.examples.js`: datos mock para entender y probar el motor.
 - `backend/src/scripts/probarMotorReglasTurnos.js`: script manual para ejecutar casos basicos del motor.
@@ -28,7 +28,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `backend/src/db/prisma.js`: cliente Prisma singleton para evitar conexiones multiples.
 - `backend/src/controllers/`: controladores GET para consultas principales y controladores `POST`/`PUT` basicos para entidades maestras.
 - `backend/src/routes/`: rutas REST registradas bajo `/api`.
-- No existen controladores CRUD completos; hay GET para recursos operativos y escrituras basicas solo en entidades maestras.
+- Existen controladores y rutas para catalogos, turnos, asignaciones, sustituciones, incidencias, verificaciones, autenticacion JWT basica y auditoria. Los permisos por rol aun deben reforzarse en endpoints operativos.
 - Existe `legacy/html-original/` para preservar la maqueta historica. Esta carpeta no es una nueva arquitectura de ejecucion.
 - Existe `frontend/package.json` con React, Vite, Tailwind CSS y scripts frontend.
 - Existe `backend/package.json` con Express, CORS, dotenv y scripts backend.
@@ -52,8 +52,8 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
-- La API Express expone `GET /api`, `GET /api/health`, endpoints GET de negocio para trabajadores, servicios, turnos, asignaciones de turno y ausencias, y endpoints `POST`/`PUT` para empresas, campus, edificios, servicios y trabajadores.
-- Hay controladores conectados a repositories Prisma. El frontend no consume todavia el backend.
+- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida y verificaciones de cobertura con usuario autenticado.
+- Hay controladores conectados a repositories Prisma. El frontend React consume el backend mediante `frontend/src/api/client.js` y normaliza listados en forma de array, `{ data }` o `{ items }`.
 - `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
 ## Pantallas y Estado Funcional
@@ -168,7 +168,7 @@ Estas entidades no deben implementarse todavia en el primer paso documental. Deb
 - Exportaciones basicas de cuadrantes e informes.
 - Migracion progresiva desde el HTML actual.
 
-Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras. MariaDB está levantada localmente (Docker) y las migraciones se han ejecutado con éxito. JWT y escrituras operativas complejas quedan para pasos posteriores.
+Importante: el frontend React, el backend Express y Prisma estan inicializados como bases tecnicas. La API REST de negocio ya tiene lecturas y escrituras basicas de entidades maestras y operativas. MariaDB esta levantada localmente (Docker), las migraciones se han ejecutado con exito y JWT basico esta disponible con usuarios demo. Queda pendiente reforzar permisos por rol y endurecer contrasenas antes de uso real.
 
 La estructura base de carpetas ya existe para orientar la migracion. Los puntos ejecutables actuales son el frontend Vite y la API Express minima. Prisma validate/generate y las migraciones funcionan con la base de datos local en el puerto 3308.
 ## Reglas de Negocio Previstas
@@ -187,7 +187,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - `MotorReglasTurnos` implementa ya reglas iniciales de solapamiento, descanso, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura.
 - Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y controladores accedan a datos sin dependencia directa del ORM.
 - Rutas y controladores GET de solo lectura ya disponibles para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
-- Rutas y controladores `POST`/`PUT` basicos ya disponibles para empresas, campus, edificios, servicios y trabajadores.
+- Rutas y controladores `POST`/`PUT` basicos ya disponibles para empresas, campus, edificios, servicios, trabajadores, turnos, asignaciones, sustituciones, incidencias y verificaciones. `POST /api/verificaciones` requiere JWT y deriva el usuario desde el token.
 - El siguiente paso tecnico recomendado es probar los endpoints existentes contra la base de datos MariaDB real.
 ## Riesgos Tecnicos Actuales
 
@@ -202,6 +202,8 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Si la base de datos se disena copiando tablas de pantalla, puede quedar mal normalizada.
 - Hay riesgo de problemas de codificacion en textos con caracteres especiales durante la migracion.
 - Las exportaciones e informes actuales dependen de datos demo y del navegador.
+- El login JWT conserva hash SHA-256 por alcance de estabilizacion; debe migrarse a bcrypt/argon2 antes de un entorno real.
+- Algunos endpoints operativos siguen sin permisos por rol estrictos.
 
 ## Recomendaciones para Migracion Progresiva
 
@@ -244,6 +246,7 @@ Al tocar backend/API futura, comprobar:
 - Auditoria.
 - `npm run test:reglas` si se toca `MotorReglasTurnos`.
 - Importacion de `createApp` si se registran nuevas rutas.
+- Smoke test de `createApp` para detectar errores de importacion o montaje de rutas.
 
 Al tocar Prisma/MariaDB futura, comprobar:
 
@@ -326,6 +329,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 
 ## Historial de Cambios de Contexto
 
+- 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.
 - 2026-05-15: Actualizada memoria viva tras analisis del repositorio. Se documenta inventario real, estado por pantalla, funcionalidades cliente, simulaciones, datos demo, riesgos y limites de la fase documental previa a la migracion full-stack.
 - 2026-05-15: Aniadida carpeta `legacy/html-original/` con copia del HTML original y README para conservar la referencia visual historica antes de iniciar la migracion.

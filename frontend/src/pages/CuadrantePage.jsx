@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTurnos, getAsignaciones } from '../api/catalogos';
+import { normalizeList } from '../api/client';
 import AppLayout from '../components/layout/AppLayout';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -77,8 +78,8 @@ export default function CuadrantePage({ currentRoute, onNavigate }) {
         getTurnos(),
         getAsignaciones()
       ]);
-      setTurnos(Array.isArray(turnosData) ? turnosData : (turnosData.items || []));
-      setAsignaciones(Array.isArray(asignData) ? asignData : []);
+      setTurnos(normalizeList(turnosData));
+      setAsignaciones(normalizeList(asignData));
     } catch (err) {
       console.error('Error cargando datos:', err);
     } finally {

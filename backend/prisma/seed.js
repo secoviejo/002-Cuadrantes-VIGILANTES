@@ -6,6 +6,8 @@ function at(date, time) {
   return new Date(`${date}T${time}:00.000Z`)
 }
 
+const DEMO_PASSWORD_HASH = '7dbb7f051b44d7d54584a7bc6c32f00da5a3b5e6973485b9fb176fe56346b3e3'
+
 async function main() {
   const [rolAdmin, rolUz, rolContrata] = await Promise.all([
     prisma.rol.upsert({
@@ -36,22 +38,26 @@ async function main() {
 
   await prisma.usuario.upsert({
     where: { email: 'supervision.demo@unizar.example' },
-    update: {},
+    update: {
+      passwordHash: DEMO_PASSWORD_HASH,
+    },
     create: {
       email: 'supervision.demo@unizar.example',
       nombre: 'Supervision Demo UZ',
-      passwordHash: 'demo-password-hash-no-usar',
+      passwordHash: DEMO_PASSWORD_HASH,
       rolId: rolUz.id,
     },
   })
 
   await prisma.usuario.upsert({
     where: { email: 'contrata.demo@example.com' },
-    update: {},
+    update: {
+      passwordHash: DEMO_PASSWORD_HASH,
+    },
     create: {
       email: 'contrata.demo@example.com',
       nombre: 'Operador Demo Contrata',
-      passwordHash: 'demo-password-hash-no-usar',
+      passwordHash: DEMO_PASSWORD_HASH,
       rolId: rolContrata.id,
       empresaId: empresa.id,
     },
@@ -59,11 +65,13 @@ async function main() {
 
   await prisma.usuario.upsert({
     where: { email: 'admin.demo@example.com' },
-    update: {},
+    update: {
+      passwordHash: DEMO_PASSWORD_HASH,
+    },
     create: {
       email: 'admin.demo@example.com',
       nombre: 'Admin Demo',
-      passwordHash: 'demo-password-hash-no-usar',
+      passwordHash: DEMO_PASSWORD_HASH,
       rolId: rolAdmin.id,
     },
   })
