@@ -39,6 +39,8 @@ const DESGLOSE_ANUAL_CATEGORIAS = [
   { codigo: 'FESTIVO_NOCTURNO', ejecutadas: 2890 },
 ]
 
+const TURNOS_VERIFICABLES = ['M', 'T', 'N']
+
 function toDateOnly(date) {
   return new Date(`${date}T00:00:00.000Z`)
 }
@@ -222,6 +224,33 @@ function buildAlertasOperativas() {
     { tipo: 'warn', titulo: 'Desvio de horas mensual', meta: '86h menos ejecutadas vs planificadas (1,6%)' },
     { tipo: 'info', titulo: 'Refuerzo programado', meta: 'Viernes 23 mayo - Acto institucional Paraninfo - 4 auxiliares' },
   ]
+}
+
+function buildAlertasVerificacion(resumenes) {
+  return resumenes.flatMap((resumen) => (
+    resumen.serviciosVerificacion.flatMap((servicio) => {
+      const suffix = servicio.etiqueta ? ` (${servicio.etiqueta})` : ''
+      const nota = servicio.nota ? ` - ${servicio.nota}` : ''
+
+      if (servicio.estado === 'DESCUBIERTO') {
+        return [{
+          tipo: 'danger',
+          titulo: `Servicio descubierto - ${servicio.nombre}${suffix}`,
+          meta: `${resumen.turno.nombre} - ${resumen.turno.rango} - Sin cobertura${nota}`,
+        }]
+      }
+
+      if (servicio.estado === 'INCIDENCIA') {
+        return [{
+          tipo: 'warn',
+          titulo: `Incidencia en ${servicio.nombre}${suffix}`,
+          meta: `${resumen.turno.nombre} - ${resumen.turno.rango} - Requiere revision${nota}`,
+        }]
+      }
+
+      return []
+    })
+  ))
 }
 
 export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N' } = {}) {
@@ -415,8 +444,15 @@ export async function obtenerCierreMensual({ anio = 2026, mes = 5 } = {}) {
 
 export async function obtenerInformeOperativo({ tipo = 'mensual', fecha = '2026-05-16', anio = 2026, mes = 5 } = {}) {
   const informeTipo = ['diario', 'mensual', 'anual'].includes(tipo) ? tipo : 'mensual'
-  const [resumen, cierre, horasAnuales] = await Promise.all([
-    obtenerResumenOperativo({ fecha, turno: 'N' }),
+  const resumenesDiariosPromise = informeTipo === 'diario'
+    ? Promise.all(TURNOS_VERIFICABLES.map((turno) => obtenerResumenOperativo({ fecha, turno })))
+    : Promise.resolve(null)
+  const resumenBasePromise = informeTipo === 'diario'
+    ? Promise.resolve(null)
+    : obtenerResumenOperativo({ fecha, turno: 'N' })
+  const [resumenesDiarios, resumen, cierre, horasAnuales] = await Promise.all([
+    resumenesDiariosPromise,
+    resumenBasePromise,
     obtenerCierreMensual({ anio, mes }),
     obtenerHorasAnuales({ anio }),
   ])
@@ -432,19 +468,34 @@ export async function obtenerInformeOperativo({ tipo = 'mensual', fecha = '2026-
   }
 
   if (informeTipo === 'diario') {
+    const serviciosVerificacion = resumenesDiarios.flatMap((resumenTurno) => (
+      resumenTurno.serviciosVerificacion.map((item) => ({
+        turno: `${resumenTurno.turno.nombre} (${resumenTurno.turno.rango})`,
+        servicio: item.nombre,
+        detalle: item.etiqueta || item.meta,
+        estado: item.estado,
+        nota: item.nota,
+      }))
+    ))
+    const alertasVerificacion = buildAlertasVerificacion(resumenesDiarios)
+    const alertasOperativas = resumenesDiarios[0]?.alertas || []
+    const incidenciasActivas = alertasVerificacion.length
+      || alertasOperativas.filter((item) => item.tipo !== 'info').length
+
     return {
       ...base,
       titulo: 'Informe basico del dia actual',
       periodo: fecha,
       kpis: [
-        { label: 'Servicios a verificar', value: resumen.serviciosVerificacion.length, unit: '' },
-        { label: 'Cobertura mes', value: resumen.kpis.coberturaMes, unit: '%' },
-        { label: 'Incidencias activas', value: resumen.alertas.filter((item) => item.tipo !== 'info').length, unit: '' },
-        { label: 'Sustituciones recientes', value: resumen.sustituciones.length, unit: '' },
+        { label: 'Servicios a verificar', value: serviciosVerificacion.length, unit: '' },
+        { label: 'Cobertura mes', value: resumenesDiarios[0]?.kpis.coberturaMes || 0, unit: '%' },
+        { label: 'Incidencias activas', value: incidenciasActivas, unit: '' },
+        { label: 'Sustituciones recientes', value: resumenesDiarios[0]?.sustituciones.length || 0, unit: '' },
       ],
       sections: [
-        { title: 'Verificacion del turno', rows: resumen.serviciosVerificacion.map((item) => ({ servicio: item.nombre, detalle: item.etiqueta || item.meta, estado: item.estado, nota: item.nota })) },
-        { title: 'Alertas activas', rows: resumen.alertas },
+        { title: 'Verificacion de los turnos del dia', rows: serviciosVerificacion },
+        { title: 'Incidencias y descubiertos confirmados', rows: alertasVerificacion },
+        { title: 'Alertas operativas de seguimiento', rows: alertasOperativas },
       ],
     }
   }

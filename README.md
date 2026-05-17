@@ -166,7 +166,7 @@ npm run build        # Produccion
 - Seed idempotente con servicios operativos, horas de contrato y puestos verificables, sin importar nombres ficticios de vigilantes
 - PTT de vigilancia archivado como fuente de conocimiento en `docs/fuentes/PTT-Vigilancia-UZ.md`.
 - Navegacion y permisos por rol: ADMIN/Unidad de Seguridad con acceso completo; Contrata limitada a Operacion.
-- Informes operativo diario, mensual y anual con vista previa imprimible.
+- Informes operativo diario, mensual y anual con vista previa imprimible. El informe diario agrega las verificaciones confirmadas de manana, tarde y noche, incluidas incidencias, descubiertos y notas.
 - Pantallas de Horas anuales y Cierre mensual para validacion de factura.
 - Edicion administrativa del contrato anual desde Horas anuales: bolsa variable y categorias del pliego persistidas en MariaDB con auditoria.
 - Calendario laboral 2026 con festivos reales del HTML original, periodos academicos y alta manual de festivos.

@@ -68,7 +68,7 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `POST /api/verificaciones/lote`: crea verificaciones de varios puestos/turnos en una sola operacion. Requiere JWT y usa el usuario autenticado.
 - `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
 - `GET /api/cuadrante-mensual?anio=2026&mes=1..12`: devuelve dias, servicios y celdas del cuadrante mensual. Cada dia incluye `tipoDia` (`NORMAL`, `FESTIVO`, `NO_LECTIVO`) segun festivos, fin de semana y periodos academicos usados por el PTT.
-- `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible.
+- `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible. El informe diario agrega las verificaciones de los turnos manana, tarde y noche, incluyendo incidencias, descubiertos y notas confirmadas.
 - `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato persistido, categorias de hora y variables informativas.
 - `PUT /api/contrato-anual/:anio`: actualiza bolsa variable anual y categorias del pliego. Requiere JWT y rol `ADMIN` o `UNIDAD_SEGURIDAD_UZ`.
 - `GET /api/cierre-mensual?anio=2026&mes=5`: devuelve conciliacion mensual planificado/ejecutado y checklist de validacion.

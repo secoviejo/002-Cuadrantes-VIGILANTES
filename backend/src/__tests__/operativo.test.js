@@ -32,6 +32,7 @@ const {
   obtenerCierreMensual,
   obtenerCuadranteMensual,
   obtenerHorasAnuales,
+  obtenerInformeOperativo,
   obtenerResumenOperativo,
 } = await import('../services/operativo.service.js')
 
@@ -169,6 +170,50 @@ describe('operativo.service', () => {
       contrato: 30000,
     })
   })
+
+  it('genera informe diario con verificaciones de manana, tarde y noche', async () => {
+    mockPrisma.horasContratoServicio.findMany.mockResolvedValue([
+      { horasPlanificadas: 1488, horasEjecutadas: 1468, servicioId: 1, servicio: servicio('SERV_SF_24H', 'San Francisco', true, 2, '24/7') },
+      { horasPlanificadas: 744, horasEjecutadas: 736, servicioId: 2, servicio: servicio('SERV_PAR_24H', 'Paraiso', true, 1, '24/7') },
+    ])
+    mockPrisma.puestoCobertura.findMany.mockImplementation(({ where }) => {
+      const puestos = {
+        M: [
+          puesto(101, 1, 'San Francisco', 'Vig 1', 'SF1'),
+          puesto(102, 2, 'Paraiso', null, 'PAR'),
+        ],
+        T: [
+          puesto(201, 1, 'San Francisco', 'Vig 1', 'SF1'),
+        ],
+        N: [
+          puesto(301, 2, 'Paraiso', null, 'PAR'),
+        ],
+      }
+      return Promise.resolve(puestos[where.turnoCodigo] || [])
+    })
+    mockPrisma.turno.findMany.mockResolvedValue([
+      turnoVerificado(1, 1, '2026-05-16', '06:00', '14:00', 'CUBIERTO', 101, 'CUBIERTO'),
+      turnoVerificado(2, 2, '2026-05-16', '06:00', '14:00', 'CUBIERTO', 102, 'DESCUBIERTO', 'dormido'),
+      turnoVerificado(3, 1, '2026-05-16', '14:00', '22:00', 'CUBIERTO', 201, 'INCIDENCIA', 'llega tarde'),
+      turnoVerificado(4, 2, '2026-05-16', '22:00', '06:00', 'CUBIERTO', 301, 'CUBIERTO'),
+    ])
+    mockPrisma.sustitucion.findMany.mockResolvedValue([])
+
+    const informe = await obtenerInformeOperativo({ tipo: 'diario', fecha: '2026-05-16' })
+
+    expect(informe.kpis.find((item) => item.label === 'Servicios a verificar').value).toBe(4)
+    expect(informe.kpis.find((item) => item.label === 'Incidencias activas').value).toBe(2)
+    expect(informe.sections[0].title).toBe('Verificacion de los turnos del dia')
+    expect(informe.sections[0].rows).toEqual(expect.arrayContaining([
+      expect.objectContaining({ turno: 'Turno mañana (06:00-14:00)', servicio: 'Paraiso', estado: 'DESCUBIERTO', nota: 'dormido' }),
+      expect.objectContaining({ turno: 'Turno tarde (14:00-22:00)', servicio: 'San Francisco', estado: 'INCIDENCIA', nota: 'llega tarde' }),
+      expect.objectContaining({ turno: 'Turno noche (22:00-06:00)', servicio: 'Paraiso', estado: 'CUBIERTO' }),
+    ]))
+    expect(informe.sections[1].rows).toEqual(expect.arrayContaining([
+      expect.objectContaining({ tipo: 'danger', titulo: 'Servicio descubierto - Paraiso', meta: expect.stringContaining('dormido') }),
+      expect.objectContaining({ tipo: 'warn', titulo: 'Incidencia en San Francisco (Vig 1)', meta: expect.stringContaining('llega tarde') }),
+    ]))
+  })
 })
 
 function servicio(codigo, nombre, visibleCuadrante, dotacionMinima, modalidad) {
@@ -190,6 +235,31 @@ function turno(id, servicioId, fecha, inicio, fin, estado) {
     horaInicio: new Date(`${fecha}T${inicio}:00.000Z`),
     horaFin: new Date(`${fecha}T${fin}:00.000Z`),
     estado,
+  }
+}
+
+function turnoVerificado(id, servicioId, fecha, inicio, fin, estado, puestoId, estadoVerificacion, nota = '') {
+  return {
+    ...turno(id, servicioId, fecha, inicio, fin, estado),
+    verificaciones: [
+      {
+        puestoId,
+        estado: estadoVerificacion,
+        nota,
+      },
+    ],
+  }
+}
+
+function puesto(id, servicioId, nombre, etiqueta, iniciales) {
+  return {
+    id,
+    servicioId,
+    codigo: iniciales,
+    nombre,
+    etiqueta,
+    meta: '24/7',
+    iniciales,
   }
 }
 
