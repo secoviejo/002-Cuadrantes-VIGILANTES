@@ -92,7 +92,7 @@ npm run dev
 - `GET /api/incidencias`
 - `GET /api/verificaciones`
 - `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`
-- `GET /api/cuadrante-mensual?anio=2026&mes=5`
+- `GET /api/cuadrante-mensual?anio=2026&mes=1..12`
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`
 - `GET /api/horas-anuales?anio=2026`
 - `GET /api/cierre-mensual?anio=2026&mes=5`
@@ -157,7 +157,7 @@ npm run build        # Produccion
 - Normalizacion del contrato API en frontend para listados `array`, `{ data }` y `{ items }`
 - Verificaciones de cobertura creadas con token JWT
 - Resumen operativo React alimentado por API con datos reales recuperados del HTML original
-- Cuadrante mensual de mayo 2026 con servicios, turnos, horas y descubiertos reales del HTML original
+- Cuadrante mensual navegable para todo 2026: mayo conserva servicios, turnos, horas y descubiertos reales del HTML original; el resto de meses muestra planificacion base por modalidad si no hay turnos persistidos
 - Seed idempotente con servicios operativos, horas de contrato y puestos verificables, sin importar nombres ficticios de vigilantes
 - Navegacion y permisos por rol: ADMIN/Unidad de Seguridad con acceso completo; Contrata limitada a Operacion.
 - Informes operativo diario, mensual y anual con vista previa imprimible.
@@ -168,7 +168,7 @@ npm run build        # Produccion
 **Pendiente:**
 - Reforzar permisos por rol en todos los endpoints operativos
 - Migrar hash de contrasenas demo de SHA-256 a bcrypt/argon2
-- Extender la navegacion de cuadrante a meses distintos de mayo 2026
+- Persistir/importar turnos reales para meses distintos de mayo 2026
 - Despliegue en produccion
 
 ## Licencia

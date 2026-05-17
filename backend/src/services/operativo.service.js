@@ -10,6 +10,20 @@ const TURNOS = {
 const CONTRATO_ANUAL_HORAS = 63508
 const ACUMULADO_ANUAL_HORAS = 26140
 const VARIABLES_ANUALES_HORAS = 2000
+const MONTH_NAMES = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+]
 
 const DESGLOSE_CATEGORIAS_MAYO = [
   { categoria: 'Laboral diurno', planificadas: 2380, ejecutadas: 2358 },
@@ -57,6 +71,52 @@ function mapEstadoVerificacion(estado) {
     DESCUBIERTO: 'DESCUBIERTO',
   }
   return estados[estado] || 'CUBIERTO'
+}
+
+function buildPeriodoLabel(anio, mes) {
+  return `${MONTH_NAMES[mes - 1] || `Mes ${mes}`} ${anio}`
+}
+
+function isWeekday(anio, mes, dia) {
+  const date = new Date(Date.UTC(anio, mes - 1, dia))
+  return ![0, 6].includes(date.getUTCDay())
+}
+
+function buildSyntheticTurnos(servicio, anio, mes, dia) {
+  const baseId = `plan-${servicio.id}-${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+  const turnos = []
+  const addTurno = (codigo) => {
+    turnos.push({
+      id: `${baseId}-${codigo}`,
+      codigo,
+      estado: 'CUBIERTO',
+      origen: 'patron',
+    })
+  }
+
+  if (servicio.modalidad === '24/7') {
+    addTurno('M')
+    addTurno('T')
+    addTurno('N')
+  }
+
+  if (servicio.modalidad === 'LABORAL_DIURNO' && isWeekday(anio, mes, dia)) {
+    addTurno('D')
+  }
+
+  if (servicio.modalidad === 'NOCTURNO' && mes !== 8) {
+    addTurno('N')
+  }
+
+  if (servicio.modalidad === 'VARIABLE') {
+    addTurno('N')
+    if (!isWeekday(anio, mes, dia)) {
+      addTurno('M')
+      addTurno('T')
+    }
+  }
+
+  return turnos
 }
 
 function buildKpis(horas) {
@@ -347,7 +407,7 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
   const fechaDesde = toDateOnly(ymd(anio, mes, 1))
   const fechaHasta = toDateOnly(ymd(anio, mes, diasMes))
 
-  const [servicios, turnos] = await Promise.all([
+  const [servicios, turnos, festivos] = await Promise.all([
     prisma.servicio.findMany({
       where: { visibleCuadrante: true, activo: true },
       include: { edificio: { include: { campus: true } } },
@@ -358,8 +418,14 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
       include: { servicio: true },
       orderBy: [{ fecha: 'asc' }, { horaInicio: 'asc' }],
     }),
+    prisma.calendarioLaboral.findMany({
+      where: { fecha: { gte: fechaDesde, lte: fechaHasta } },
+      orderBy: { fecha: 'asc' },
+    }),
   ])
 
+  const hasPersistedTurnos = turnos.length > 0
+  const festivosPorFecha = new Set(festivos.map((item) => item.fecha.toISOString().slice(0, 10)))
   const turnosPorServicioDia = new Map()
   for (const turno of turnos) {
     const dia = new Date(turno.fecha).getUTCDate()
@@ -376,15 +442,17 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
   return {
     anio,
     mes,
-    etiqueta: 'Mayo 2026',
+    etiqueta: buildPeriodoLabel(anio, mes),
+    origen: hasPersistedTurnos ? 'persistido' : 'patron',
     dias: Array.from({ length: diasMes }, (_, index) => {
       const dia = index + 1
       const date = new Date(Date.UTC(anio, mes - 1, dia))
+      const fecha = ymd(anio, mes, dia)
       return {
         dia,
-        fecha: ymd(anio, mes, dia),
+        fecha,
         finSemana: [0, 6].includes(date.getUTCDay()),
-        festivo: dia === 1,
+        festivo: festivosPorFecha.has(fecha),
       }
     }),
     servicios: servicios.map((servicio) => ({
@@ -398,7 +466,8 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
         const dia = index + 1
         return {
           dia,
-          turnos: turnosPorServicioDia.get(`${servicio.id}:${dia}`) || [],
+          turnos: turnosPorServicioDia.get(`${servicio.id}:${dia}`)
+            || (hasPersistedTurnos ? [] : buildSyntheticTurnos(servicio, anio, mes, dia)),
         }
       }),
     })),

@@ -17,22 +17,42 @@ const FILTROS = [
   { id: 'descubierto', label: 'Solo descubierto' },
 ];
 
+const MONTHS = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+];
+
+const YEAR = 2026;
+
 function hasDescubierto(servicio) {
   return servicio.celdas.some((celda) => celda.turnos.some((turno) => turno.estado === 'DESCUBIERTO'));
 }
 
 export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user }) {
   const [cuadrante, setCuadrante] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(5);
   const [filtro, setFiltro] = useState('todos');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const selectedLabel = `${MONTHS[selectedMonth - 1]} ${YEAR}`;
 
   useEffect(() => {
     async function loadCuadrante() {
       setLoading(true);
       setError(null);
       try {
-        const payload = await getCuadranteMensual({ anio: 2026, mes: 5 });
+        const payload = await getCuadranteMensual({ anio: YEAR, mes: selectedMonth });
         setCuadrante(payload.data || payload);
       } catch (err) {
         setError(err.message);
@@ -41,7 +61,15 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
       }
     }
     loadCuadrante();
-  }, []);
+  }, [selectedMonth]);
+
+  function goToPreviousMonth() {
+    setSelectedMonth((month) => Math.max(1, month - 1));
+  }
+
+  function goToNextMonth() {
+    setSelectedMonth((month) => Math.min(12, month + 1));
+  }
 
   const serviciosFiltrados = useMemo(() => {
     if (!cuadrante) return [];
@@ -61,13 +89,39 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
       onLogout={onLogout}
       user={user}
       title="Cuadrante mensual"
-      subtitle="Visualizacion por servicio - Mayo 2026"
+      subtitle={`Visualizacion por servicio - ${selectedLabel}`}
     >
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center rounded-full border border-stone-200 bg-white">
-          <button className="p-2 text-stone-400" title="Disponible en siguientes fases"><ChevronLeft className="h-4 w-4" /></button>
-          <span className="px-4 text-sm font-semibold text-stone-800">Mayo 2026</span>
-          <button className="p-2 text-stone-400" title="Disponible en siguientes fases"><ChevronRight className="h-4 w-4" /></button>
+          <button
+            type="button"
+            onClick={goToPreviousMonth}
+            disabled={selectedMonth === 1}
+            className="p-2 text-stone-500 disabled:cursor-not-allowed disabled:text-stone-300"
+            title="Mes anterior"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <label className="sr-only" htmlFor="month-select">Seleccionar mes</label>
+          <select
+            id="month-select"
+            value={selectedMonth}
+            onChange={(event) => setSelectedMonth(Number(event.target.value))}
+            className="h-9 min-w-32 border-x border-stone-100 bg-white px-3 text-sm font-semibold text-stone-800 outline-none"
+          >
+            {MONTHS.map((month, index) => (
+              <option key={month} value={index + 1}>{month} {YEAR}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={goToNextMonth}
+            disabled={selectedMonth === 12}
+            className="p-2 text-stone-500 disabled:cursor-not-allowed disabled:text-stone-300"
+            title="Mes siguiente"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
         <div className="flex flex-wrap gap-2">
           {FILTROS.map((item) => (
@@ -100,8 +154,14 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
       ) : error ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-700">{error}</div>
       ) : cuadrante && (
-        <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white shadow-sm">
-          <div className="min-w-[1480px]">
+        <div>
+          {cuadrante.origen === 'patron' && (
+            <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Mes sin turnos persistidos: se muestra la planificacion base calculada por modalidad del servicio.
+            </div>
+          )}
+          <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white shadow-sm">
+            <div className="min-w-[1480px]">
             <div className="grid border-b border-stone-200 bg-stone-50" style={{ gridTemplateColumns: `190px repeat(${cuadrante.dias.length}, minmax(38px, 1fr))` }}>
               <div className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-stone-500">Servicio</div>
               {cuadrante.dias.map((dia) => (
@@ -136,6 +196,7 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
                 ))}
               </div>
             ))}
+            </div>
           </div>
         </div>
       )}

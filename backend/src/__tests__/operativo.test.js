@@ -16,6 +16,9 @@ const mockPrisma = {
   servicio: {
     findMany: jest.fn(),
   },
+  calendarioLaboral: {
+    findMany: jest.fn(),
+  },
 }
 
 jest.unstable_mockModule('../db/prisma.js', () => ({
@@ -62,6 +65,9 @@ describe('operativo.service', () => {
       { id: 1, codigo: 'SERV_HUE_VARIABLE', nombre: 'Huesca', tipoOperativo: 'Vigilancia', descripcion: 'Variable', modalidad: 'VARIABLE' },
       { id: 2, codigo: 'SERV_CECO_JEFE', nombre: 'CECO Jefe equipo', tipoOperativo: 'Coordinacion', descripcion: 'L-V diurno', modalidad: 'LABORAL_DIURNO' },
     ])
+    mockPrisma.calendarioLaboral.findMany.mockResolvedValue([
+      { fecha: new Date('2026-05-01T00:00:00.000Z') },
+    ])
     mockPrisma.turno.findMany.mockResolvedValue([
       turno(1, 1, '2026-05-10', '14:00', '22:00', 'SIN_CUBRIR'),
       turno(2, 2, '2026-05-06', '08:00', '16:00', 'SIN_CUBRIR'),
@@ -76,6 +82,31 @@ describe('operativo.service', () => {
     expect(cuadrante.dias).toHaveLength(31)
     expect(cuadrante.servicios).toHaveLength(2)
     expect(descubiertos).toHaveLength(3)
+    expect(cuadrante.etiqueta).toBe('Mayo 2026')
+    expect(cuadrante.origen).toBe('persistido')
+    expect(cuadrante.dias[0].festivo).toBe(true)
+  })
+
+  it('genera una planificacion base para meses de 2026 sin turnos persistidos', async () => {
+    mockPrisma.servicio.findMany.mockResolvedValue([
+      { id: 1, codigo: 'SERV_PAR_24H', nombre: 'Paraiso', tipoOperativo: 'Vigilancia', descripcion: '24/7', modalidad: '24/7' },
+      { id: 2, codigo: 'SERV_CECO_JEFE', nombre: 'CECO Jefe equipo', tipoOperativo: 'Coordinacion', descripcion: 'L-V diurno', modalidad: 'LABORAL_DIURNO' },
+      { id: 3, codigo: 'SERV_TER_NOCTURNO', nombre: 'Teruel', tipoOperativo: 'Vigilancia', descripcion: '22:00-08:00 sin agosto', modalidad: 'NOCTURNO' },
+    ])
+    mockPrisma.turno.findMany.mockResolvedValue([])
+    mockPrisma.calendarioLaboral.findMany.mockResolvedValue([
+      { fecha: new Date('2026-06-24T00:00:00.000Z') },
+    ])
+
+    const cuadrante = await obtenerCuadranteMensual({ anio: 2026, mes: 6 })
+
+    expect(cuadrante.dias).toHaveLength(30)
+    expect(cuadrante.etiqueta).toBe('Junio 2026')
+    expect(cuadrante.origen).toBe('patron')
+    expect(cuadrante.dias[23].festivo).toBe(true)
+    expect(cuadrante.servicios[0].celdas[0].turnos.map((item) => item.codigo)).toEqual(['M', 'T', 'N'])
+    expect(cuadrante.servicios[1].celdas[0].turnos.map((item) => item.codigo)).toEqual(['D'])
+    expect(cuadrante.servicios[2].celdas[0].turnos.map((item) => item.codigo)).toEqual(['N'])
   })
 
   it('devuelve cierre mensual con totales planificado y ejecutado', async () => {

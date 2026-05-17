@@ -65,7 +65,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 | Sidebar y navegacion | Implementado por rol en React | Contrata ve solo Operacion; ADMIN y Unidad de Seguridad ven todas las secciones. |
 | Resumen operativo | Implementado en React con API | Muestra KPIs, alertas, ultimas sustituciones, cobertura por campus y panel de verificacion con datos de mayo 2026. |
 | Verificacion de cobertura | Persistente por API | Permite marcar cubierto, incidencia o descubierto, anadir notas y guardar lote con JWT. |
-| Cuadrante mensual | Implementado en React con API | Renderiza mayo de 2026 completo con turnos reales recuperados del HTML y descubiertos marcados. |
+| Cuadrante mensual | Implementado en React con API | Permite seleccionar cualquier mes de 2026. Mayo renderiza turnos reales recuperados del HTML y descubiertos marcados; meses sin turnos persistidos muestran planificacion base calculada por modalidad. |
 | Importar Excel | Solo visual | Representa carga e historial, pero no lee ni valida archivos. |
 | Sustituciones | Tabla demo generada | Muestra sustituciones con preaviso, sin alta ni persistencia real. |
 | Horas anuales | Implementado en React con API | Muestra contrato, acumulado, categorias de hora y variables informativas. |
@@ -108,7 +108,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Vista por persona del cuadrante.
 - Filtros avanzados de sustituciones.
 - Nueva sustitucion.
-- Cambio de mes o ano.
+- Cambio de ano.
 - Aprobacion para facturacion.
 - Exportaciones de horas, servicios o informes.
 - Editar servicios existentes.
@@ -124,6 +124,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 ## Datos Reales Recuperados del HTML Original
 
 - Servicios activos migrados al seed: San Francisco, Paraiso, Veterinaria, Rio Ebro, CECO, CECO jefe equipo, Teruel, Huesca, OCA San Francisco, C.M.U. Pedro Cerbuna, C.M.U. Ramon Acin, Residencia Jaca y Salas estudio.
+- El cuadrante mensual navega enero-diciembre de 2026. Mayo conserva datos reales persistidos; el resto de meses usa planificacion base no persistida por modalidad del servicio hasta importar/generar turnos reales.
 - Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas y desviacion -86 h.
 - Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
 - Turnos base: `M` 06:00-14:00, `T` 14:00-22:00, `N` 22:00-06:00 y `D` para CECO jefe.
@@ -339,6 +340,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 ## Historial de Cambios de Contexto
 
 - 2026-05-16: Incorporada informacion funcional clave de la conversacion original al React/Express actual. La navegacion queda filtrada por rol, Contrata solo accede a Operacion, ADMIN/Unidad de Seguridad ven todo, se anaden informes operativo diario/mensual/anual con vista previa imprimible, APIs de horas anuales y cierre mensual, paginas React de Horas anuales y Cierre mensual, filtro por campus en Servicios y formulario avanzado de servicio con metadatos operativos persistidos. La importacion Excel queda aplazada hasta disponer de fichero real.
+- 2026-05-17: Activada la seleccion de meses en el Cuadrante mensual para todo 2026. El frontend permite cambiar con desplegable y botones anterior/siguiente. El backend devuelve mayo desde turnos persistidos y, para meses sin datos, una planificacion base calculada por modalidad de servicio marcada como origen `patron`.
 - 2026-05-16: Migrado Calendario laboral 2026 desde el HTML original. Anadida API `GET/POST /api/calendario-laboral`, seed con 11 festivos reales y periodos academicos servidos como constantes operativas, pagina React de calendario visible para ADMIN/Unidad de Seguridad y alta manual de festivos.
 - 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.

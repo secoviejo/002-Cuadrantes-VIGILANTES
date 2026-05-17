@@ -36,7 +36,7 @@ La migracion debe ser progresiva. El HTML original no debe borrarse ni reescribi
 El Resumen operativo y el Cuadrante mensual ya consumen servicios backend especificos para datos operativos de mayo 2026 recuperados desde el HTML original:
 
 - `GET /api/resumen-operativo`: KPIs, horas, servicios verificables, alertas, cobertura por campus y ultimas sustituciones.
-- `GET /api/cuadrante-mensual`: dias, servicios y celdas M/T/N/D del mes.
+- `GET /api/cuadrante-mensual`: dias, servicios y celdas M/T/N/D del mes. Mayo 2026 usa turnos persistidos del seed; si el mes solicitado no tiene turnos guardados, devuelve una planificacion base por modalidad de servicio para poder navegar todo 2026.
 - `POST /api/verificaciones/lote`: persistencia de verificaciones por puesto, siempre con JWT.
 - `GET /api/informes-operativos`: informe diario, mensual o anual estructurado para vista previa imprimible.
 - `GET /api/horas-anuales` y `GET /api/cierre-mensual`: seguimiento contractual y conciliacion mensual para validacion de factura.
@@ -44,4 +44,4 @@ El Resumen operativo y el Cuadrante mensual ya consumen servicios backend especi
 
 El seed idempotente carga servicios, turnos, horas de contrato, descubiertos de mayo 2026 y festivos reales de 2026. Los nombres ficticios de vigilantes del HTML no se importan como trabajadores reales.
 
-La navegacion y backend aplican permisos basicos por rol. ADMIN y Unidad de Seguridad tienen acceso completo. Contrata queda limitada a Operacion: Resumen, Cuadrante, Sustituciones y Verificaciones. La navegacion de meses queda visible pero limitada a mayo 2026 hasta completar una generacion mensual general.
+La navegacion y backend aplican permisos basicos por rol. ADMIN y Unidad de Seguridad tienen acceso completo. Contrata queda limitada a Operacion: Resumen, Cuadrante, Sustituciones y Verificaciones. La navegacion de meses del cuadrante esta activa para todo 2026; los meses sin datos persistidos se identifican como planificacion base calculada.
