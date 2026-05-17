@@ -25,7 +25,7 @@ Pantallas operativas recuperadas del HTML original:
 
 - `Dashboard.jsx` implementa el Resumen operativo con KPIs, tres tablas de verificacion para manana, tarde y noche, verificacion por puesto, alertas dinamicas, cobertura por campus y ultimas sustituciones.
 - `CuadrantePage.jsx` permite seleccionar cualquier mes de 2026. Mayo conserva los turnos reales recuperados del HTML original y el resto de meses muestra una planificacion base calculada por modalidad de servicio cuando no hay turnos persistidos. El encabezado diferencia dias normales, festivos y no lectivos.
-- `Dashboard.jsx` permite generar informe diario, mensual o anual mediante vista previa imprimible. El informe diario muestra las verificaciones confirmadas de manana, tarde y noche con incidencias, descubiertos y notas, resaltando `warn`/incidencia en amarillo y `danger`/descubierto en rojo.
+- `Dashboard.jsx` permite generar informe diario, mensual o anual mediante vista previa imprimible. El informe diario muestra las verificaciones confirmadas de manana, tarde y noche con incidencias, descubiertos y notas, resaltando cubierto en verde, `warn`/incidencia en amarillo y `danger`/descubierto en rojo.
 - `HorasAnualesPage.jsx` muestra el seguimiento contractual y permite editar bolsa variable y categorias del pliego para UZ/ADMIN. `CierreMensualPage.jsx` muestra la conciliacion de mayo 2026.
 - `CalendarioLaboralPage.jsx` reproduce el calendario laboral 2026 con festivos, periodos academicos y alta manual de festivo.
 - `ServiciosPage.jsx` filtra por campus y `ServicioForm.jsx` ofrece un formulario avanzado con previsualizacion.

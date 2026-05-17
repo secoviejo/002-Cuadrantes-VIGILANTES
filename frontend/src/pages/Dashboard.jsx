@@ -536,6 +536,9 @@ function GenericRows({ rows }) {
 
   const getRowTone = (row) => {
     const state = String(row.estado || row.tipo || '').toLowerCase();
+    if (['cubierto', 'ok', 'success'].includes(state)) {
+      return 'border-l-4 border-emerald-500 bg-emerald-50 text-emerald-950';
+    }
     if (['danger', 'descubierto'].includes(state)) {
       return 'border-l-4 border-red-500 bg-red-50 text-red-950';
     }
@@ -547,6 +550,9 @@ function GenericRows({ rows }) {
 
   const getCellTone = (key, value) => {
     const normalized = String(value || '').toLowerCase();
+    if (['estado', 'tipo'].includes(key) && ['cubierto', 'ok', 'success'].includes(normalized)) {
+      return 'font-bold uppercase text-emerald-700';
+    }
     if (['estado', 'tipo'].includes(key) && ['danger', 'descubierto'].includes(normalized)) {
       return 'font-bold uppercase text-red-700';
     }
