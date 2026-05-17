@@ -85,6 +85,7 @@ describe('operativo.service', () => {
     expect(cuadrante.etiqueta).toBe('Mayo 2026')
     expect(cuadrante.origen).toBe('persistido')
     expect(cuadrante.dias[0].festivo).toBe(true)
+    expect(cuadrante.dias[0].tipoDia).toBe('FESTIVO')
   })
 
   it('genera una planificacion base para meses de 2026 sin turnos persistidos', async () => {
@@ -104,9 +105,25 @@ describe('operativo.service', () => {
     expect(cuadrante.etiqueta).toBe('Junio 2026')
     expect(cuadrante.origen).toBe('patron')
     expect(cuadrante.dias[23].festivo).toBe(true)
+    expect(cuadrante.dias[23].tipoDia).toBe('FESTIVO')
     expect(cuadrante.servicios[0].celdas[0].turnos.map((item) => item.codigo)).toEqual(['M', 'T', 'N'])
     expect(cuadrante.servicios[1].celdas[0].turnos.map((item) => item.codigo)).toEqual(['D'])
     expect(cuadrante.servicios[2].celdas[0].turnos.map((item) => item.codigo)).toEqual(['N'])
+  })
+
+  it('marca no lectivos segun calendario academico y aplica el patron variable del PTT', async () => {
+    mockPrisma.servicio.findMany.mockResolvedValue([
+      { id: 1, codigo: 'SERV_HUE_VARIABLE', nombre: 'Huesca', tipoOperativo: 'Vigilancia', descripcion: 'Variable', modalidad: 'VARIABLE' },
+    ])
+    mockPrisma.turno.findMany.mockResolvedValue([])
+    mockPrisma.calendarioLaboral.findMany.mockResolvedValue([])
+
+    const cuadrante = await obtenerCuadranteMensual({ anio: 2026, mes: 2 })
+
+    expect(cuadrante.dias[1].fecha).toBe('2026-02-02')
+    expect(cuadrante.dias[1].tipoDia).toBe('NO_LECTIVO')
+    expect(cuadrante.dias[1].tipoDiaLabel).toBe('No lectivo')
+    expect(cuadrante.servicios[0].celdas[1].turnos.map((item) => item.codigo)).toEqual(['T', 'N'])
   })
 
   it('devuelve cierre mensual con totales planificado y ejecutado', async () => {

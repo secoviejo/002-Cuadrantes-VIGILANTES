@@ -67,7 +67,7 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `POST /api/verificaciones`: crea una verificacion de cobertura. Requiere JWT y usa el usuario autenticado.
 - `POST /api/verificaciones/lote`: crea verificaciones de varios puestos/turnos en una sola operacion. Requiere JWT y usa el usuario autenticado.
 - `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
-- `GET /api/cuadrante-mensual?anio=2026&mes=5`: devuelve dias, servicios y celdas del cuadrante mensual de mayo 2026.
+- `GET /api/cuadrante-mensual?anio=2026&mes=1..12`: devuelve dias, servicios y celdas del cuadrante mensual. Cada dia incluye `tipoDia` (`NORMAL`, `FESTIVO`, `NO_LECTIVO`) segun festivos, fin de semana y periodos academicos usados por el PTT.
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible.
 - `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato, categorias de hora y variables informativas.
 - `GET /api/cierre-mensual?anio=2026&mes=5`: devuelve conciliacion mensual planificado/ejecutado y checklist de validacion.
@@ -222,7 +222,7 @@ npm run seed
 - API Express registra correctamente todas las rutas desde `createApp()`.
 - Autenticacion JWT basica disponible con usuarios demo.
 - `POST /api/verificaciones` requiere token JWT y deriva `usuarioId` del usuario autenticado.
-- `GET /api/resumen-operativo` y `GET /api/cuadrante-mensual` sirven los datos reales de mayo 2026 migrados desde el HTML original.
+- `GET /api/resumen-operativo` y `GET /api/cuadrante-mensual` sirven los datos reales de mayo 2026 migrados desde el HTML original. El cuadrante clasifica los dias segun reglas derivadas del PTT archivado en `docs/fuentes/`.
 - `POST /api/verificaciones/lote` persiste verificaciones por puesto de cobertura con el usuario autenticado.
 - Los endpoints operativos y de catalogo se han endurecido con JWT y permisos por rol.
 - `ADMIN` y `UNIDAD_SEGURIDAD_UZ` tienen acceso completo; `CONTRATA` queda limitada a Resumen, Cuadrante, Sustituciones y Verificaciones.

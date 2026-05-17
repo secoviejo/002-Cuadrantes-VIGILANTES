@@ -23,6 +23,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `backend/src/scripts/probarMotorReglasTurnos.js`: script manual para ejecutar casos basicos del motor.
 - `backend/src/utils/dateUtils.js`: utilidades de fechas para rangos, solapamientos y calculo de descanso.
 - `docs/`: documentacion base de arquitectura prevista, modelo de datos, roadmap de Fase 1 y decisiones tecnicas.
+- `docs/fuentes/PTT-Vigilancia-UZ.md`: PTT archivado como fuente documental operativa para reglas de vigilancia, auxiliares, festivos, no lectivos y futuros analisis de nuevos PTT.
 - `.agents/skills/cuadrantes-vigilantes-context/`: skill de contexto vivo del proyecto.
 - `backend/src/repositories/`: capa de acceso a datos con Prisma. Contiene `base.repository.js` con utilidades de filtrado y paginacion, repositories de Trabajador, Servicio, Turno, AsignacionTurno, Ausencia, Empresa, Campus y Edificio, e `index.js` que exporta todos los repositorios.
 - `backend/src/db/prisma.js`: cliente Prisma singleton para evitar conexiones multiples.
@@ -65,7 +66,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 | Sidebar y navegacion | Implementado por rol en React | Contrata ve solo Operacion; ADMIN y Unidad de Seguridad ven todas las secciones. |
 | Resumen operativo | Implementado en React con API | Muestra KPIs, alertas, ultimas sustituciones, cobertura por campus y panel de verificacion con datos de mayo 2026. |
 | Verificacion de cobertura | Persistente por API | Permite marcar cubierto, incidencia o descubierto, anadir notas y guardar lote con JWT. |
-| Cuadrante mensual | Implementado en React con API | Permite seleccionar cualquier mes de 2026. Mayo renderiza turnos reales recuperados del HTML y descubiertos marcados; meses sin turnos persistidos muestran planificacion base calculada por modalidad. |
+| Cuadrante mensual | Implementado en React con API | Permite seleccionar cualquier mes de 2026. Mayo renderiza turnos reales recuperados del HTML y descubiertos marcados; meses sin turnos persistidos muestran planificacion base calculada por modalidad. El encabezado clasifica dias normales, festivos y no lectivos. |
 | Importar Excel | Solo visual | Representa carga e historial, pero no lee ni valida archivos. |
 | Sustituciones | Tabla demo generada | Muestra sustituciones con preaviso, sin alta ni persistencia real. |
 | Horas anuales | Implementado en React con API | Muestra contrato, acumulado, categorias de hora y variables informativas. |
@@ -125,6 +126,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 
 - Servicios activos migrados al seed: San Francisco, Paraiso, Veterinaria, Rio Ebro, CECO, CECO jefe equipo, Teruel, Huesca, OCA San Francisco, C.M.U. Pedro Cerbuna, C.M.U. Ramon Acin, Residencia Jaca y Salas estudio.
 - El cuadrante mensual navega enero-diciembre de 2026. Mayo conserva datos reales persistidos; el resto de meses usa planificacion base no persistida por modalidad del servicio hasta importar/generar turnos reales.
+- El PTT de vigilancia queda archivado en `docs/fuentes/PTT-Vigilancia-UZ.md` como fuente de conocimiento. Sus reglas se usan para interpretar normal/festivo/no lectivo y orientar la planificacion base.
 - Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas y desviacion -86 h.
 - Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
 - Turnos base: `M` 06:00-14:00, `T` 14:00-22:00, `N` 22:00-06:00 y `D` para CECO jefe.
@@ -194,6 +196,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Registrar verificaciones de cobertura con usuario, fecha/hora, turno y estado por servicio.
 - Guardar trazabilidad de acciones importantes en auditoria.
 - Centralizar reglas en backend, preferiblemente en un servicio tipo `MotorReglasTurnos`, evitando duplicarlas en componentes React.
+- Las reglas de calendario derivadas del PTT distinguen dia normal, festivo y no lectivo. En el cuadrante, sabados, domingos y festivos oficiales computan como `FESTIVO`; periodos no lectivos o cierres universitarios laborables computan como `NO_LECTIVO`; el resto como `NORMAL`.
 - `MotorReglasTurnos` implementa ya reglas iniciales de solapamiento, descanso, perfil requerido, trabajador activo, ausencias, dotacion minima y estado de cobertura.
 - Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y controladores accedan a datos sin dependencia directa del ORM.
 - Rutas y controladores GET de solo lectura ya disponibles para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
@@ -341,6 +344,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 
 - 2026-05-16: Incorporada informacion funcional clave de la conversacion original al React/Express actual. La navegacion queda filtrada por rol, Contrata solo accede a Operacion, ADMIN/Unidad de Seguridad ven todo, se anaden informes operativo diario/mensual/anual con vista previa imprimible, APIs de horas anuales y cierre mensual, paginas React de Horas anuales y Cierre mensual, filtro por campus en Servicios y formulario avanzado de servicio con metadatos operativos persistidos. La importacion Excel queda aplazada hasta disponer de fichero real.
 - 2026-05-17: Activada la seleccion de meses en el Cuadrante mensual para todo 2026. El frontend permite cambiar con desplegable y botones anterior/siguiente. El backend devuelve mayo desde turnos persistidos y, para meses sin datos, una planificacion base calculada por modalidad de servicio marcada como origen `patron`.
+- 2026-05-17: Archivado `docs/fuentes/PTT-Vigilancia-UZ.md` como fuente de conocimiento del proyecto. El cuadrante mensual clasifica y resalta dias normales, festivos y no lectivos, y la planificacion base de Huesca se ajusta al patron del PTT para lectivo/no lectivo/festivo.
 - 2026-05-16: Migrado Calendario laboral 2026 desde el HTML original. Anadida API `GET/POST /api/calendario-laboral`, seed con 11 festivos reales y periodos academicos servidos como constantes operativas, pagina React de calendario visible para ADMIN/Unidad de Seguridad y alta manual de festivos.
 - 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.

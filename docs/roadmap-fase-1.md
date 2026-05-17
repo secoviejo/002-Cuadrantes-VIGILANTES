@@ -220,3 +220,4 @@ Se ha migrado el Calendario laboral del HTML original a React/Express:
 
 1. **PASO 27**: Implementar importacion Excel real cuando exista fichero de muestra de la contrata.
 2. **PASO 28**: Persistir o importar turnos reales para meses posteriores a mayo 2026, sustituyendo la planificacion base calculada del cuadrante.
+3. **PASO 29**: Modelar versiones de PTT y reglas de calendario para que nuevos pliegos actualicen la planificacion de forma trazable.

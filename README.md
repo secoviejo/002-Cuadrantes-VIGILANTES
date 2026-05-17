@@ -157,8 +157,9 @@ npm run build        # Produccion
 - Normalizacion del contrato API en frontend para listados `array`, `{ data }` y `{ items }`
 - Verificaciones de cobertura creadas con token JWT
 - Resumen operativo React alimentado por API con datos reales recuperados del HTML original
-- Cuadrante mensual navegable para todo 2026: mayo conserva servicios, turnos, horas y descubiertos reales del HTML original; el resto de meses muestra planificacion base por modalidad si no hay turnos persistidos
+- Cuadrante mensual navegable para todo 2026: mayo conserva servicios, turnos, horas y descubiertos reales del HTML original; el resto de meses muestra planificacion base por modalidad si no hay turnos persistidos. El encabezado resalta dias normales, festivos y no lectivos segun reglas derivadas del PTT.
 - Seed idempotente con servicios operativos, horas de contrato y puestos verificables, sin importar nombres ficticios de vigilantes
+- PTT de vigilancia archivado como fuente de conocimiento en `docs/fuentes/PTT-Vigilancia-UZ.md`.
 - Navegacion y permisos por rol: ADMIN/Unidad de Seguridad con acceso completo; Contrata limitada a Operacion.
 - Informes operativo diario, mensual y anual con vista previa imprimible.
 - Pantallas de Horas anuales y Cierre mensual para validacion de factura.

@@ -49,7 +49,9 @@ El primer periodo fiel es mayo 2026. Incluye 13 servicios, 5.394 h planificadas,
 
 Los informes, Horas anuales y Cierre mensual usan estos datos persistidos y constantes operativas recuperadas del HTML para los desgloses todavia no normalizados en tablas especificas: categorias laboral diurno/nocturno, festivo diurno/nocturno y bolsa variable de 2.000 h.
 
-`CalendarioLaboral` guarda festivos puntuales por fecha, ambito general o campus local. Los periodos academicos de 2026 se sirven como constantes operativas porque el modelo actual no tiene una tabla de rangos lectivos/no lectivos.
+`CalendarioLaboral` guarda festivos puntuales por fecha, ambito general o campus local. Los periodos academicos de 2026 se sirven como constantes operativas porque el modelo actual no tiene una tabla de rangos lectivos/no lectivos. El cuadrante mensual expone una clasificacion derivada para cada dia: `NORMAL`, `FESTIVO` o `NO_LECTIVO`.
+
+El PTT de vigilancia se archiva en `docs/fuentes/PTT-Vigilancia-UZ.md` como fuente documental. En esta fase no se ha creado una tabla especifica de versiones de PTT; cuando llegue un nuevo documento, se comparara contra esta fuente antes de migrar cambios de reglas al modelo.
 
 ## Seed inicial
 

@@ -10,6 +10,18 @@ const TURNO_CLASS = {
   D: 'bg-[#6b7e5b] text-white',
 };
 
+const DIA_CLASS = {
+  NORMAL: 'bg-white text-stone-500 border-t-2 border-transparent',
+  FESTIVO: 'bg-amber-100 text-amber-900 border-t-2 border-amber-500',
+  NO_LECTIVO: 'bg-sky-100 text-sky-900 border-t-2 border-sky-500',
+};
+
+const DIA_LEGEND = [
+  { id: 'normal', label: 'Normal', className: 'border border-stone-200 bg-white' },
+  { id: 'festivo', label: 'Festivo', className: 'border border-amber-300 bg-amber-100' },
+  { id: 'no-lectivo', label: 'No lectivo', className: 'border border-sky-300 bg-sky-100' },
+];
+
 const FILTROS = [
   { id: 'todos', label: 'Todos' },
   { id: 'vigilancia', label: 'Vigilancia' },
@@ -36,6 +48,10 @@ const YEAR = 2026;
 
 function hasDescubierto(servicio) {
   return servicio.celdas.some((celda) => celda.turnos.some((turno) => turno.estado === 'DESCUBIERTO'));
+}
+
+function getDiaClass(dia) {
+  return DIA_CLASS[dia.tipoDia] || DIA_CLASS.NORMAL;
 }
 
 export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user }) {
@@ -147,6 +163,10 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
         <span><b className="mr-1 inline-block h-3 w-3 bg-[#4a4742] align-middle" />Noche</span>
         <span><b className="mr-1 inline-block h-3 w-3 bg-[#6b7e5b] align-middle" />Diurno</span>
         <span><b className="mr-1 inline-block h-3 w-3 bg-red-600 align-middle" />Sin cubrir</span>
+        <span className="h-4 w-px bg-stone-200" />
+        {DIA_LEGEND.map((item) => (
+          <span key={item.id}><b className={`mr-1 inline-block h-3 w-3 align-middle ${item.className}`} />{item.label}</span>
+        ))}
       </div>
 
       {loading ? (
@@ -167,7 +187,8 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
               {cuadrante.dias.map((dia) => (
                 <div
                   key={dia.dia}
-                  className={`px-1 py-3 text-center text-xs font-bold ${dia.festivo ? 'bg-amber-100 text-amber-800' : dia.finSemana ? 'bg-stone-100 text-amber-700' : 'text-stone-500'}`}
+                  className={`px-1 py-3 text-center text-xs font-bold ${getDiaClass(dia)}`}
+                  title={`${dia.fecha} - ${dia.tipoDiaLabel || 'Normal'}`}
                 >
                   {dia.dia}
                 </div>

@@ -24,7 +24,7 @@ El frontend React ya contiene layout principal, login JWT basico, Dashboard y pa
 Pantallas operativas recuperadas del HTML original:
 
 - `Dashboard.jsx` implementa el Resumen operativo con KPIs, selector de turno, verificacion por puesto, alertas dinamicas, cobertura por campus y ultimas sustituciones.
-- `CuadrantePage.jsx` permite seleccionar cualquier mes de 2026. Mayo conserva los turnos reales recuperados del HTML original y el resto de meses muestra una planificacion base calculada por modalidad de servicio cuando no hay turnos persistidos.
+- `CuadrantePage.jsx` permite seleccionar cualquier mes de 2026. Mayo conserva los turnos reales recuperados del HTML original y el resto de meses muestra una planificacion base calculada por modalidad de servicio cuando no hay turnos persistidos. El encabezado diferencia dias normales, festivos y no lectivos.
 - `Dashboard.jsx` permite generar informe diario, mensual o anual mediante vista previa imprimible.
 - `HorasAnualesPage.jsx` y `CierreMensualPage.jsx` muestran el seguimiento contractual y la conciliacion de mayo 2026 para UZ/ADMIN.
 - `CalendarioLaboralPage.jsx` reproduce el calendario laboral 2026 con festivos, periodos academicos y alta manual de festivo.

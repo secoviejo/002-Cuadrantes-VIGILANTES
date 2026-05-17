@@ -1,4 +1,5 @@
 import { getPrismaClient } from '../db/prisma.js'
+import { PERIODOS_ACADEMICOS_2026 } from './calendario.service.js'
 
 const TURNOS = {
   M: { nombre: 'Turno mañana', rango: '06:00-14:00', horaInicio: 6 },
@@ -77,12 +78,80 @@ function buildPeriodoLabel(anio, mes) {
   return `${MONTH_NAMES[mes - 1] || `Mes ${mes}`} ${anio}`
 }
 
-function isWeekday(anio, mes, dia) {
+function getWeekday(anio, mes, dia) {
   const date = new Date(Date.UTC(anio, mes - 1, dia))
-  return ![0, 6].includes(date.getUTCDay())
+  return date.getUTCDay()
 }
 
-function buildSyntheticTurnos(servicio, anio, mes, dia) {
+function isWeekday(anio, mes, dia) {
+  return ![0, 6].includes(getWeekday(anio, mes, dia))
+}
+
+function parsePeriodoAcademico(periodo) {
+  const match = /^(\d{2})\/(\d{2}) - (\d{2})\/(\d{2})$/.exec(periodo)
+  if (!match) return null
+  return {
+    startDay: Number(match[1]),
+    startMonth: Number(match[2]),
+    endDay: Number(match[3]),
+    endMonth: Number(match[4]),
+  }
+}
+
+function dateValue(anio, mes, dia) {
+  return Date.UTC(anio, mes - 1, dia)
+}
+
+function isDateInPeriodo(anio, mes, dia, periodo) {
+  const range = parsePeriodoAcademico(periodo)
+  if (!range) return false
+
+  const current = dateValue(anio, mes, dia)
+  const start = dateValue(anio, range.startMonth, range.startDay)
+  const end = dateValue(anio, range.endMonth, range.endDay)
+
+  if (start <= end) {
+    return current >= start && current <= end
+  }
+
+  return current >= start || current <= end
+}
+
+function getEstadoAcademico(anio, mes, dia) {
+  const periodo = PERIODOS_ACADEMICOS_2026.find((item) => isDateInPeriodo(anio, mes, dia, item.periodo))
+  return periodo?.estado || 'LECTIVO'
+}
+
+function buildDiaInfo(anio, mes, dia, festivosPorFecha) {
+  const fecha = ymd(anio, mes, dia)
+  const weekday = getWeekday(anio, mes, dia)
+  const finSemana = [0, 6].includes(weekday)
+  const festivoOficial = festivosPorFecha.has(fecha)
+  const estadoAcademico = getEstadoAcademico(anio, mes, dia)
+  const noLectivo = ['NO_LECTIVO', 'CIERRE'].includes(estadoAcademico)
+  const tipoDia = festivoOficial || finSemana
+    ? 'FESTIVO'
+    : noLectivo
+      ? 'NO_LECTIVO'
+      : 'NORMAL'
+
+  return {
+    dia,
+    fecha,
+    finSemana,
+    festivo: tipoDia === 'FESTIVO',
+    festivoOficial,
+    estadoAcademico,
+    tipoDia,
+    tipoDiaLabel: tipoDia === 'FESTIVO'
+      ? 'Festivo'
+      : tipoDia === 'NO_LECTIVO'
+        ? estadoAcademico === 'CIERRE' ? 'No lectivo - cierre universitario' : 'No lectivo'
+        : 'Normal',
+  }
+}
+
+function buildSyntheticTurnos(servicio, anio, mes, dia, diaInfo) {
   const baseId = `plan-${servicio.id}-${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
   const turnos = []
   const addTurno = (codigo) => {
@@ -109,10 +178,15 @@ function buildSyntheticTurnos(servicio, anio, mes, dia) {
   }
 
   if (servicio.modalidad === 'VARIABLE') {
-    addTurno('N')
-    if (!isWeekday(anio, mes, dia)) {
+    if (diaInfo?.tipoDia === 'FESTIVO' || diaInfo?.estadoAcademico === 'CIERRE') {
       addTurno('M')
       addTurno('T')
+      addTurno('N')
+    } else if (diaInfo?.tipoDia === 'NO_LECTIVO') {
+      addTurno('T')
+      addTurno('N')
+    } else {
+      addTurno('N')
     }
   }
 
@@ -426,6 +500,7 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
 
   const hasPersistedTurnos = turnos.length > 0
   const festivosPorFecha = new Set(festivos.map((item) => item.fecha.toISOString().slice(0, 10)))
+  const dias = Array.from({ length: diasMes }, (_, index) => buildDiaInfo(anio, mes, index + 1, festivosPorFecha))
   const turnosPorServicioDia = new Map()
   for (const turno of turnos) {
     const dia = new Date(turno.fecha).getUTCDate()
@@ -444,17 +519,7 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
     mes,
     etiqueta: buildPeriodoLabel(anio, mes),
     origen: hasPersistedTurnos ? 'persistido' : 'patron',
-    dias: Array.from({ length: diasMes }, (_, index) => {
-      const dia = index + 1
-      const date = new Date(Date.UTC(anio, mes - 1, dia))
-      const fecha = ymd(anio, mes, dia)
-      return {
-        dia,
-        fecha,
-        finSemana: [0, 6].includes(date.getUTCDay()),
-        festivo: festivosPorFecha.has(fecha),
-      }
-    }),
+    dias,
     servicios: servicios.map((servicio) => ({
       id: servicio.id,
       codigo: servicio.codigo,
@@ -462,12 +527,12 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
       tipo: servicio.tipoOperativo,
       subtitulo: servicio.descripcion,
       modalidad: servicio.modalidad,
-      celdas: Array.from({ length: diasMes }, (_, index) => {
-        const dia = index + 1
+      celdas: dias.map((diaInfo) => {
+        const dia = diaInfo.dia
         return {
           dia,
           turnos: turnosPorServicioDia.get(`${servicio.id}:${dia}`)
-            || (hasPersistedTurnos ? [] : buildSyntheticTurnos(servicio, anio, mes, dia)),
+            || (hasPersistedTurnos ? [] : buildSyntheticTurnos(servicio, anio, mes, dia, diaInfo)),
         }
       }),
     })),
