@@ -44,6 +44,23 @@ function ymd(year, month, day) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
+function fotoTrabajadorDemo(iniciales, colorFondo, colorUniforme) {
+  const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <rect width="160" height="160" fill="${colorFondo}"/>
+  <circle cx="80" cy="58" r="30" fill="#d6a57c"/>
+  <path d="M30 140c6-34 29-54 50-54s44 20 50 54" fill="${colorUniforme}"/>
+  <path d="M50 43h60l-7-16H57z" fill="#3f3f46"/>
+  <path d="M48 43h64v13H48z" fill="#5b8a9c"/>
+  <circle cx="68" cy="57" r="4" fill="#292524"/>
+  <circle cx="92" cy="57" r="4" fill="#292524"/>
+  <path d="M68 74c7 5 17 5 24 0" stroke="#7c2d12" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="122" cy="122" r="22" fill="#ffffff" opacity=".92"/>
+  <text x="122" y="129" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#292524">${iniciales}</text>
+</svg>`
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
+}
+
 function isWeekend(year, month, day) {
   const dow = new Date(Date.UTC(year, month - 1, day)).getUTCDay()
   return dow === 0 || dow === 6
@@ -253,17 +270,17 @@ async function main() {
   }
 
   const trabajadoresData = [
-    { codigo: 'TRAB_DEMO_001', nombre: 'Vigilante Demo 001', tipo: 'VIGILANTE', empresaId: empresa.id },
-    { codigo: 'TRAB_DEMO_002', nombre: 'Vigilante Demo 002', tipo: 'VIGILANTE', empresaId: empresa.id },
-    { codigo: 'TRAB_DEMO_003', nombre: 'Auxiliar Demo 001', tipo: 'AUXILIAR', empresaId: empresa.id },
-    { codigo: 'TRAB_DEMO_004', nombre: 'Jefe Equipo Demo 001', tipo: 'JEFE_EQUIPO', empresaId: empresa.id },
+    { codigo: 'TRAB_DEMO_001', nombre: 'Vigilante Demo 001', tipo: 'VIGILANTE', empresaId: empresa.id, fotoUrl: fotoTrabajadorDemo('V1', '#eef6f9', '#1f2937') },
+    { codigo: 'TRAB_DEMO_002', nombre: 'Vigilante Demo 002', tipo: 'VIGILANTE', empresaId: empresa.id, fotoUrl: fotoTrabajadorDemo('V2', '#f7f0e7', '#334155') },
+    { codigo: 'TRAB_DEMO_003', nombre: 'Auxiliar Demo 001', tipo: 'AUXILIAR', empresaId: empresa.id, fotoUrl: fotoTrabajadorDemo('A1', '#ecfdf5', '#047857') },
+    { codigo: 'TRAB_DEMO_004', nombre: 'Jefe Equipo Demo 001', tipo: 'JEFE_EQUIPO', empresaId: empresa.id, fotoUrl: fotoTrabajadorDemo('JE', '#faf5ff', '#6d28d9') },
   ]
 
   const trabajadores = {}
   for (const item of trabajadoresData) {
     trabajadores[item.codigo] = await prisma.trabajador.upsert({
       where: { codigo: item.codigo },
-      update: {},
+      update: { fotoUrl: item.fotoUrl },
       create: item,
     })
   }
