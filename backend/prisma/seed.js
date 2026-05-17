@@ -185,9 +185,9 @@ async function main() {
     { codigo: 'SERV_CECO_JEFE', nombre: 'CECO Jefe equipo', descripcion: 'L-V diurno', tipoOperativo: 'Coordinacion', modalidad: 'LABORAL_DIURNO', horario: 'L-V diurno (8h)', vehiculo: null, orden: 6, visibleCuadrante: true, perfilRequerido: 'VIGILANTE', dotacionMinima: 1, edificioId: edificios.CECO_CONTROL.id },
     { codigo: 'SERV_TER_NOCTURNO', nombre: 'Teruel', descripcion: '22:00-08:00 sin agosto', tipoOperativo: 'Vigilancia', modalidad: 'NOCTURNO', horario: '22:00-08:00 (sin agosto)', vehiculo: null, orden: 7, visibleCuadrante: true, perfilRequerido: 'VIGILANTE', dotacionMinima: 1, edificioId: edificios.TER_CAMPUS.id },
     { codigo: 'SERV_HUE_VARIABLE', nombre: 'Huesca', descripcion: 'Variable lectivo/no lectivo', tipoOperativo: 'Vigilancia', modalidad: 'VARIABLE', horario: 'Variable (lectivo/no lectivo/festivos)', vehiculo: '1 x SUV hibrido', orden: 8, visibleCuadrante: true, perfilRequerido: 'VIGILANTE', dotacionMinima: 1, edificioId: edificios.HUE_CAMPUS.id },
-    { codigo: 'SERV_OCA_SF', nombre: 'OCA San Francisco', descripcion: 'Auxiliar lectivo/no lectivo', tipoOperativo: 'Auxiliar', modalidad: 'LECTIVO', horario: 'L-V dias lectivos / no lectivos', vehiculo: null, orden: 9, visibleCuadrante: false, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.SF_INTERFAC.id },
-    { codigo: 'SERV_CMU_CERBUNA', nombre: 'C.M.U. Pedro Cerbuna', descripcion: 'Auxiliar nocturno y fin de semana', tipoOperativo: 'Auxiliar', modalidad: 'NOCTURNO_FDS', horario: 'Nocturno L-V + 24h fin de semana', vehiculo: null, orden: 10, visibleCuadrante: false, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.PAR_CAMPUS.id },
-    { codigo: 'SERV_CMU_RAMON_ACIN', nombre: 'C.M.U. Ramon Acin', descripcion: 'Auxiliar nocturno y fin de semana', tipoOperativo: 'Auxiliar', modalidad: 'NOCTURNO_FDS', horario: 'Nocturno L-V + 24h fin de semana', vehiculo: null, orden: 11, visibleCuadrante: false, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.HUE_CAMPUS.id },
+    { codigo: 'SERV_OCA_SF', nombre: 'OCA San Francisco', descripcion: 'Auxiliar lectivo/no lectivo', tipoOperativo: 'Auxiliar', modalidad: 'LECTIVO', horario: 'L-V dias lectivos / no lectivos', vehiculo: null, orden: 9, visibleCuadrante: true, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.SF_INTERFAC.id },
+    { codigo: 'SERV_CMU_CERBUNA', nombre: 'C.M.U. Pedro Cerbuna', descripcion: 'Auxiliar nocturno y fin de semana', tipoOperativo: 'Auxiliar', modalidad: 'NOCTURNO_FDS', horario: 'Nocturno L-V + 24h fin de semana', vehiculo: null, orden: 10, visibleCuadrante: true, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.PAR_CAMPUS.id },
+    { codigo: 'SERV_CMU_RAMON_ACIN', nombre: 'C.M.U. Ramon Acin', descripcion: 'Auxiliar nocturno y fin de semana', tipoOperativo: 'Auxiliar', modalidad: 'NOCTURNO_FDS', horario: 'Nocturno L-V + 24h fin de semana', vehiculo: null, orden: 11, visibleCuadrante: true, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.HUE_CAMPUS.id },
     { codigo: 'SERV_RES_JACA', nombre: 'Residencia Jaca', descripcion: 'A demanda nocturno', tipoOperativo: 'A demanda', modalidad: 'A_DEMANDA', horario: '22:00-08:00 segun solicitud (~1.900h/ano)', vehiculo: null, orden: 12, visibleCuadrante: false, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.JACA_RESIDENCIA.id },
     { codigo: 'SERV_SALAS_ESTUDIO', nombre: 'Salas estudio (varias)', descripcion: 'Segun calendario academico', tipoOperativo: 'A demanda', modalidad: 'A_DEMANDA', horario: 'Segun calendario academico', vehiculo: null, orden: 13, visibleCuadrante: false, perfilRequerido: 'AUXILIAR', dotacionMinima: 1, edificioId: edificios.MULTI_SALAS.id },
   ]
@@ -259,6 +259,14 @@ async function main() {
     { codigo: 'PUESTO_CECO_N', nombre: 'CECO', etiqueta: null, meta: '24/7 - Centro de Control', iniciales: 'CE', turnoCodigo: 'N', orden: 6, servicioId: servicios.SERV_CECO_24H.id },
     { codigo: 'PUESTO_HUE_N', nombre: 'Huesca', etiqueta: null, meta: 'Variable lectivo - Rondas vehiculo', iniciales: 'HU', turnoCodigo: 'N', orden: 7, servicioId: servicios.SERV_HUE_VARIABLE.id },
     { codigo: 'PUESTO_TER_N', nombre: 'Teruel', etiqueta: null, meta: '22:00-08:00', iniciales: 'TER', turnoCodigo: 'N', orden: 8, servicioId: servicios.SERV_TER_NOCTURNO.id },
+    { codigo: 'PUESTO_OCA_SF_M', nombre: 'OCA San Francisco', etiqueta: 'Aux', meta: 'Auxiliar lectivo/no lectivo', iniciales: 'OCA', turnoCodigo: 'M', orden: 20, servicioId: servicios.SERV_OCA_SF.id },
+    { codigo: 'PUESTO_OCA_SF_T', nombre: 'OCA San Francisco', etiqueta: 'Aux', meta: 'Auxiliar lectivo/no lectivo', iniciales: 'OCA', turnoCodigo: 'T', orden: 20, servicioId: servicios.SERV_OCA_SF.id },
+    { codigo: 'PUESTO_CERBUNA_M', nombre: 'C.M.U. Pedro Cerbuna', etiqueta: 'Aux', meta: 'Auxiliar fin de semana', iniciales: 'CER', turnoCodigo: 'M', orden: 21, servicioId: servicios.SERV_CMU_CERBUNA.id },
+    { codigo: 'PUESTO_CERBUNA_T', nombre: 'C.M.U. Pedro Cerbuna', etiqueta: 'Aux', meta: 'Auxiliar fin de semana', iniciales: 'CER', turnoCodigo: 'T', orden: 21, servicioId: servicios.SERV_CMU_CERBUNA.id },
+    { codigo: 'PUESTO_CERBUNA_N', nombre: 'C.M.U. Pedro Cerbuna', etiqueta: 'Aux', meta: 'Auxiliar nocturno y fin de semana', iniciales: 'CER', turnoCodigo: 'N', orden: 21, servicioId: servicios.SERV_CMU_CERBUNA.id },
+    { codigo: 'PUESTO_RAMON_ACIN_M', nombre: 'C.M.U. Ramon Acin', etiqueta: 'Aux', meta: 'Auxiliar fin de semana', iniciales: 'RA', turnoCodigo: 'M', orden: 22, servicioId: servicios.SERV_CMU_RAMON_ACIN.id },
+    { codigo: 'PUESTO_RAMON_ACIN_T', nombre: 'C.M.U. Ramon Acin', etiqueta: 'Aux', meta: 'Auxiliar fin de semana', iniciales: 'RA', turnoCodigo: 'T', orden: 22, servicioId: servicios.SERV_CMU_RAMON_ACIN.id },
+    { codigo: 'PUESTO_RAMON_ACIN_N', nombre: 'C.M.U. Ramon Acin', etiqueta: 'Aux', meta: 'Auxiliar nocturno y fin de semana', iniciales: 'RA', turnoCodigo: 'N', orden: 22, servicioId: servicios.SERV_CMU_RAMON_ACIN.id },
   ]
 
   for (const puesto of puestos) {
@@ -313,6 +321,14 @@ async function main() {
     }
     addTurnos('SERV_TER_NOCTURNO', day, ['N'])
     addTurnos('SERV_HUE_VARIABLE', day, isWeekend(2026, 5, day) ? ['M', 'T', 'N'] : ['N'], day === 10 ? ['T'] : [])
+    if (!isWeekend(2026, 5, day)) {
+      addTurnos('SERV_OCA_SF', day, ['M', 'T'])
+      addTurnos('SERV_CMU_CERBUNA', day, ['N'])
+      addTurnos('SERV_CMU_RAMON_ACIN', day, ['N'])
+    } else {
+      addTurnos('SERV_CMU_CERBUNA', day, ['M', 'T', 'N'])
+      addTurnos('SERV_CMU_RAMON_ACIN', day, ['M', 'T', 'N'])
+    }
   }
 
   let turno = null

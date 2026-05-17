@@ -65,6 +65,35 @@ describe('operativo.service', () => {
     expect(resumen.coberturaCampus).toHaveLength(7)
   })
 
+  it('incluye auxiliares programados en el resumen operativo', async () => {
+    mockPrisma.horasContratoServicio.findMany.mockResolvedValue([])
+    mockPrisma.puestoCobertura.findMany.mockResolvedValue([
+      {
+        ...puesto(401, 9, 'OCA San Francisco', 'Aux', 'OCA'),
+        servicio: {
+          perfilRequerido: 'AUXILIAR',
+          tipoOperativo: 'Auxiliar',
+        },
+      },
+    ])
+    mockPrisma.turno.findMany.mockResolvedValue([
+      turnoVerificado(21, 9, '2026-05-18', '06:00', '14:00', 'CUBIERTO', 401, 'CUBIERTO'),
+    ])
+    mockPrisma.sustitucion.findMany.mockResolvedValue([])
+
+    const resumen = await obtenerResumenOperativo({ fecha: '2026-05-18', turno: 'M' })
+
+    expect(resumen.serviciosVerificacion).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        nombre: 'OCA San Francisco',
+        etiqueta: 'Aux',
+        perfilRequerido: 'AUXILIAR',
+        tipoOperativo: 'Auxiliar',
+        estado: 'CUBIERTO',
+      }),
+    ]))
+  })
+
   it('devuelve cuadrante mensual de mayo con 31 dias y descubiertos esperados', async () => {
     mockPrisma.servicio.findMany.mockResolvedValue([
       { id: 1, codigo: 'SERV_HUE_VARIABLE', nombre: 'Huesca', tipoOperativo: 'Vigilancia', descripcion: 'Variable', modalidad: 'VARIABLE' },

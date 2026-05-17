@@ -66,7 +66,7 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `GET /api/verificaciones`: lista verificaciones.
 - `POST /api/verificaciones`: crea una verificacion de cobertura. Requiere JWT y usa el usuario autenticado.
 - `POST /api/verificaciones/lote`: crea verificaciones de varios puestos/turnos en una sola operacion. Requiere JWT y usa el usuario autenticado.
-- `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
+- `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, auxiliares programados, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
 - `GET /api/cuadrante-mensual?anio=2026&mes=1..12`: devuelve dias, servicios y celdas del cuadrante mensual. Cada dia incluye `tipoDia` (`NORMAL`, `FESTIVO`, `NO_LECTIVO`) segun festivos, fin de semana y periodos academicos usados por el PTT. Los turnos incluyen `verificacionEstado` y `verificacionResumen` cuando hay incidencias o descubiertos confirmados por verificacion de cobertura.
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible. El informe diario agrega las verificaciones de los turnos manana, tarde y noche, incluyendo incidencias, descubiertos y notas confirmadas.
 - `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato persistido, categorias de hora y variables informativas.
@@ -194,6 +194,7 @@ El seed carga roles, empresa demo, usuarios demo, campus, edificios, trabajadore
 Datos operativos recuperados:
 
 - Servicios activos: San Francisco, Paraiso, Veterinaria, Rio Ebro, CECO, CECO jefe equipo, Teruel, Huesca, OCA San Francisco, C.M.U. Pedro Cerbuna, C.M.U. Ramon Acin, Residencia Jaca y Salas estudio.
+- Auxiliares programados en verificacion: OCA San Francisco en turnos de manana/tarde laborables; C.M.U. Pedro Cerbuna y C.M.U. Ramon Acin en noches laborables y turnos completos de fin de semana. El Resumen operativo solo muestra puestos con turno programado para la fecha consultada.
 - Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas, desviacion -86 h.
 - Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
 - Contrato anual editable: prestaciones fijas calculadas desde categorias del pliego y bolsa variable inicial de 2.000 h.

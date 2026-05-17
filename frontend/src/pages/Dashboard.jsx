@@ -384,6 +384,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
                               <div className="truncate font-semibold text-stone-800">
                                 {servicio.nombre}
                                 {servicio.etiqueta && <span className="ml-2 rounded bg-stone-200 px-2 py-0.5 text-[10px] uppercase text-stone-600">{servicio.etiqueta}</span>}
+                                {servicio.perfilRequerido === 'AUXILIAR' && <span className="ml-2 rounded bg-emerald-100 px-2 py-0.5 text-[10px] uppercase text-emerald-700">Auxiliar</span>}
                               </div>
                               <div className="truncate text-xs text-stone-500">{servicio.meta}</div>
                             </div>

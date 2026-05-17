@@ -210,6 +210,19 @@ function buildSyntheticTurnos(servicio, anio, mes, dia, diaInfo) {
     }
   }
 
+  if (servicio.modalidad === 'LECTIVO' && isWeekday(anio, mes, dia)) {
+    addTurno('M')
+    addTurno('T')
+  }
+
+  if (servicio.modalidad === 'NOCTURNO_FDS') {
+    if (diaInfo?.finSemana || diaInfo?.tipoDia === 'FESTIVO') {
+      addTurno('M')
+      addTurno('T')
+    }
+    addTurno('N')
+  }
+
   return turnos
 }
 
@@ -310,10 +323,11 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
       .map((item) => [item.servicioId, item]),
   )
 
-  const serviciosVerificacion = puestos.map((puesto) => {
+  const serviciosVerificacion = puestos.flatMap((puesto) => {
     const turnoServicio = turnosPorServicio.get(puesto.servicioId)
+    if (!turnoServicio) return []
     const ultima = turnoServicio?.verificaciones?.[0]
-    return {
+    return [{
       puestoId: puesto.id,
       turnoId: turnoServicio?.id || null,
       codigo: puesto.codigo,
@@ -321,9 +335,11 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
       etiqueta: puesto.etiqueta,
       meta: puesto.meta,
       iniciales: puesto.iniciales,
+      perfilRequerido: puesto.servicio?.perfilRequerido || null,
+      tipoOperativo: puesto.servicio?.tipoOperativo || null,
       estado: ultima?.estado || 'PENDIENTE',
       nota: ultima?.nota || '',
-    }
+    }]
   })
 
   const coberturaCampus = horas

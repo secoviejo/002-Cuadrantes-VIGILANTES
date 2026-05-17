@@ -162,6 +162,7 @@ npm run build        # Produccion
 - Normalizacion del contrato API en frontend para listados `array`, `{ data }` y `{ items }`
 - Verificaciones de cobertura creadas con token JWT
 - Resumen operativo React alimentado por API con selector de dia de mayo 2026, datos reales recuperados del HTML original y verificacion visible en tres tablas: manana, tarde y noche.
+- El Resumen operativo incluye solo puestos con turno programado ese dia, incluidos auxiliares: OCA San Francisco y C.M.U. Pedro Cerbuna/Ramon Acin segun su patron de cobertura.
 - Cuadrante mensual navegable para todo 2026: mayo conserva servicios, turnos, horas y descubiertos reales del HTML original; el resto de meses muestra planificacion base por modalidad si no hay turnos persistidos. El encabezado resalta dias normales, festivos y no lectivos segun reglas derivadas del PTT.
 - El cuadrante mensual refleja incidencias y descubiertos confirmados por verificacion de cobertura, con resaltado/parpadeo en amarillo o rojo.
 - Seed idempotente con servicios operativos, horas de contrato y puestos verificables, sin importar nombres ficticios de vigilantes
