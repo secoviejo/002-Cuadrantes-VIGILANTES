@@ -75,8 +75,7 @@ function AlertItem({ alerta }) {
 }
 
 export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) {
-  const [turno, setTurno] = useState('N');
-  const [resumen, setResumen] = useState(null);
+  const [summaries, setSummaries] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [states, setStates] = useState({});
@@ -92,14 +91,25 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
       setLoading(true);
       setError(null);
       try {
-        const payload = await getResumenOperativo({ fecha: todayForDemo(), turno });
-        const data = payload.data || payload;
-        setResumen(data);
-        setStates(Object.fromEntries(data.serviciosVerificacion.map((item) => [
-          item.puestoId,
-          ESTADOS[item.estado] || 'pending',
+        const responses = await Promise.all(
+          TURNOS.map(async (item) => {
+            const payload = await getResumenOperativo({ fecha: todayForDemo(), turno: item.codigo });
+            return [item.codigo, payload.data || payload];
+          }),
+        );
+        const summariesByTurno = Object.fromEntries(responses);
+        setSummaries(summariesByTurno);
+        setStates(Object.fromEntries(responses.map(([codigo, data]) => [
+          codigo,
+          Object.fromEntries(data.serviciosVerificacion.map((item) => [
+            item.puestoId,
+            ESTADOS[item.estado] || 'pending',
+          ])),
         ])));
-        setNotes(Object.fromEntries(data.serviciosVerificacion.map((item) => [item.puestoId, item.nota || ''])));
+        setNotes(Object.fromEntries(responses.map(([codigo, data]) => [
+          codigo,
+          Object.fromEntries(data.serviciosVerificacion.map((item) => [item.puestoId, item.nota || ''])),
+        ])));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -107,51 +117,71 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
       }
     }
     loadResumen();
-  }, [turno]);
+  }, []);
+
+  const turnosResumen = useMemo(() => (
+    TURNOS
+      .map((item) => summaries[item.codigo])
+      .filter(Boolean)
+  ), [summaries]);
+  const resumen = turnosResumen[0];
 
   const dynamicAlerts = useMemo(() => {
-    if (!resumen) return [];
-    return resumen.serviciosVerificacion.flatMap((servicio) => {
-      const state = states[servicio.puestoId];
-      const note = notes[servicio.puestoId];
-      if (state === 'danger') {
-        return [{
-          tipo: 'danger',
-          titulo: `Servicio descubierto - ${servicio.nombre}${servicio.etiqueta ? ` (${servicio.etiqueta})` : ''}`,
-          meta: `${resumen.turno.nombre} en curso - Marcado por la contrata - Sin cobertura${note ? ` - ${note}` : ''}`,
-        }];
-      }
-      if (state === 'warn') {
-        return [{
-          tipo: 'warn',
-          titulo: `Incidencia en ${servicio.nombre}${servicio.etiqueta ? ` (${servicio.etiqueta})` : ''}`,
-          meta: `${resumen.turno.nombre} en curso - Requiere revision${note ? ` - ${note}` : ''}`,
-        }];
-      }
-      return [];
-    });
-  }, [notes, resumen, states]);
+    return turnosResumen.flatMap((turnoResumen) => (
+      turnoResumen.serviciosVerificacion.flatMap((servicio) => {
+        const turnoStates = states[turnoResumen.turno.codigo] || {};
+        const turnoNotes = notes[turnoResumen.turno.codigo] || {};
+        const state = turnoStates[servicio.puestoId];
+        const note = turnoNotes[servicio.puestoId];
+        if (state === 'danger') {
+          return [{
+            tipo: 'danger',
+            titulo: `Servicio descubierto - ${servicio.nombre}${servicio.etiqueta ? ` (${servicio.etiqueta})` : ''}`,
+            meta: `${turnoResumen.turno.nombre} - Marcado por la contrata - Sin cobertura${note ? ` - ${note}` : ''}`,
+          }];
+        }
+        if (state === 'warn') {
+          return [{
+            tipo: 'warn',
+            titulo: `Incidencia en ${servicio.nombre}${servicio.etiqueta ? ` (${servicio.etiqueta})` : ''}`,
+            meta: `${turnoResumen.turno.nombre} - Requiere revision${note ? ` - ${note}` : ''}`,
+          }];
+        }
+        return [];
+      })
+    ));
+  }, [notes, states, turnosResumen]);
 
-  const doneCount = resumen
-    ? resumen.serviciosVerificacion.filter((item) => states[item.puestoId] !== 'pending').length
-    : 0;
+  const getDoneCount = (turnoResumen) => {
+    const turnoStates = states[turnoResumen.turno.codigo] || {};
+    return turnoResumen.serviciosVerificacion.filter((item) => turnoStates[item.puestoId] !== 'pending').length;
+  };
 
-  const setServiceStatus = (puestoId, status) => {
+  const setServiceStatus = (turnoCodigo, puestoId, status) => {
     setStates((prev) => ({
       ...prev,
-      [puestoId]: prev[puestoId] === status ? 'pending' : status,
+      [turnoCodigo]: {
+        ...(prev[turnoCodigo] || {}),
+        [puestoId]: prev[turnoCodigo]?.[puestoId] === status ? 'pending' : status,
+      },
     }));
   };
 
   const markAllOk = () => {
     if (!resumen) return;
-    setStates(Object.fromEntries(resumen.serviciosVerificacion.map((item) => [item.puestoId, 'ok'])));
+    setStates(Object.fromEntries(turnosResumen.map((turnoResumen) => [
+      turnoResumen.turno.codigo,
+      Object.fromEntries(turnoResumen.serviciosVerificacion.map((item) => [item.puestoId, 'ok'])),
+    ])));
     setNotes({});
   };
 
   const confirmVerification = async () => {
     if (!resumen) return;
-    const pendientes = resumen.serviciosVerificacion.filter((item) => states[item.puestoId] === 'pending');
+    const pendientes = turnosResumen.flatMap((turnoResumen) => {
+      const turnoStates = states[turnoResumen.turno.codigo] || {};
+      return turnoResumen.serviciosVerificacion.filter((item) => turnoStates[item.puestoId] === 'pending');
+    });
     if (pendientes.length > 0) {
       setFeedback({ type: 'error', message: `Quedan ${pendientes.length} servicios sin marcar.` });
       return;
@@ -159,16 +189,18 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
 
     setSaving(true);
     try {
-      await createVerificacionesLote({
-        fecha: resumen.fecha,
-        turno: resumen.turno.codigo,
-        verificaciones: resumen.serviciosVerificacion.map((item) => ({
-          puestoId: item.puestoId,
-          estado: states[item.puestoId],
-          nota: notes[item.puestoId] || null,
-        })),
-      });
-      setFeedback({ type: 'success', message: 'Turno verificado correctamente.' });
+      await Promise.all(turnosResumen.map((turnoResumen) => (
+        createVerificacionesLote({
+          fecha: turnoResumen.fecha,
+          turno: turnoResumen.turno.codigo,
+          verificaciones: turnoResumen.serviciosVerificacion.map((item) => ({
+            puestoId: item.puestoId,
+            estado: states[turnoResumen.turno.codigo]?.[item.puestoId],
+            nota: notes[turnoResumen.turno.codigo]?.[item.puestoId] || null,
+          })),
+        })
+      )));
+      setFeedback({ type: 'success', message: 'Turnos verificados correctamente.' });
     } catch (err) {
       setFeedback({ type: 'error', message: err.message });
     } finally {
@@ -224,72 +256,97 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
             <div className="flex flex-wrap items-start justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-700 font-serif text-2xl text-white">
-                  {resumen.turno.codigo}
+                  3
                 </div>
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">Verificacion de cobertura</div>
                   <h2 className="font-serif text-2xl font-semibold text-stone-900">
-                    {resumen.turno.nombre} - {resumen.turno.rango}
+                    Turnos del cuadrante diario
                   </h2>
                   <p className="text-sm text-stone-500">Hoy, sabado 16 de mayo de 2026</p>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-3">
-                <div className="text-right">
-                  <div className="font-serif text-4xl font-semibold text-stone-900">{doneCount}<span className="text-xl text-stone-500">/{resumen.serviciosVerificacion.length}</span></div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">Verificados</div>
-                </div>
-                <div className="flex gap-2">
-                  {TURNOS.map((item) => (
-                    <button
-                      key={item.codigo}
-                      type="button"
-                      onClick={() => setTurno(item.codigo)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${turno === item.codigo ? 'border-stone-900 bg-stone-900 text-white' : 'border-stone-200 bg-white text-stone-700'}`}
-                    >
-                      <span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ background: item.color }} />
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
+              <div className="grid gap-3 text-right sm:grid-cols-3">
+                {turnosResumen.map((turnoResumen) => (
+                  <div key={turnoResumen.turno.codigo}>
+                    <div className="font-serif text-3xl font-semibold text-stone-900">
+                      {getDoneCount(turnoResumen)}<span className="text-base text-stone-500">/{turnoResumen.serviciosVerificacion.length}</span>
+                    </div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-stone-500">{turnoResumen.turno.nombre}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="mt-6 space-y-2">
-              {resumen.serviciosVerificacion.map((servicio) => {
-                const state = states[servicio.puestoId] || 'pending';
-                const needsNote = state === 'warn' || state === 'danger';
-                return (
-                  <div key={servicio.puestoId} className={`rounded-md border p-4 transition-colors ${statusClass(state)}`}>
-                    <div className="flex flex-wrap items-center gap-4">
-                      <div className="min-w-0 flex-1">
-                        <div className="font-semibold text-stone-800">
-                          {servicio.nombre}
-                          {servicio.etiqueta && <span className="ml-2 rounded bg-stone-200 px-2 py-0.5 text-[10px] uppercase text-stone-600">{servicio.etiqueta}</span>}
-                        </div>
-                        <div className="text-xs text-stone-500">{servicio.meta}</div>
+            <div className="mt-6 grid gap-4 xl:grid-cols-3">
+              {turnosResumen.map((turnoResumen) => (
+                <div key={turnoResumen.turno.codigo} className="overflow-hidden rounded-lg border border-stone-200">
+                  <div className="flex items-center justify-between border-b border-stone-200 bg-stone-50 px-4 py-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white"
+                          style={{ background: TURNOS.find((item) => item.codigo === turnoResumen.turno.codigo)?.color }}
+                        >
+                          {turnoResumen.turno.codigo}
+                        </span>
+                        <h3 className="font-serif text-lg font-semibold text-stone-900">{turnoResumen.turno.nombre}</h3>
                       </div>
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-700 text-xs font-bold text-white">
-                        {servicio.iniciales}
-                      </div>
-                      <div className="flex gap-1">
-                        <button onClick={() => setServiceStatus(servicio.puestoId, 'ok')} className={`h-10 w-10 rounded border ${state === 'ok' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}><Check className="mx-auto h-4 w-4" /></button>
-                        <button onClick={() => setServiceStatus(servicio.puestoId, 'warn')} className={`h-10 w-10 rounded border font-bold ${state === 'warn' ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}>!</button>
-                        <button onClick={() => setServiceStatus(servicio.puestoId, 'danger')} className={`h-10 w-10 rounded border ${state === 'danger' ? 'border-red-600 bg-red-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}><X className="mx-auto h-4 w-4" /></button>
-                      </div>
+                      <div className="mt-1 text-xs text-stone-500">{turnoResumen.turno.rango}</div>
                     </div>
-                    {needsNote && (
-                      <textarea
-                        value={notes[servicio.puestoId] || ''}
-                        onChange={(event) => setNotes((prev) => ({ ...prev, [servicio.puestoId]: event.target.value }))}
-                        className="mt-3 w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                        rows="2"
-                        placeholder={state === 'danger' ? 'Descripcion del descubierto' : 'Descripcion de la incidencia'}
-                      />
-                    )}
+                    <div className="text-right">
+                      <div className="font-serif text-2xl font-semibold text-stone-900">
+                        {getDoneCount(turnoResumen)}<span className="text-sm text-stone-500">/{turnoResumen.serviciosVerificacion.length}</span>
+                      </div>
+                      <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-stone-500">Verificados</div>
+                    </div>
                   </div>
-                );
-              })}
+
+                  <div className="divide-y divide-stone-100">
+                    {turnoResumen.serviciosVerificacion.map((servicio) => {
+                      const turnoCodigo = turnoResumen.turno.codigo;
+                      const state = states[turnoCodigo]?.[servicio.puestoId] || 'pending';
+                      const needsNote = state === 'warn' || state === 'danger';
+                      return (
+                        <div key={servicio.puestoId} className={`p-3 transition-colors ${statusClass(state)}`}>
+                          <div className="flex items-center gap-3">
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate font-semibold text-stone-800">
+                                {servicio.nombre}
+                                {servicio.etiqueta && <span className="ml-2 rounded bg-stone-200 px-2 py-0.5 text-[10px] uppercase text-stone-600">{servicio.etiqueta}</span>}
+                              </div>
+                              <div className="truncate text-xs text-stone-500">{servicio.meta}</div>
+                            </div>
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-700 text-[10px] font-bold text-white">
+                              {servicio.iniciales}
+                            </div>
+                          </div>
+                          <div className="mt-3 flex gap-1">
+                            <button title="Cubierto" onClick={() => setServiceStatus(turnoCodigo, servicio.puestoId, 'ok')} className={`h-9 flex-1 rounded border ${state === 'ok' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}><Check className="mx-auto h-4 w-4" /></button>
+                            <button title="Incidencia" onClick={() => setServiceStatus(turnoCodigo, servicio.puestoId, 'warn')} className={`h-9 flex-1 rounded border font-bold ${state === 'warn' ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}>!</button>
+                            <button title="Descubierto" onClick={() => setServiceStatus(turnoCodigo, servicio.puestoId, 'danger')} className={`h-9 flex-1 rounded border ${state === 'danger' ? 'border-red-600 bg-red-600 text-white' : 'border-stone-200 bg-white text-stone-500'}`}><X className="mx-auto h-4 w-4" /></button>
+                          </div>
+                          {needsNote && (
+                            <textarea
+                              value={notes[turnoCodigo]?.[servicio.puestoId] || ''}
+                              onChange={(event) => setNotes((prev) => ({
+                                ...prev,
+                                [turnoCodigo]: {
+                                  ...(prev[turnoCodigo] || {}),
+                                  [servicio.puestoId]: event.target.value,
+                                },
+                              }))}
+                              className="mt-3 w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                              rows="2"
+                              placeholder={state === 'danger' ? 'Descripcion del descubierto' : 'Descripcion de la incidencia'}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 pt-4">
