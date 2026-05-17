@@ -49,13 +49,18 @@ export default function Sidebar({ currentRoute = 'dashboard', onNavigate, onLogo
 
   return (
     <aside className="w-64 bg-stone-950 text-stone-200 min-h-screen flex flex-col sticky top-0 h-screen">
-      <div className="p-6 border-b border-stone-800">
-        <div className="flex items-center gap-2 text-amber-500 font-bold text-xl tracking-tight">
+      <div className="p-6 border-b border-stone-800 flex flex-col items-start gap-4">
+        {/* Logo principal */}
+        <div className="bg-white p-2 rounded-md w-full">
+          <img src="/logo-seguridad.png" alt="Unidad de Seguridad - Universidad de Zaragoza" className="w-full h-auto object-contain" />
+        </div>
+        
+        <div className="flex items-center gap-2 text-amber-500 font-bold text-xl tracking-tight mt-2">
           <div className="w-2.5 h-6 bg-amber-500"></div>
           Cuadrantes UZ
         </div>
-        <p className="text-xs uppercase tracking-widest text-stone-500 mt-2 ml-4">
-          {contrata ? 'Contrata de vigilancia' : 'Unidad de Seguridad'}
+        <p className="text-xs uppercase tracking-widest text-stone-500 ml-4">
+          {contrata ? 'Contrata de vigilancia' : 'Gestión Interna'}
         </p>
       </div>
 

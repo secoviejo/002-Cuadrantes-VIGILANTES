@@ -58,13 +58,18 @@ export default function LoginForm({ onSuccess, onError }) {
     <div className="min-h-screen flex items-center justify-center bg-stone-100">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="bg-stone-950 px-6 py-8 text-center">
+          <div className="bg-stone-950 px-6 py-8 text-center flex flex-col items-center">
+            {/* Logos en la cabecera del login */}
+            <div className="bg-white p-3 rounded-lg w-3/4 mb-6 shadow-md">
+              <img src="/logo-seguridad.png" alt="Unidad de Seguridad - Universidad de Zaragoza" className="w-full h-auto object-contain" />
+            </div>
+
             <div className="flex items-center justify-center gap-2 text-amber-500 font-bold text-2xl tracking-tight mb-2">
               <div className="w-3 h-8 bg-amber-500"></div>
               Cuadrantes UZ
             </div>
             <p className="text-xs uppercase tracking-widest text-stone-400">
-              Unidad de Seguridad
+              Acceso Restringido
             </p>
           </div>
 
