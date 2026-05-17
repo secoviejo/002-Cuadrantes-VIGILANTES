@@ -16,6 +16,10 @@ Sistema de gestión de cuadrantes de vigilantes de seguridad para la Universidad
 
 ## Instalacion
 
+Para preparar un equipo nuevo desde GitHub, incluyendo aplicacion y base de datos, sigue la guia:
+
+- [`docs/instalacion-desde-github.md`](docs/instalacion-desde-github.md)
+
 ### Backend
 
 ```bash
