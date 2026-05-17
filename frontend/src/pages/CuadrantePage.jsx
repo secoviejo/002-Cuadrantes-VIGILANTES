@@ -47,11 +47,31 @@ const MONTHS = [
 const YEAR = 2026;
 
 function hasDescubierto(servicio) {
-  return servicio.celdas.some((celda) => celda.turnos.some((turno) => turno.estado === 'DESCUBIERTO'));
+  return servicio.celdas.some((celda) => celda.turnos.some((turno) => turno.estado === 'DESCUBIERTO' || turno.verificacionEstado === 'DESCUBIERTO'));
 }
 
 function getDiaClass(dia) {
   return DIA_CLASS[dia.tipoDia] || DIA_CLASS.NORMAL;
+}
+
+function getTurnoClass(turno) {
+  if (turno.verificacionEstado === 'DESCUBIERTO') return 'cuadrante-alerta-danger bg-red-600 text-white ring-2 ring-red-300';
+  if (turno.verificacionEstado === 'INCIDENCIA') return 'cuadrante-alerta-warn bg-amber-500 text-white ring-2 ring-amber-300';
+  if (turno.estado === 'DESCUBIERTO') return 'bg-red-600 text-white';
+  return TURNO_CLASS[turno.codigo] || 'bg-stone-300 text-stone-800';
+}
+
+function getTurnoLabel(turno) {
+  if (turno.estado === 'DESCUBIERTO' || turno.verificacionEstado === 'DESCUBIERTO') return 'x';
+  if (turno.verificacionEstado === 'INCIDENCIA') return '!';
+  return turno.codigo;
+}
+
+function getTurnoTitle(turno) {
+  if (turno.verificacionEstado) {
+    return `${turno.verificacionEstado}${turno.verificacionResumen ? ` - ${turno.verificacionResumen}` : ''}`;
+  }
+  return turno.estado === 'DESCUBIERTO' ? 'Sin cubrir' : turno.estado;
 }
 
 export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user }) {
@@ -163,6 +183,8 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
         <span><b className="mr-1 inline-block h-3 w-3 bg-[#4a4742] align-middle" />Noche</span>
         <span><b className="mr-1 inline-block h-3 w-3 bg-[#6b7e5b] align-middle" />Diurno</span>
         <span><b className="mr-1 inline-block h-3 w-3 bg-red-600 align-middle" />Sin cubrir</span>
+        <span><b className="cuadrante-alerta-danger mr-1 inline-block h-3 w-3 bg-red-600 align-middle" />Descubierto verificado</span>
+        <span><b className="cuadrante-alerta-warn mr-1 inline-block h-3 w-3 bg-amber-500 align-middle" />Incidencia verificada</span>
         <span className="h-4 w-px bg-stone-200" />
         {DIA_LEGEND.map((item) => (
           <span key={item.id}><b className={`mr-1 inline-block h-3 w-3 align-middle ${item.className}`} />{item.label}</span>
@@ -206,10 +228,10 @@ export default function CuadrantePage({ currentRoute, onNavigate, onLogout, user
                       {celda.turnos.map((turno) => (
                         <div
                           key={turno.id}
-                          className={`h-5 rounded-sm text-center text-[10px] font-bold leading-5 ${turno.estado === 'DESCUBIERTO' ? 'bg-red-600 text-white' : TURNO_CLASS[turno.codigo] || 'bg-stone-300 text-stone-800'}`}
-                          title={turno.estado === 'DESCUBIERTO' ? 'Sin cubrir' : turno.estado}
+                          className={`h-5 rounded-sm text-center text-[10px] font-bold leading-5 ${getTurnoClass(turno)}`}
+                          title={getTurnoTitle(turno)}
                         >
-                          {turno.estado === 'DESCUBIERTO' ? 'x' : turno.codigo}
+                          {getTurnoLabel(turno)}
                         </div>
                       ))}
                     </div>

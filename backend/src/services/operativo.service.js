@@ -75,6 +75,25 @@ function mapEstadoVerificacion(estado) {
   return estados[estado] || 'CUBIERTO'
 }
 
+function getEstadoVerificacionTurno(turno) {
+  const verificaciones = turno.verificaciones || []
+  if (verificaciones.some((item) => item.estado === 'DESCUBIERTO')) return 'DESCUBIERTO'
+  if (verificaciones.some((item) => item.estado === 'INCIDENCIA')) return 'INCIDENCIA'
+  if (verificaciones.some((item) => item.estado === 'CUBIERTO')) return 'CUBIERTO'
+  return null
+}
+
+function getResumenVerificacionTurno(turno) {
+  const verificaciones = turno.verificaciones || []
+  return verificaciones
+    .filter((item) => ['DESCUBIERTO', 'INCIDENCIA'].includes(item.estado))
+    .map((item) => {
+      const puesto = item.puesto?.etiqueta || item.puesto?.nombre || 'Puesto'
+      return `${item.estado}: ${puesto}${item.nota ? ` - ${item.nota}` : ''}`
+    })
+    .join(' | ')
+}
+
 function buildPeriodoLabel(anio, mes) {
   return `${MONTH_NAMES[mes - 1] || `Mes ${mes}`} ${anio}`
 }
@@ -552,7 +571,13 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
     }),
     prisma.turno.findMany({
       where: { fecha: { gte: fechaDesde, lte: fechaHasta } },
-      include: { servicio: true },
+      include: {
+        servicio: true,
+        verificaciones: {
+          orderBy: { verificadaEn: 'desc' },
+          include: { puesto: true },
+        },
+      },
       orderBy: [{ fecha: 'asc' }, { horaInicio: 'asc' }],
     }),
     prisma.calendarioLaboral.findMany({
@@ -573,6 +598,8 @@ export async function obtenerCuadranteMensual({ anio = 2026, mes = 5 } = {}) {
       id: turno.id,
       codigo: getTurnoCodigo(turno),
       estado: mapEstadoCobertura(turno.estado),
+      verificacionEstado: getEstadoVerificacionTurno(turno),
+      verificacionResumen: getResumenVerificacionTurno(turno),
     })
     turnosPorServicioDia.set(key, entries)
   }

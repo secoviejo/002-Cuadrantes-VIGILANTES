@@ -93,6 +93,28 @@ describe('operativo.service', () => {
     expect(cuadrante.dias[0].tipoDia).toBe('FESTIVO')
   })
 
+  it('refleja incidencias y descubiertos verificados en el cuadrante mensual', async () => {
+    mockPrisma.servicio.findMany.mockResolvedValue([
+      { id: 1, codigo: 'SERV_PAR_24H', nombre: 'Paraiso', tipoOperativo: 'Vigilancia', descripcion: '24/7', modalidad: '24/7' },
+      { id: 2, codigo: 'SERV_VET_24H', nombre: 'Veterinaria', tipoOperativo: 'Vigilancia', descripcion: '24/7', modalidad: '24/7' },
+    ])
+    mockPrisma.calendarioLaboral.findMany.mockResolvedValue([])
+    mockPrisma.turno.findMany.mockResolvedValue([
+      turnoVerificado(1, 1, '2026-05-16', '06:00', '14:00', 'CUBIERTO', 101, 'DESCUBIERTO', 'dormido'),
+      turnoVerificado(2, 2, '2026-05-16', '06:00', '14:00', 'CUBIERTO', 102, 'INCIDENCIA', 'llega tarde'),
+    ])
+
+    const cuadrante = await obtenerCuadranteMensual({ anio: 2026, mes: 5 })
+    const paraisoDia16 = cuadrante.servicios[0].celdas[15].turnos[0]
+    const veterinariaDia16 = cuadrante.servicios[1].celdas[15].turnos[0]
+
+    expect(paraisoDia16.estado).toBe('CUBIERTO')
+    expect(paraisoDia16.verificacionEstado).toBe('DESCUBIERTO')
+    expect(paraisoDia16.verificacionResumen).toContain('dormido')
+    expect(veterinariaDia16.verificacionEstado).toBe('INCIDENCIA')
+    expect(veterinariaDia16.verificacionResumen).toContain('llega tarde')
+  })
+
   it('genera una planificacion base para meses de 2026 sin turnos persistidos', async () => {
     mockPrisma.servicio.findMany.mockResolvedValue([
       { id: 1, codigo: 'SERV_PAR_24H', nombre: 'Paraiso', tipoOperativo: 'Vigilancia', descripcion: '24/7', modalidad: '24/7' },
