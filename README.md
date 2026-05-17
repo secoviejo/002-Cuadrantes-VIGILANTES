@@ -171,6 +171,7 @@ npm run build        # Produccion
 - Edicion administrativa del contrato anual desde Horas anuales: bolsa variable y categorias del pliego persistidas en MariaDB con auditoria.
 - Calendario laboral 2026 con festivos reales del HTML original, periodos academicos y alta manual de festivos.
 - Formulario avanzado de servicios con metadatos operativos y filtro por campus.
+- Alta y edicion de trabajadores con foto opcional (`fotoUrl`) y avatar demo por defecto.
 
 **Pendiente:**
 - Reforzar permisos por rol en todos los endpoints operativos

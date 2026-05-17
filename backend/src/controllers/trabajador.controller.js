@@ -18,6 +18,7 @@ const CAMPOS_TRABAJADOR = [
   'nombre',
   'tipo',
   'identificadorProfesional',
+  'fotoUrl',
   'activo',
   'empresaId',
 ]

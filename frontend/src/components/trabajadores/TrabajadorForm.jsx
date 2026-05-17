@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createTrabajador, updateTrabajador } from '../../api/catalogos';
-import { Save, X, Loader2 } from 'lucide-react';
+import { Image, RotateCcw, Save, X, Loader2 } from 'lucide-react';
 
 const TIPOS_TRABAJADOR = [
   { value: 'VIGILANTE', label: 'Vigilante' },
@@ -8,6 +8,8 @@ const TIPOS_TRABAJADOR = [
   { value: 'JEFE_EQUIPO', label: 'Jefe de Equipo' },
   { value: 'OTRO', label: 'Otro' },
 ];
+
+const DEFAULT_FOTO_TRABAJADOR = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%23f5f5f4'/%3E%3Ccircle cx='80' cy='58' r='30' fill='%23d97706'/%3E%3Cpath d='M30 140c6-34 29-54 50-54s44 20 50 54' fill='%23292524'/%3E%3Cpath d='M50 43h60l-7-16H57z' fill='%2344413c'/%3E%3Cpath d='M48 43h64v13H48z' fill='%235b8a9c'/%3E%3Ccircle cx='68' cy='57' r='4' fill='%23fff7ed'/%3E%3Ccircle cx='92' cy='57' r='4' fill='%23fff7ed'/%3E%3Cpath d='M68 74c7 5 17 5 24 0' stroke='%23fff7ed' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E";
 
 export default function TrabajadorForm({ trabajador, onSaved, onCancel, empresaList }) {
   const isEditing = !!trabajador;
@@ -17,6 +19,7 @@ export default function TrabajadorForm({ trabajador, onSaved, onCancel, empresaL
     nombre: '',
     tipo: 'VIGILANTE',
     identificadorProfesional: '',
+    fotoUrl: DEFAULT_FOTO_TRABAJADOR,
     activo: true,
     empresaId: ''
   });
@@ -31,6 +34,7 @@ export default function TrabajadorForm({ trabajador, onSaved, onCancel, empresaL
         nombre: trabajador.nombre || '',
         tipo: trabajador.tipo || 'VIGILANTE',
         identificadorProfesional: trabajador.identificadorProfesional || '',
+        fotoUrl: trabajador.fotoUrl || DEFAULT_FOTO_TRABAJADOR,
         activo: trabajador.activo ?? true,
         empresaId: trabajador.empresaId || trabajador.empresa?.id || ''
       });
@@ -56,6 +60,7 @@ export default function TrabajadorForm({ trabajador, onSaved, onCancel, empresaL
         nombre: formData.nombre,
         tipo: formData.tipo,
         identificadorProfesional: formData.identificadorProfesional || null,
+        fotoUrl: formData.fotoUrl || DEFAULT_FOTO_TRABAJADOR,
         activo: formData.activo,
         empresaId: parseInt(formData.empresaId)
       };
@@ -92,6 +97,53 @@ export default function TrabajadorForm({ trabajador, onSaved, onCancel, empresaL
             {error}
           </div>
         )}
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-[160px_1fr]">
+          <div className="space-y-2">
+            <span className="block text-sm font-medium text-stone-700">Foto</span>
+            <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-md border border-stone-300 bg-stone-100">
+              <img
+                src={formData.fotoUrl || DEFAULT_FOTO_TRABAJADOR}
+                alt="Vista previa del trabajador"
+                className="h-full w-full object-cover"
+                onError={(event) => {
+                  event.currentTarget.src = DEFAULT_FOTO_TRABAJADOR;
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="fotoUrl" className="block text-sm font-medium text-stone-700">
+              URL de foto
+            </label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Image className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                <input
+                  type="text"
+                  id="fotoUrl"
+                  name="fotoUrl"
+                  value={formData.fotoUrl}
+                  onChange={handleChange}
+                  className="w-full rounded-md border border-stone-300 py-2 pl-9 pr-3 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  placeholder="https://..."
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, fotoUrl: DEFAULT_FOTO_TRABAJADOR }))}
+                className="inline-flex items-center gap-2 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 shadow-sm hover:bg-stone-50"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Demo
+              </button>
+            </div>
+            <p className="text-xs text-stone-500">
+              De momento se carga una foto demo inventada. Mas adelante se puede sustituir por subida real de archivo.
+            </p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">

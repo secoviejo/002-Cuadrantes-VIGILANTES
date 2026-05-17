@@ -108,6 +108,7 @@ model Trabajador {
   nombre                     String            @db.VarChar(191)
   tipo                       TipoTrabajador
   identificadorProfesional   String?           @db.VarChar(80)
+  fotoUrl                    String?           @db.Text
   activo                     Boolean           @default(true)
   empresaId                  Int
   empresa                    Empresa           @relation(fields: [empresaId], references: [id])

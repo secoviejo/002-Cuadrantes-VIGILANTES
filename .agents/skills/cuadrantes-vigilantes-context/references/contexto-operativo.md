@@ -74,7 +74,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 | Cierre mensual | Implementado en React con API | Muestra conciliacion planificado/ejecutado y checklist de validacion de factura. |
 | Catalogo de servicios | Visual con filtro cliente | Lista 13 servicios y filtra por campus manipulando filas HTML. |
 | Nuevo servicio | Implementado en React con persistencia | Formulario avanzado con metadatos operativos y previsualizacion. |
-| Personal | Tabla demo generada | Lista vigilantes y auxiliares con formacion, acreditacion y estado. |
+| Personal | Implementado en React con API | Lista vigilantes y auxiliares con acreditacion, estado y foto opcional mediante `fotoUrl`. El alta de trabajador incluye avatar demo por defecto y vista previa. |
 | Calendario laboral | Implementado en React con API | Muestra festivos 2026, periodos academicos y permite alta manual de festivos para UZ/ADMIN. |
 | Informes | Implementado en React con API | Permite elegir informe diario, mensual o anual y previsualizarlo para imprimir/PDF del navegador. El informe diario agrega las verificaciones confirmadas de manana, tarde y noche, incluyendo incidencias, descubiertos y notas. |
 | Impresion/PDF | Dependiente del navegador | Usa `window.print()` para imprimir o guardar PDF desde el navegador. |
@@ -353,6 +353,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 - 2026-05-17: Ajustado el Resumen operativo React para mostrar simultaneamente los tres turnos del cuadrante diario en tres tablas de verificacion: manana, tarde y noche. El frontend carga los tres resumenes de `GET /api/resumen-operativo` en paralelo y conserva el guardado por lotes con JWT.
 - 2026-05-17: Anadida guia `docs/instalacion-desde-github.md` para desplegar el entorno de desarrollo desde GitHub en un equipo nuevo, con MariaDB por Docker, migraciones Prisma, seed, backend, frontend y usuarios demo.
 - 2026-05-17: Corregido el informe operativo diario para que no use solo el turno noche. Ahora agrega los turnos manana, tarde y noche, muestra 23 servicios verificables, separa incidencias/descubiertos confirmados y conserva las notas guardadas por la contrata.
+- 2026-05-17: Anadida foto opcional de trabajador (`fotoUrl`) al modelo Prisma, API y frontend. El formulario de trabajadores muestra un avatar demo inventado por defecto y permite sustituirlo por una URL.
 - 2026-05-16: Migrado Calendario laboral 2026 desde el HTML original. Anadida API `GET/POST /api/calendario-laboral`, seed con 11 festivos reales y periodos academicos servidos como constantes operativas, pagina React de calendario visible para ADMIN/Unidad de Seguridad y alta manual de festivos.
 - 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.

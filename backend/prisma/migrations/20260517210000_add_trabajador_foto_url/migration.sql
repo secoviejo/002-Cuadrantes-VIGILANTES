@@ -1,0 +1,1 @@
+ALTER TABLE `Trabajador` ADD COLUMN `fotoUrl` TEXT NULL;

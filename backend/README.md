@@ -38,10 +38,10 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `PUT /api/campus/:id`: actualiza un campus.
 - `POST /api/edificios`: crea un edificio.
 - `PUT /api/edificios/:id`: actualiza un edificio.
-- `GET /api/trabajadores`: lista trabajadores con filtros basicos.
+- `GET /api/trabajadores`: lista trabajadores con filtros basicos, incluyendo `fotoUrl` cuando exista.
 - `GET /api/trabajadores/:id`: obtiene un trabajador.
-- `POST /api/trabajadores`: crea un trabajador.
-- `PUT /api/trabajadores/:id`: actualiza un trabajador.
+- `POST /api/trabajadores`: crea un trabajador, con `fotoUrl` opcional.
+- `PUT /api/trabajadores/:id`: actualiza un trabajador, con `fotoUrl` opcional.
 - `GET /api/servicios`: lista servicios con filtros basicos.
 - `GET /api/servicios/:id`: obtiene un servicio.
 - `POST /api/servicios`: crea un servicio.

@@ -29,6 +29,7 @@ Pantallas operativas recuperadas del HTML original:
 - `HorasAnualesPage.jsx` muestra el seguimiento contractual y permite editar bolsa variable y categorias del pliego para UZ/ADMIN. `CierreMensualPage.jsx` muestra la conciliacion de mayo 2026.
 - `CalendarioLaboralPage.jsx` reproduce el calendario laboral 2026 con festivos, periodos academicos y alta manual de festivo.
 - `ServiciosPage.jsx` filtra por campus y `ServicioForm.jsx` ofrece un formulario avanzado con previsualizacion.
+- `TrabajadorForm.jsx` permite registrar una foto mediante `fotoUrl`, con avatar demo inventado por defecto y vista previa en formulario y tabla.
 - La navegacion se adapta por rol: Contrata solo ve Operacion; ADMIN y Unidad de Seguridad ven todo.
 - La navegacion de mes esta activa para enero-diciembre de 2026, con selector desplegable y botones de mes anterior/siguiente.
 
