@@ -5,7 +5,7 @@ import {
   getResumenOperativo,
 } from '../api/catalogos';
 import AppLayout from '../components/layout/AppLayout';
-import { AlertCircle, Check, FileText, Loader2, Printer, X } from 'lucide-react';
+import { AlertCircle, CalendarDays, Check, ChevronLeft, ChevronRight, FileText, Loader2, Printer, X } from 'lucide-react';
 
 const TURNOS = [
   { codigo: 'M', label: 'Mañana', color: '#5b8a9c' },
@@ -20,12 +20,39 @@ const ESTADOS = {
   DESCUBIERTO: 'danger',
 };
 
+const SERVICE_DATE_MIN = '2026-05-01';
+const SERVICE_DATE_MAX = '2026-05-31';
+
 function formatNumber(value) {
   return Number(value || 0).toLocaleString('es-ES');
 }
 
 function todayForDemo() {
   return '2026-05-16';
+}
+
+function clampServiceDate(value) {
+  if (!value) return todayForDemo();
+  if (value < SERVICE_DATE_MIN) return SERVICE_DATE_MIN;
+  if (value > SERVICE_DATE_MAX) return SERVICE_DATE_MAX;
+  return value;
+}
+
+function addDays(value, amount) {
+  const date = new Date(`${value}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + amount);
+  return clampServiceDate(date.toISOString().slice(0, 10));
+}
+
+function formatServiceDate(value) {
+  const formatted = new Intl.DateTimeFormat('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${value}T00:00:00.000Z`));
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 function KpiCard({ label, value, unit, sub, tone = 'neutral', progress }) {
@@ -85,6 +112,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
   const [reportPickerOpen, setReportPickerOpen] = useState(false);
   const [reportLoading, setReportLoading] = useState(false);
   const [report, setReport] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(todayForDemo());
 
   useEffect(() => {
     async function loadResumen() {
@@ -93,7 +121,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
       try {
         const responses = await Promise.all(
           TURNOS.map(async (item) => {
-            const payload = await getResumenOperativo({ fecha: todayForDemo(), turno: item.codigo });
+            const payload = await getResumenOperativo({ fecha: selectedDate, turno: item.codigo });
             return [item.codigo, payload.data || payload];
           }),
         );
@@ -110,6 +138,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
           codigo,
           Object.fromEntries(data.serviciosVerificacion.map((item) => [item.puestoId, item.nota || ''])),
         ])));
+        setFeedback(null);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -117,7 +146,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
       }
     }
     loadResumen();
-  }, []);
+  }, [selectedDate]);
 
   const turnosResumen = useMemo(() => (
     TURNOS
@@ -125,6 +154,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
       .filter(Boolean)
   ), [summaries]);
   const resumen = turnosResumen[0];
+  const selectedDateLabel = formatServiceDate(selectedDate);
 
   const dynamicAlerts = useMemo(() => {
     return turnosResumen.flatMap((turnoResumen) => (
@@ -212,7 +242,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
     setReportPickerOpen(false);
     setReportLoading(true);
     try {
-      const payload = await getInformeOperativo({ tipo, fecha: todayForDemo(), anio: 2026, mes: 5 });
+      const payload = await getInformeOperativo({ tipo, fecha: selectedDate, anio: 2026, mes: 5 });
       setReport(payload.data || payload);
     } catch (err) {
       setFeedback({ type: 'error', message: err.message });
@@ -241,6 +271,46 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
         </button>
       }
     >
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-stone-200 bg-white px-5 py-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-800">
+            <CalendarDays className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">Dia de servicio</div>
+            <div className="font-serif text-xl font-semibold text-stone-900">{selectedDateLabel}</div>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedDate((current) => addDays(current, -1))}
+            disabled={selectedDate <= SERVICE_DATE_MIN}
+            title="Dia anterior"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-stone-300 text-stone-600 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <input
+            type="date"
+            min={SERVICE_DATE_MIN}
+            max={SERVICE_DATE_MAX}
+            value={selectedDate}
+            onChange={(event) => setSelectedDate(clampServiceDate(event.target.value))}
+            className="h-10 rounded-md border border-stone-300 px-3 text-sm font-medium text-stone-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+          />
+          <button
+            type="button"
+            onClick={() => setSelectedDate((current) => addDays(current, 1))}
+            disabled={selectedDate >= SERVICE_DATE_MAX}
+            title="Dia siguiente"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-stone-300 text-stone-600 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
       {loading ? (
         <div className="flex items-center justify-center p-12 text-stone-500">
           <Loader2 className="mr-2 h-6 w-6 animate-spin" /> Cargando resumen operativo...
@@ -263,7 +333,7 @@ export default function Dashboard({ currentRoute, onNavigate, onLogout, user }) 
                   <h2 className="font-serif text-2xl font-semibold text-stone-900">
                     Turnos del cuadrante diario
                   </h2>
-                  <p className="text-sm text-stone-500">Hoy, sabado 16 de mayo de 2026</p>
+                  <p className="text-sm text-stone-500">{selectedDateLabel}</p>
                 </div>
               </div>
               <div className="grid gap-3 text-right sm:grid-cols-3">
