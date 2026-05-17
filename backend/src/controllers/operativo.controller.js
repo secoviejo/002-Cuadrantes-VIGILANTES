@@ -6,6 +6,7 @@ import {
   obtenerResumenOperativo,
 } from '../services/operativo.service.js'
 import { asyncHandler } from '../utils/httpUtils.js'
+import { actualizarContratoAnual as guardarContratoAnual } from '../services/contratoAnual.service.js'
 
 export const resumenOperativo = asyncHandler(async (req, res) => {
   const data = await obtenerResumenOperativo({
@@ -28,6 +29,16 @@ export const cuadranteMensual = asyncHandler(async (req, res) => {
 export const horasAnuales = asyncHandler(async (req, res) => {
   const data = await obtenerHorasAnuales({
     anio: req.query.anio ? Number.parseInt(req.query.anio, 10) : 2026,
+  })
+
+  res.json({ data })
+})
+
+export const contratoAnual = asyncHandler(async (req, res) => {
+  const data = await guardarContratoAnual({
+    anio: req.params.anio,
+    payload: req.body,
+    usuarioId: req.user?.id,
   })
 
   res.json({ data })

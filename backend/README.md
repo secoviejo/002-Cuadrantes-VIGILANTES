@@ -69,7 +69,8 @@ Puedes copiar `.env.example` a `.env` para ajustar `PORT`, `HOST`, `FRONTEND_ORI
 - `GET /api/resumen-operativo?fecha=2026-05-16&turno=M|T|N`: devuelve KPIs, horas, servicios a verificar, cobertura por campus, alertas y ultimas sustituciones para el Resumen operativo.
 - `GET /api/cuadrante-mensual?anio=2026&mes=1..12`: devuelve dias, servicios y celdas del cuadrante mensual. Cada dia incluye `tipoDia` (`NORMAL`, `FESTIVO`, `NO_LECTIVO`) segun festivos, fin de semana y periodos academicos usados por el PTT.
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`: devuelve informe estructurado para vista previa imprimible.
-- `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato, categorias de hora y variables informativas.
+- `GET /api/horas-anuales?anio=2026`: devuelve acumulado anual, contrato persistido, categorias de hora y variables informativas.
+- `PUT /api/contrato-anual/:anio`: actualiza bolsa variable anual y categorias del pliego. Requiere JWT y rol `ADMIN` o `UNIDAD_SEGURIDAD_UZ`.
 - `GET /api/cierre-mensual?anio=2026&mes=5`: devuelve conciliacion mensual planificado/ejecutado y checklist de validacion.
 - `GET /api/calendario-laboral?anio=2026`: devuelve festivos y periodos academicos del calendario laboral.
 - `POST /api/calendario-laboral`: alta manual de festivo. Requiere JWT y rol `ADMIN` o `UNIDAD_SEGURIDAD_UZ`.
@@ -195,6 +196,7 @@ Datos operativos recuperados:
 - Servicios activos: San Francisco, Paraiso, Veterinaria, Rio Ebro, CECO, CECO jefe equipo, Teruel, Huesca, OCA San Francisco, C.M.U. Pedro Cerbuna, C.M.U. Ramon Acin, Residencia Jaca y Salas estudio.
 - Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas, desviacion -86 h.
 - Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
+- Contrato anual editable: prestaciones fijas calculadas desde categorias del pliego y bolsa variable inicial de 2.000 h.
 - Descubiertos iniciales: Huesca tarde 10/05, CECO jefe 06/05 y 14/05.
 
 Usuarios demo creados o actualizados por el seed:
@@ -223,6 +225,7 @@ npm run seed
 - Autenticacion JWT basica disponible con usuarios demo.
 - `POST /api/verificaciones` requiere token JWT y deriva `usuarioId` del usuario autenticado.
 - `GET /api/resumen-operativo` y `GET /api/cuadrante-mensual` sirven los datos reales de mayo 2026 migrados desde el HTML original. El cuadrante clasifica los dias segun reglas derivadas del PTT archivado en `docs/fuentes/`.
+- `GET /api/horas-anuales` lee `ContratoAnual` y `ContratoCategoriaHora`; `PUT /api/contrato-anual/:anio` actualiza esos valores y registra auditoria.
 - `POST /api/verificaciones/lote` persiste verificaciones por puesto de cobertura con el usuario autenticado.
 - Los endpoints operativos y de catalogo se han endurecido con JWT y permisos por rol.
 - `ADMIN` y `UNIDAD_SEGURIDAD_UZ` tienen acceso completo; `CONTRATA` queda limitada a Resumen, Cuadrante, Sustituciones y Verificaciones.

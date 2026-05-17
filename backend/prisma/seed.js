@@ -12,6 +12,13 @@ function dateOnly(date) {
 
 const DEMO_PASSWORD_HASH = '7dbb7f051b44d7d54584a7bc6c32f00da5a3b5e6973485b9fb176fe56346b3e3'
 
+const CONTRATO_CATEGORIAS_2026 = [
+  { codigo: 'LABORAL_DIURNO', nombre: 'Laboral diurno', contratoHoras: 27656, orden: 1 },
+  { codigo: 'LABORAL_NOCTURNO', nombre: 'Laboral nocturno', contratoHoras: 15944, orden: 2 },
+  { codigo: 'FESTIVO_DIURNO', nombre: 'Festivo diurno', contratoHoras: 12740, orden: 3 },
+  { codigo: 'FESTIVO_NOCTURNO', nombre: 'Festivo nocturno', contratoHoras: 7168, orden: 4 },
+]
+
 const TURNOS = {
   M: { inicio: '06:00', fin: '14:00', horas: 8 },
   T: { inicio: '14:00', fin: '22:00', horas: 8 },
@@ -358,6 +365,35 @@ async function main() {
         tipo: 'FESTIVO',
         descripcion: festivo.descripcion,
         campusId: festivo.campusId,
+      },
+    })
+  }
+
+  const contratoAnual = await prisma.contratoAnual.upsert({
+    where: { anio: 2026 },
+    update: {
+      bolsaVariableHoras: 2000,
+      observaciones: 'Datos iniciales recuperados del PTT-Vigilancia-UZ.md',
+    },
+    create: {
+      anio: 2026,
+      bolsaVariableHoras: 2000,
+      observaciones: 'Datos iniciales recuperados del PTT-Vigilancia-UZ.md',
+    },
+  })
+
+  for (const categoria of CONTRATO_CATEGORIAS_2026) {
+    await prisma.contratoCategoriaHora.upsert({
+      where: {
+        contratoId_codigo: {
+          contratoId: contratoAnual.id,
+          codigo: categoria.codigo,
+        },
+      },
+      update: categoria,
+      create: {
+        ...categoria,
+        contratoId: contratoAnual.id,
       },
     })
   }

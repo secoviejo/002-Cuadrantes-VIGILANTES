@@ -40,8 +40,9 @@ El Resumen operativo y el Cuadrante mensual ya consumen servicios backend especi
 - `POST /api/verificaciones/lote`: persistencia de verificaciones por puesto, siempre con JWT.
 - `GET /api/informes-operativos`: informe diario, mensual o anual estructurado para vista previa imprimible.
 - `GET /api/horas-anuales` y `GET /api/cierre-mensual`: seguimiento contractual y conciliacion mensual para validacion de factura.
+- `PUT /api/contrato-anual/:anio`: edicion administrativa de bolsa variable y categorias del pliego con auditoria.
 - `GET /api/calendario-laboral` y `POST /api/calendario-laboral`: consulta y alta manual de festivos del calendario laboral.
 
-El seed idempotente carga servicios, turnos, horas de contrato, descubiertos de mayo 2026 y festivos reales de 2026. Los nombres ficticios de vigilantes del HTML no se importan como trabajadores reales. El PTT vigente queda archivado como fuente de conocimiento en `docs/fuentes/PTT-Vigilancia-UZ.md`.
+El seed idempotente carga servicios, turnos, horas de contrato, contrato anual editable, descubiertos de mayo 2026 y festivos reales de 2026. Los nombres ficticios de vigilantes del HTML no se importan como trabajadores reales. El PTT vigente queda archivado como fuente de conocimiento en `docs/fuentes/PTT-Vigilancia-UZ.md`.
 
 La navegacion y backend aplican permisos basicos por rol. ADMIN y Unidad de Seguridad tienen acceso completo. Contrata queda limitada a Operacion: Resumen, Cuadrante, Sustituciones y Verificaciones. La navegacion de meses del cuadrante esta activa para todo 2026; los meses sin datos persistidos se identifican como planificacion base calculada.

@@ -1,5 +1,6 @@
 import { getPrismaClient } from '../db/prisma.js'
 import { PERIODOS_ACADEMICOS_2026 } from './calendario.service.js'
+import { obtenerContratoAnual } from './contratoAnual.service.js'
 
 const TURNOS = {
   M: { nombre: 'Turno mañana', rango: '06:00-14:00', horaInicio: 6 },
@@ -8,9 +9,7 @@ const TURNOS = {
   D: { nombre: 'Diurno', rango: '08:00-16:00', horaInicio: 8 },
 }
 
-const CONTRATO_ANUAL_HORAS = 63508
 const ACUMULADO_ANUAL_HORAS = 26140
-const VARIABLES_ANUALES_HORAS = 2000
 const MONTH_NAMES = [
   'Enero',
   'Febrero',
@@ -34,10 +33,10 @@ const DESGLOSE_CATEGORIAS_MAYO = [
 ]
 
 const DESGLOSE_ANUAL_CATEGORIAS = [
-  { categoria: 'Laboral diurno', ejecutadas: 11420, contrato: 27656 },
-  { categoria: 'Laboral nocturno', ejecutadas: 6580, contrato: 15944 },
-  { categoria: 'Festivo diurno', ejecutadas: 5250, contrato: 12740 },
-  { categoria: 'Festivo nocturno', ejecutadas: 2890, contrato: 7168 },
+  { codigo: 'LABORAL_DIURNO', ejecutadas: 11420 },
+  { codigo: 'LABORAL_NOCTURNO', ejecutadas: 6580 },
+  { codigo: 'FESTIVO_DIURNO', ejecutadas: 5250 },
+  { codigo: 'FESTIVO_NOCTURNO', ejecutadas: 2890 },
 ]
 
 function toDateOnly(date) {
@@ -193,11 +192,11 @@ function buildSyntheticTurnos(servicio, anio, mes, dia, diaInfo) {
   return turnos
 }
 
-function buildKpis(horas) {
+function buildKpis(horas, contratoAnual) {
   const planificadas = horas.reduce((total, item) => total + item.horasPlanificadas, 0)
   const ejecutadas = horas.reduce((total, item) => total + (item.horasEjecutadas || 0), 0)
   const desviacion = ejecutadas - planificadas
-  const avance = (ACUMULADO_ANUAL_HORAS / CONTRATO_ANUAL_HORAS) * 100
+  const avance = contratoAnual > 0 ? (ACUMULADO_ANUAL_HORAS / contratoAnual) * 100 : 0
 
   return {
     coberturaMes: 98.4,
@@ -205,7 +204,7 @@ function buildKpis(horas) {
     horasEjecutadas: ejecutadas,
     desviacionHoras: desviacion,
     acumuladoAnual: ACUMULADO_ANUAL_HORAS,
-    contratoAnual: CONTRATO_ANUAL_HORAS,
+    contratoAnual,
     avanceContrato: Number(avance.toFixed(1)),
   }
 }
@@ -230,7 +229,7 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
   const turnoCodigo = TURNOS[turno] ? turno : 'N'
   const fechaTurno = toDateOnly(fecha)
 
-  const [horas, puestos, turnos, sustituciones] = await Promise.all([
+  const [horas, puestos, turnos, sustituciones, contrato] = await Promise.all([
     prisma.horasContratoServicio.findMany({
       where: { anio: 2026, mes: 5 },
       include: { servicio: { include: { edificio: { include: { campus: true } } } } },
@@ -254,6 +253,7 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
       },
       orderBy: { creadoEn: 'desc' },
     }),
+    obtenerContratoAnual({ anio: 2026 }),
   ])
 
   const turnosPorServicio = new Map(
@@ -308,7 +308,7 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
       nombre: TURNOS[turnoCodigo].nombre,
       rango: TURNOS[turnoCodigo].rango,
     },
-    kpis: buildKpis(horas),
+    kpis: buildKpis(horas, contrato.contratoAnual),
     serviciosVerificacion,
     coberturaCampus,
     alertas: buildAlertasOperativas(),
@@ -327,23 +327,35 @@ export async function obtenerResumenOperativo({ fecha = '2026-05-16', turno = 'N
 
 export async function obtenerHorasAnuales({ anio = 2026 } = {}) {
   const prisma = getPrismaClient()
-  const horas = await prisma.horasContratoServicio.findMany({
-    where: { anio, mes: 5 },
-    include: { servicio: { include: { edificio: { include: { campus: true } } } } },
-    orderBy: { servicio: { orden: 'asc' } },
-  })
+  const [horas, contrato] = await Promise.all([
+    prisma.horasContratoServicio.findMany({
+      where: { anio, mes: 5 },
+      include: { servicio: { include: { edificio: { include: { campus: true } } } } },
+      orderBy: { servicio: { orden: 'asc' } },
+    }),
+    obtenerContratoAnual({ anio }),
+  ])
+  const ejecutadasPorCodigo = new Map(DESGLOSE_ANUAL_CATEGORIAS.map((item) => [item.codigo, item.ejecutadas]))
 
   return {
     anio,
-    contratoAnual: CONTRATO_ANUAL_HORAS,
+    contratoAnual: contrato.contratoAnual,
     acumuladoAnual: ACUMULADO_ANUAL_HORAS,
-    variablesAnuales: VARIABLES_ANUALES_HORAS,
+    variablesAnuales: contrato.bolsaVariableHoras,
     variablesAcumuladas: 684,
-    avanceContrato: Number(((ACUMULADO_ANUAL_HORAS / CONTRATO_ANUAL_HORAS) * 100).toFixed(1)),
-    categorias: DESGLOSE_ANUAL_CATEGORIAS.map((item) => ({
-      ...item,
-      desviacionRitmo: item.ejecutadas - Math.round(item.contrato * (5 / 12)),
-      avance: Number(((item.ejecutadas / item.contrato) * 100).toFixed(1)),
+    avanceContrato: contrato.contratoAnual > 0
+      ? Number(((ACUMULADO_ANUAL_HORAS / contrato.contratoAnual) * 100).toFixed(1))
+      : 0,
+    contrato,
+    categorias: contrato.categorias.map((item) => ({
+      codigo: item.codigo,
+      categoria: item.nombre,
+      ejecutadas: ejecutadasPorCodigo.get(item.codigo) || 0,
+      contrato: item.contratoHoras,
+      desviacionRitmo: (ejecutadasPorCodigo.get(item.codigo) || 0) - Math.round(item.contratoHoras * (5 / 12)),
+      avance: item.contratoHoras > 0
+        ? Number((((ejecutadasPorCodigo.get(item.codigo) || 0) / item.contratoHoras) * 100).toFixed(1))
+        : 0,
     })),
     servicios: horas
       .filter((item) => item.servicio.visibleCuadrante)

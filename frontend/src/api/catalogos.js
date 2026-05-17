@@ -164,6 +164,10 @@ export function getHorasAnuales({ anio = 2026 } = {}) {
   return getJson(`/horas-anuales?anio=${anio}`);
 }
 
+export function updateContratoAnual(anio, data) {
+  return putJson(`/contrato-anual/${anio}`, data);
+}
+
 export function getCierreMensual({ anio = 2026, mes = 5 } = {}) {
   return getJson(`/cierre-mensual?anio=${anio}&mes=${mes}`);
 }

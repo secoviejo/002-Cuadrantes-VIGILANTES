@@ -216,8 +216,17 @@ Se ha migrado el Calendario laboral del HTML original a React/Express:
 - Seed idempotente con 11 festivos reales de 2026 y limpieza de registros demo antiguos.
 - Pagina React `Calendario laboral` en Configuracion, visible solo para ADMIN y Unidad de Seguridad.
 
+## Estado del paso 27
+
+Se ha creado la primera edicion administrativa del contrato anual:
+
+- Modelo Prisma `ContratoAnual` y `ContratoCategoriaHora`.
+- Seed idempotente con categorias y bolsa variable del PTT vigente.
+- API `PUT /api/contrato-anual/:anio` protegida para ADMIN/Unidad de Seguridad y con auditoria.
+- Pagina React `Horas anuales` con modal para editar bolsa variable y categorias del pliego.
+
 ## Proximo paso recomendado
 
-1. **PASO 27**: Implementar importacion Excel real cuando exista fichero de muestra de la contrata.
-2. **PASO 28**: Persistir o importar turnos reales para meses posteriores a mayo 2026, sustituyendo la planificacion base calculada del cuadrante.
-3. **PASO 29**: Modelar versiones de PTT y reglas de calendario para que nuevos pliegos actualicen la planificacion de forma trazable.
+1. **PASO 28**: Implementar importacion Excel real cuando exista fichero de muestra de la contrata.
+2. **PASO 29**: Persistir o importar turnos reales para meses posteriores a mayo 2026, sustituyendo la planificacion base calculada del cuadrante.
+3. **PASO 30**: Modelar versiones de PTT y reglas de calendario para que nuevos pliegos actualicen la planificacion de forma trazable.

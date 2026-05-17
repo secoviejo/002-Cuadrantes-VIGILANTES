@@ -16,8 +16,8 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - `progresos/AVANCES_14_05_2026_INFORMES.md`: registro de avance sobre el modal de seleccion de informes diario, mensual y anual.
 - `frontend/`: aplicacion base React + Vite + Tailwind CSS. Contiene `package.json`, `vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`, `src/styles.css`, README, `.gitignore` y `package-lock.json`.
 - `backend/`: API Node.js + Express. Contiene `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `src/app.js`, `src/server.js`, rutas, controladores, repositories, README y estructura preparada.
-- `backend/prisma/schema.prisma`: schema Prisma inicial configurado para MariaDB con proveedor `mysql`.
-- `backend/prisma/seed.js`: seed idempotente con roles, usuarios demo, empresa, campus, edificios, trabajadores ficticios y datos operativos reales recuperados del HTML original: servicios, horas, puestos de cobertura, turnos de mayo 2026 y descubiertos. Los usuarios demo usan la contrasena comun `Demo1234!`.
+- `backend/prisma/schema.prisma`: schema Prisma configurado para MariaDB con proveedor `mysql`, incluyendo contrato anual editable.
+- `backend/prisma/seed.js`: seed idempotente con roles, usuarios demo, empresa, campus, edificios, trabajadores ficticios y datos operativos reales recuperados del HTML original: servicios, horas, contrato anual, puestos de cobertura, turnos de mayo 2026 y descubiertos. Los usuarios demo usan la contrasena comun `Demo1234!`.
 - `backend/src/services/motorReglasTurnos.service.js`: motor central de reglas de turnos, independiente de Prisma y basado en objetos JavaScript.
 - `backend/src/services/motorReglasTurnos.examples.js`: datos mock para entender y probar el motor.
 - `backend/src/scripts/probarMotorReglasTurnos.js`: script manual para ejecutar casos basicos del motor.
@@ -53,7 +53,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - Los roles se aplican en cliente con clases CSS (`role-uz`, `role-contrata`), no con permisos reales.
 - Las acciones se guardan solo en memoria durante la sesion y se pierden al recargar.
 - El prototipo HTML no tiene `fetch`, `axios`, `localStorage`, `sessionStorage` ni llamadas a servicios externos.
-- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida, verificaciones de cobertura con usuario autenticado, `GET /api/resumen-operativo`, `GET /api/cuadrante-mensual`, `GET /api/informes-operativos`, `GET /api/horas-anuales`, `GET /api/cierre-mensual` y `POST /api/verificaciones/lote`.
+- La API Express expone `GET /api`, `GET /api/health`, endpoints de catalogos y operativa, autenticacion JWT basica, auditoria protegida, verificaciones de cobertura con usuario autenticado, `GET /api/resumen-operativo`, `GET /api/cuadrante-mensual`, `GET /api/informes-operativos`, `GET /api/horas-anuales`, `PUT /api/contrato-anual/:anio`, `GET /api/cierre-mensual` y `POST /api/verificaciones/lote`.
 - Hay controladores conectados a repositories Prisma. El frontend React consume el backend mediante `frontend/src/api/client.js` y normaliza listados en forma de array, `{ data }` o `{ items }`.
 - `MotorReglasTurnos` ya existe como modulo backend independiente; todavia no esta conectado a controladores reales ni a Prisma.
 
@@ -69,7 +69,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 | Cuadrante mensual | Implementado en React con API | Permite seleccionar cualquier mes de 2026. Mayo renderiza turnos reales recuperados del HTML y descubiertos marcados; meses sin turnos persistidos muestran planificacion base calculada por modalidad. El encabezado clasifica dias normales, festivos y no lectivos. |
 | Importar Excel | Solo visual | Representa carga e historial, pero no lee ni valida archivos. |
 | Sustituciones | Tabla demo generada | Muestra sustituciones con preaviso, sin alta ni persistencia real. |
-| Horas anuales | Implementado en React con API | Muestra contrato, acumulado, categorias de hora y variables informativas. |
+| Horas anuales | Implementado en React con API | Muestra contrato, acumulado, categorias de hora y variables informativas. Permite editar bolsa variable y categorias del pliego para ADMIN/Unidad de Seguridad. |
 | Cierre mensual | Implementado en React con API | Muestra conciliacion planificado/ejecutado y checklist de validacion de factura. |
 | Catalogo de servicios | Visual con filtro cliente | Lista 13 servicios y filtra por campus manipulando filas HTML. |
 | Nuevo servicio | Implementado en React con persistencia | Formulario avanzado con metadatos operativos y previsualizacion. |
@@ -128,7 +128,7 @@ El objetivo funcional es controlar servicios, turnos, coberturas, sustituciones,
 - El cuadrante mensual navega enero-diciembre de 2026. Mayo conserva datos reales persistidos; el resto de meses usa planificacion base no persistida por modalidad del servicio hasta importar/generar turnos reales.
 - El PTT de vigilancia queda archivado en `docs/fuentes/PTT-Vigilancia-UZ.md` como fuente de conocimiento. Sus reglas se usan para interpretar normal/festivo/no lectivo y orientar la planificacion base.
 - Horas mayo 2026: 5.394 h planificadas, 5.308 h ejecutadas y desviacion -86 h.
-- Contrato anual: 63.508 h; acumulado anual inicial: 26.140 h.
+- Contrato anual editable: prestaciones fijas calculadas desde categorias del pliego (63.508 h iniciales), bolsa variable inicial de 2.000 h y acumulado anual inicial de 26.140 h.
 - Turnos base: `M` 06:00-14:00, `T` 14:00-22:00, `N` 22:00-06:00 y `D` para CECO jefe.
 - Descubiertos iniciales: Huesca tarde 10/05, CECO jefe 06/05 y CECO jefe 14/05.
 - Los nombres de vigilantes del HTML se consideran inventados y no se migran como trabajadores reales.
@@ -163,6 +163,8 @@ La aplicacion futura debe contemplar, al menos, estas entidades funcionales:
 - Incidencia.
 - VerificacionCobertura.
 - CalendarioLaboral.
+- ContratoAnual.
+- ContratoCategoriaHora.
 - Auditoria.
 
 Estas entidades no deben implementarse todavia en el primer paso documental. Deben guiar la futura normalizacion de datos y evitar modelar la base de datos copiando directamente las pantallas del prototipo.
@@ -201,6 +203,7 @@ La estructura base de carpetas ya existe para orientar la migracion. Los puntos 
 - Capa de repositories preparada para conectar Prisma manteniendo bajo acoplamiento; permite que el MotorReglasTurnos y controladores accedan a datos sin dependencia directa del ORM.
 - Rutas y controladores GET de solo lectura ya disponibles para trabajadores, servicios, turnos, asignaciones de turno y ausencias.
 - Rutas y controladores `POST`/`PUT` basicos ya disponibles para empresas, campus, edificios, servicios, trabajadores, turnos, asignaciones, sustituciones, incidencias y verificaciones. `POST /api/verificaciones` requiere JWT y deriva el usuario desde el token.
+- `PUT /api/contrato-anual/:anio` permite actualizar bolsa variable y categorias del pliego, solo para ADMIN/Unidad de Seguridad y con registro de auditoria.
 - El siguiente paso tecnico recomendado es probar los endpoints existentes contra la base de datos MariaDB real.
 ## Riesgos Tecnicos Actuales
 
@@ -345,6 +348,7 @@ Cada vez que se implemente un paso funcional, tecnico, documental o de arquitect
 - 2026-05-16: Incorporada informacion funcional clave de la conversacion original al React/Express actual. La navegacion queda filtrada por rol, Contrata solo accede a Operacion, ADMIN/Unidad de Seguridad ven todo, se anaden informes operativo diario/mensual/anual con vista previa imprimible, APIs de horas anuales y cierre mensual, paginas React de Horas anuales y Cierre mensual, filtro por campus en Servicios y formulario avanzado de servicio con metadatos operativos persistidos. La importacion Excel queda aplazada hasta disponer de fichero real.
 - 2026-05-17: Activada la seleccion de meses en el Cuadrante mensual para todo 2026. El frontend permite cambiar con desplegable y botones anterior/siguiente. El backend devuelve mayo desde turnos persistidos y, para meses sin datos, una planificacion base calculada por modalidad de servicio marcada como origen `patron`.
 - 2026-05-17: Archivado `docs/fuentes/PTT-Vigilancia-UZ.md` como fuente de conocimiento del proyecto. El cuadrante mensual clasifica y resalta dias normales, festivos y no lectivos, y la planificacion base de Huesca se ajusta al patron del PTT para lectivo/no lectivo/festivo.
+- 2026-05-17: Anadida edicion administrativa del contrato anual en Horas anuales. Nuevos modelos `ContratoAnual` y `ContratoCategoriaHora`, seed desde PTT, API `PUT /api/contrato-anual/:anio` con auditoria y modal React para editar bolsa variable y categorias del pliego.
 - 2026-05-16: Migrado Calendario laboral 2026 desde el HTML original. Anadida API `GET/POST /api/calendario-laboral`, seed con 11 festivos reales y periodos academicos servidos como constantes operativas, pagina React de calendario visible para ADMIN/Unidad de Seguridad y alta manual de festivos.
 - 2026-05-16: Estabilizada la integracion React/Express tras trabajo de varios agentes. Corregido el montaje de rutas backend (`auditoriaRouter`, `trabajadorRouter`), anadido smoke test de `createApp`, centralizado el cliente API frontend con `normalizeList` y `deleteJson`, eliminado uso de URLs hardcodeadas en login/deletes, alineado el seed con usuarios demo funcionales (`Demo1234!`) y protegido `POST /api/verificaciones` con JWT usando el usuario autenticado.
 - 2026-05-15: Creada memoria operativa inicial a partir de `cuadrantes_uz_6.html`, `DESCRIPCION_Y_FUNCIONES_APP.md` y `progresos/AVANCES_14_05_2026_INFORMES.md`.

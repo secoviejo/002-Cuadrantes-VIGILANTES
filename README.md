@@ -95,6 +95,7 @@ npm run dev
 - `GET /api/cuadrante-mensual?anio=2026&mes=1..12`
 - `GET /api/informes-operativos?tipo=diario|mensual|anual&fecha=2026-05-16&anio=2026&mes=5`
 - `GET /api/horas-anuales?anio=2026`
+- `PUT /api/contrato-anual/:anio`
 - `GET /api/cierre-mensual?anio=2026&mes=5`
 - `GET /api/calendario-laboral?anio=2026`
 - `POST /api/calendario-laboral`
@@ -163,6 +164,7 @@ npm run build        # Produccion
 - Navegacion y permisos por rol: ADMIN/Unidad de Seguridad con acceso completo; Contrata limitada a Operacion.
 - Informes operativo diario, mensual y anual con vista previa imprimible.
 - Pantallas de Horas anuales y Cierre mensual para validacion de factura.
+- Edicion administrativa del contrato anual desde Horas anuales: bolsa variable y categorias del pliego persistidas en MariaDB con auditoria.
 - Calendario laboral 2026 con festivos reales del HTML original, periodos academicos y alta manual de festivos.
 - Formulario avanzado de servicios con metadatos operativos y filtro por campus.
 

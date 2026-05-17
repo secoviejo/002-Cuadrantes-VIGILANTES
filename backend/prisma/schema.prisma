@@ -301,6 +301,34 @@ model HorasContratoServicio {
   @@index([anio, mes])
 }
 
+model ContratoAnual {
+  id                  Int                     @id @default(autoincrement())
+  anio                Int                     @unique
+  bolsaVariableHoras  Int                     @default(0)
+  observaciones       String?                 @db.Text
+  categorias          ContratoCategoriaHora[]
+  creadoEn            DateTime                @default(now())
+  actualizadoEn       DateTime                @updatedAt
+
+  @@index([anio])
+}
+
+model ContratoCategoriaHora {
+  id             Int            @id @default(autoincrement())
+  contratoId     Int
+  contrato       ContratoAnual  @relation(fields: [contratoId], references: [id], onDelete: Cascade)
+  codigo         String         @db.VarChar(80)
+  nombre         String         @db.VarChar(191)
+  contratoHoras  Int            @default(0)
+  orden          Int            @default(0)
+  creadoEn       DateTime       @default(now())
+  actualizadoEn  DateTime       @updatedAt
+
+  @@unique([contratoId, codigo])
+  @@index([contratoId])
+  @@index([orden])
+}
+
 model PuestoCobertura {
   id            Int                     @id @default(autoincrement())
   codigo        String                  @unique @db.VarChar(120)

@@ -19,6 +19,9 @@ const mockPrisma = {
   calendarioLaboral: {
     findMany: jest.fn(),
   },
+  contratoAnual: {
+    findUnique: jest.fn(),
+  },
 }
 
 jest.unstable_mockModule('../db/prisma.js', () => ({
@@ -35,6 +38,7 @@ const {
 describe('operativo.service', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockPrisma.contratoAnual.findUnique.mockResolvedValue(contratoRecord())
   })
 
   it('calcula KPIs de mayo 2026 con horas reales recuperadas del HTML original', async () => {
@@ -143,13 +147,27 @@ describe('operativo.service', () => {
     mockPrisma.horasContratoServicio.findMany.mockResolvedValue([
       { horasPlanificadas: 1488, horasEjecutadas: 1468, servicioId: 1, servicio: servicio('SERV_SF_24H', 'San Francisco', true, 2, '24/7') },
     ])
+    mockPrisma.contratoAnual.findUnique.mockResolvedValue(contratoRecord({
+      bolsaVariableHoras: 2500,
+      categorias: [
+        categoriaContrato('LABORAL_DIURNO', 'Laboral diurno', 30000, 1),
+        categoriaContrato('LABORAL_NOCTURNO', 'Laboral nocturno', 16000, 2),
+        categoriaContrato('FESTIVO_DIURNO', 'Festivo diurno', 13000, 3),
+        categoriaContrato('FESTIVO_NOCTURNO', 'Festivo nocturno', 7000, 4),
+      ],
+    }))
 
     const horas = await obtenerHorasAnuales({ anio: 2026 })
 
-    expect(horas.contratoAnual).toBe(63508)
+    expect(horas.contratoAnual).toBe(66000)
     expect(horas.acumuladoAnual).toBe(26140)
-    expect(horas.variablesAnuales).toBe(2000)
+    expect(horas.variablesAnuales).toBe(2500)
     expect(horas.categorias).toHaveLength(4)
+    expect(horas.categorias[0]).toMatchObject({
+      codigo: 'LABORAL_DIURNO',
+      categoria: 'Laboral diurno',
+      contrato: 30000,
+    })
   })
 })
 
@@ -173,4 +191,24 @@ function turno(id, servicioId, fecha, inicio, fin, estado) {
     horaFin: new Date(`${fecha}T${fin}:00.000Z`),
     estado,
   }
+}
+
+function contratoRecord(overrides = {}) {
+  return {
+    id: 1,
+    anio: 2026,
+    bolsaVariableHoras: 2000,
+    observaciones: '',
+    categorias: [
+      categoriaContrato('LABORAL_DIURNO', 'Laboral diurno', 27656, 1),
+      categoriaContrato('LABORAL_NOCTURNO', 'Laboral nocturno', 15944, 2),
+      categoriaContrato('FESTIVO_DIURNO', 'Festivo diurno', 12740, 3),
+      categoriaContrato('FESTIVO_NOCTURNO', 'Festivo nocturno', 7168, 4),
+    ],
+    ...overrides,
+  }
+}
+
+function categoriaContrato(codigo, nombre, contratoHoras, orden) {
+  return { codigo, nombre, contratoHoras, orden }
 }

@@ -26,7 +26,7 @@ Pantallas operativas recuperadas del HTML original:
 - `Dashboard.jsx` implementa el Resumen operativo con KPIs, selector de turno, verificacion por puesto, alertas dinamicas, cobertura por campus y ultimas sustituciones.
 - `CuadrantePage.jsx` permite seleccionar cualquier mes de 2026. Mayo conserva los turnos reales recuperados del HTML original y el resto de meses muestra una planificacion base calculada por modalidad de servicio cuando no hay turnos persistidos. El encabezado diferencia dias normales, festivos y no lectivos.
 - `Dashboard.jsx` permite generar informe diario, mensual o anual mediante vista previa imprimible.
-- `HorasAnualesPage.jsx` y `CierreMensualPage.jsx` muestran el seguimiento contractual y la conciliacion de mayo 2026 para UZ/ADMIN.
+- `HorasAnualesPage.jsx` muestra el seguimiento contractual y permite editar bolsa variable y categorias del pliego para UZ/ADMIN. `CierreMensualPage.jsx` muestra la conciliacion de mayo 2026.
 - `CalendarioLaboralPage.jsx` reproduce el calendario laboral 2026 con festivos, periodos academicos y alta manual de festivo.
 - `ServiciosPage.jsx` filtra por campus y `ServicioForm.jsx` ofrece un formulario avanzado con previsualizacion.
 - La navegacion se adapta por rol: Contrata solo ve Operacion; ADMIN y Unidad de Seguridad ven todo.
@@ -39,7 +39,7 @@ El cliente API central vive en `src/api/client.js` y:
 - Normaliza listados recibidos como array, `{ data: [] }` o `{ items: [] }`.
 - Centraliza `GET`, `POST`, `PUT` y `DELETE`.
 - Expone funciones de catalogo para `getResumenOperativo`, `getCuadranteMensual` y `createVerificacionesLote`.
-- Expone funciones de informes y cierre: `getInformeOperativo`, `getHorasAnuales` y `getCierreMensual`.
+- Expone funciones de informes y cierre: `getInformeOperativo`, `getHorasAnuales`, `updateContratoAnual` y `getCierreMensual`.
 - Expone funciones de calendario: `getCalendarioLaboral` y `createFestivo`.
 
 Usuarios demo tras ejecutar el seed del backend:
