@@ -533,6 +533,29 @@ function ReportPreview({ report, onClose }) {
 function GenericRows({ rows }) {
   if (!rows?.length) return <div className="rounded-md border border-dashed border-stone-300 p-4 text-sm text-stone-500">Sin registros.</div>;
   const keys = Object.keys(rows[0]);
+
+  const getRowTone = (row) => {
+    const state = String(row.estado || row.tipo || '').toLowerCase();
+    if (['danger', 'descubierto'].includes(state)) {
+      return 'border-l-4 border-red-500 bg-red-50 text-red-950';
+    }
+    if (['warn', 'incidencia', 'pendiente'].includes(state)) {
+      return 'border-l-4 border-amber-500 bg-amber-50 text-amber-950';
+    }
+    return '';
+  };
+
+  const getCellTone = (key, value) => {
+    const normalized = String(value || '').toLowerCase();
+    if (['estado', 'tipo'].includes(key) && ['danger', 'descubierto'].includes(normalized)) {
+      return 'font-bold uppercase text-red-700';
+    }
+    if (['estado', 'tipo'].includes(key) && ['warn', 'incidencia', 'pendiente'].includes(normalized)) {
+      return 'font-bold uppercase text-amber-700';
+    }
+    return '';
+  };
+
   return (
     <table className="w-full text-left text-sm">
       <thead className="text-[11px] uppercase tracking-wider text-stone-500">
@@ -540,8 +563,12 @@ function GenericRows({ rows }) {
       </thead>
       <tbody className="divide-y divide-stone-100">
         {rows.map((row, index) => (
-          <tr key={index}>
-            {keys.map((key) => <td key={key} className="py-2 pr-4 align-top">{String(row[key] ?? '')}</td>)}
+          <tr key={index} className={getRowTone(row)}>
+            {keys.map((key) => (
+              <td key={key} className={`py-2 pr-4 align-top ${key === keys[0] && getRowTone(row) ? 'pl-3' : ''} ${getCellTone(key, row[key])}`}>
+                {String(row[key] ?? '')}
+              </td>
+            ))}
           </tr>
         ))}
       </tbody>
